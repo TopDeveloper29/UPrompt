@@ -1,0 +1,15 @@
+<Application>
+	<Settings Name="Width" Value="500"/>
+	<Settings Name="Height" Value="600"/>
+	<Settings Name="WindowsMode" Value="Standard"/>
+	<Settings Name="AllowMinimize" Value="true"/>
+	<Settings Name="AllowMaximize" Value="true"/>
+	<Settings Name="NoFrame" Value="false"/>
+	<View>
+		<ViewItem Type="Button" Action="MSG" Value="Hello Word on [DEVICE]" DisplayText="Click Me"/>
+		<ViewItem Type="Button" Action="MSG" Value="Hello Word on [DEVICE]" DisplayText="Exit"/>
+		<div>
+			<a href="?LOCAL:MSG=Hello [USER]">Hello Word</a>
+		</div>
+	</View>
+</Application>
