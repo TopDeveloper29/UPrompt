@@ -1,0 +1,9 @@
+Implement html Form value «internal handler» that alow to store the value in c#
+Implement TextBox using «internal handler»
+Implement XML action and «pointer» to be able to get/set the value in «internal handler»
+Implement first XML code handler (powershell)
+Implement action to run code
+Implement more built-in control all the basic (combobox, slider, checkbox, radio button, etc)
+Implemenet more built-in XML action
+Implement more built-in field
+Implement other settings (if needed)
