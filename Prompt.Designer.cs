@@ -46,15 +46,16 @@
             this.htmlhandler.Url = new System.Uri("", System.UriKind.Relative);
             this.htmlhandler.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
             // 
-            // Form1
+            // Prompt
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.htmlhandler);
             this.FormStyle = MaterialSkin.Controls.MaterialForm.FormStyles.ActionBar_None;
-            this.Name = "Form1";
+            this.Name = "Prompt";
             this.Padding = new System.Windows.Forms.Padding(3, 24, 3, 3);
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "UPrompt DEMO";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);

@@ -1,15 +1,33 @@
 <Application>
 	<Settings Name="Width" Value="500"/>
 	<Settings Name="Height" Value="600"/>
-	<Settings Name="WindowsMode" Value="Standard"/>
-	<Settings Name="AllowMinimize" Value="true"/>
-	<Settings Name="AllowMaximize" Value="true"/>
-	<Settings Name="NoFrame" Value="false"/>
+	<Settings Name="WindowsOpenMode" Value="Normal"/>
+	<Settings Name="AllowMinimize" Value="false"/>
+	<Settings Name="AllowMaximize" Value="false"/>
+	<Settings Name="Frame" Value="true"/>
+	<Settings Name="Text-Color" Value="#000"/>
+	<Settings Name="Application-Color" Value="#fff"/>
+	<Settings Name="Accent-Color" Value="#272c33"/>
+	<Settings Name="Accent-Text-Color" Value="#fff"/>
+	<Settings Name="Item-Margin" Value="3%"/>
+	
 	<View>
-		<ViewItem Type="Button" Action="MSG" Value="Hello Word on [DEVICE]" DisplayText="Click Me"/>
-		<ViewItem Type="Button" Action="MSG" Value="Hello Word on [DEVICE]" DisplayText="Exit"/>
-		<div>
-			<a href="?LOCAL:MSG=Hello [USER]">Hello Word</a>
-		</div>
+		<ViewItem Type="Title">Welcome to UPrompt</ViewItem>
+		<ViewItem Type="Row">
+			<ViewItem Type="LabelBox">Hello Word to [DEVICE]\[USER]</ViewItem>
+			<ViewItem Type="LabelBox">Hello Word to [DEVICE]\[USER]</ViewItem>
+			<ViewItem Type="Label">Hello Word to [DEVICE]\[USER]</ViewItem>
+		</ViewItem>
+		<ViewItem Type="Row">
+			<ViewItem Type="Button" Action="MSG=Hello [USER]">Click Me 1</ViewItem>
+			<ViewItem Type="Button" Action="MSG=Hello [DEVICE]">Click Me 2</ViewItem>
+		</ViewItem>
+		<br/>
+		<br/>
+		<br/>
+		<ViewItem Type="Button" Layout="Left" Action="EXIT=0">Exit</ViewItem>
 	</View>
+	<Code Id="1"  Type="PowerShell">
+		
+	</Code>
 </Application>

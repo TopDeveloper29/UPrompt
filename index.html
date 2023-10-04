@@ -1,57 +1,79 @@
 <html>
     <head>
 	    <style>
+            body
+            {
+                color: #TEXT_COLOR#;
+                background-color: #BACKGROUND_COLOR#;
+            }
             .container
             {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                height: 100vh; /* ajustez la hauteur selon vos besoins */
+                height: 100vh;
+                margin:1%;
             }
 
             .title {
-                font-size: 3rem;
+                margin: 5px;
+                margin-bottom: #ITEM_MARGIN#;
+                margin-top: #ITEM_MARGIN#;
+                font-size: 2.8rem;
                 font-weight: bold;
-                color: #333;
                 text-align: center;
-                margin-bottom: 1rem;
             }
 
-            .button {
+            .Button {
+                margin-bottom: #ITEM_MARGIN#;
+                margin-top: #ITEM_MARGIN#;
                 display: inline-block;
                 padding: 1rem 2rem;
                 font-size: 1.2rem;
                 font-weight: bold;
-                color: #fff;
-                background-color: #007bff;
+                color: #MAIN_TEXT_COLOR#;
+                background-color: #MAIN_COLOR#;
                 border: none;
                 border-radius: 0.5rem;
                 text-decoration: none;
                 text-align: center;
                 transition: background-color 0.3s ease-in-out;
+                
             }
-
-                .button:hover {
-                    background-color: #0062cc;
+                .Button:hover {
+                    cursor: grab;
+                    background-color: #FADE_MAIN_COLOR#;
                 }
             .box {
-                border: 2px solid #11253b;
+                margin: 5px;
+                margin-bottom: #ITEM_MARGIN#;
+                margin-top: #ITEM_MARGIN#;
+                border: 2px solid #MAIN_COLOR#;
                 border-radius: 0.5rem;
-                width: 80%;
+                width: 90%;
                 padding: 1rem;
-                margin: 0 auto;
-                margin-bottom:10px;
+            }
+            .label {
+                margin: 5px;
+                margin-bottom: #ITEM_MARGIN#;
+                margin-top: #ITEM_MARGIN#;
+                width: 90%;
+                padding: 1rem;
+            }
+            .row {
+                margin-top: #ITEM_MARGIN#;
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
             }
 
-            text {
-              
-            }
 	    </style>
     </head>
     <body>
-        <div class="container">
-            |=== XML CODE WILL GENERATE ===|
-        </div>
+        <form action="view.html?LOCAL:" method="get" class="container">
+            <input type="text" name="INPUT_1432" />
+            === XML CODE WILL GENERATE THIS VIEW ===
+        </form>
     </body>
 </html>
