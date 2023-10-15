@@ -44,7 +44,7 @@
             this.htmlhandler.Size = new System.Drawing.Size(794, 423);
             this.htmlhandler.TabIndex = 0;
             this.htmlhandler.Url = new System.Uri("", System.UriKind.Relative);
-            this.htmlhandler.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
+            this.htmlhandler.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.htmlhandler_Navigating);
             // 
             // Prompt
             // 
@@ -57,7 +57,7 @@
             this.Padding = new System.Windows.Forms.Padding(3, 24, 3, 3);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "UPrompt DEMO";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.Prompt_Load);
             this.ResumeLayout(false);
 
         }

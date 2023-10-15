@@ -1,79 +1,97 @@
 <html>
-    <head>
-	    <style>
-            body
-            {
-                color: #TEXT_COLOR#;
-                background-color: #BACKGROUND_COLOR#;
-            }
-            .container
-            {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin:1%;
+<head>
+    <style>
+        body {
+            font-family: #FONT_NAME#;
+            color: #TEXT_COLOR#;
+            background-color: #BACKGROUND_COLOR#;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 1%;
+        }
+
+        .title {
+            margin: 5px;
+            margin-bottom: #ITEM_MARGIN#;
+            margin-top: #ITEM_MARGIN#;
+            font-size: 2.8rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .Button {
+            margin-bottom: #ITEM_MARGIN#;
+            margin-top: #ITEM_MARGIN#;
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #MAIN_TEXT_COLOR#;
+            background-color: #MAIN_COLOR#;
+            border: none;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+            .Button:hover {
+                cursor: grab;
+                background-color: #FADE_MAIN_COLOR#;
             }
 
-            .title {
-                margin: 5px;
-                margin-bottom: #ITEM_MARGIN#;
-                margin-top: #ITEM_MARGIN#;
-                font-size: 2.8rem;
-                font-weight: bold;
-                text-align: center;
-            }
+        .box {
+            margin: 5px;
+            margin-bottom: #ITEM_MARGIN#;
+            margin-top: #ITEM_MARGIN#;
+            border: 2px solid #MAIN_COLOR#;
+            border-radius: 0.5rem;
+            width: 90%;
+            padding: 1rem;
+        }
 
-            .Button {
-                margin-bottom: #ITEM_MARGIN#;
-                margin-top: #ITEM_MARGIN#;
-                display: inline-block;
-                padding: 1rem 2rem;
-                font-size: 1.2rem;
-                font-weight: bold;
-                color: #MAIN_TEXT_COLOR#;
-                background-color: #MAIN_COLOR#;
-                border: none;
-                border-radius: 0.5rem;
-                text-decoration: none;
-                text-align: center;
-                transition: background-color 0.3s ease-in-out;
-                
-            }
-                .Button:hover {
-                    cursor: grab;
-                    background-color: #FADE_MAIN_COLOR#;
-                }
-            .box {
-                margin: 5px;
-                margin-bottom: #ITEM_MARGIN#;
-                margin-top: #ITEM_MARGIN#;
-                border: 2px solid #MAIN_COLOR#;
-                border-radius: 0.5rem;
-                width: 90%;
-                padding: 1rem;
-            }
-            .label {
-                margin: 5px;
-                margin-bottom: #ITEM_MARGIN#;
-                margin-top: #ITEM_MARGIN#;
-                width: 90%;
-                padding: 1rem;
-            }
-            .row {
-                margin-top: #ITEM_MARGIN#;
-                display: flex;
-                justify-content: space-between;
-                width: 100%;
-            }
+        .label {
+            margin: 5px;
+            margin-bottom: #ITEM_MARGIN#;
+            margin-top: #ITEM_MARGIN#;
+            width: 90%;
+            padding: 1rem;
+        }
 
-	    </style>
-    </head>
-    <body>
-        <form action="view.html?LOCAL:" method="get" class="container">
-            <input type="text" name="INPUT_1432" />
-            === XML CODE WILL GENERATE THIS VIEW ===
-        </form>
-    </body>
+        .row {
+            margin-top: #ITEM_MARGIN#;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .TextBox {
+            margin: 5px;
+            margin-bottom: #ITEM_MARGIN#;
+            margin-top: #ITEM_MARGIN#;
+            border: 1px groove #FADE_MAIN_COLOR#;
+            width: 99%;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 16px;
+            color: #TEXT_COLOR#;
+        }
+
+            .TextBox:focus {
+                outline: none;
+                box-shadow: 0px 0px 8px #MAIN_COLOR#;
+            }
+    </style>
+</head>
+<body>
+    <form id="UForm" action="view.html?LOCAL:" method="get" class="container">
+        === XML CODE WILL GENERATE THIS VIEW ===
+    </form>
+</body>
 </html>
