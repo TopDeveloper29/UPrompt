@@ -2,11 +2,11 @@
 	<Settings Name="Width" Value="600"/>
 	<Settings Name="Height" Value="600"/>
 	<Settings Name="WindowsOpenMode" Value="Normal"/>
-	<Settings Name="AllowMinimize" Value="false"/>
+	<Settings Name="AllowMinimize" Value="true"/>
 	<Settings Name="AllowMaximize" Value="false"/>
-	<Settings Name="Frame" Value="true"/>
-	<Settings Name="Text-Color" Value="#0e1111"/>
-	<Settings Name="Application-Color" Value="#fff"/>
+	<Settings Name="AllowClose" Value="true"/>
+	<Settings Name="Text-Color" Value="#fff"/>
+	<Settings Name="Application-Color" Value="#22252e"/>
 	<Settings Name="Accent-Color" Value="#272c33"/>
 	<Settings Name="Accent-Text-Color" Value="#fff"/>
 	<Settings Name="Item-Margin" Value="3%"/>
@@ -15,22 +15,19 @@
 		<ViewItem Type="Title">Welcome to UPrompt</ViewItem>
 		<ViewItem Type="Row">
 			<ViewInput Type="TextBox" Id="TextBox1">{USER}</ViewInput>
-			<ViewInput Type="TextBox" Id="TextBox2">{DEVICE}</ViewInput>
+			<ViewInput Action="SetVariable=NewVar2:[TextBox2]" Type="TextBox" Id="TextBox2">{DEVICE}</ViewInput>
 		</ViewItem>
 		<ViewItem Type="Row">
 			<ViewItem Type="LabelBox">#TEXT_COLOR# - #MAIN_COLOR# for {USER}</ViewItem>
 			<ViewItem Type="Label">#BACKGROUND_COLOR# - #FADE_BACKGROUND_COLOR#</ViewItem>
 		</ViewItem>
 		<ViewItem Type="Row">
-			<ViewAction Type="Button" Action="MSG=Hello [TextBox1]">Click Me 1</ViewAction>
+			<ViewAction Id="yn" Type="Button" Action="YesNoDialog=Hello [TextBox1] and [TextBox2]">Click Me 1</ViewAction>
 			<ViewAction Type="Button">Submit</ViewAction>
-			<ViewAction Type="Button" Action="MSG=Hello [TextBox2]">Click Me 2</ViewAction>
+			<ViewAction Type="Button" Action="OkDialog=[NewVar] [NewVar2]">Click Me 2</ViewAction>
+			<ViewAction Type="Linker" Action="NewVar=TextBox1"/>
 		</ViewItem>
 		<br/>
-		<br/>
-		<br/>
 		<ViewAction Type="Button" Action="EXIT=0">Exit</ViewAction>
-		<ViewAction Type="InputHandler" Action="MSG=Hello [TextBox2]">TextBox1</ViewAction>
-		<ViewAction Type="Linker" Id="L1" Action="FileSelector=C:\">TextBox1</ViewAction>
 	</View>
 </Application>
