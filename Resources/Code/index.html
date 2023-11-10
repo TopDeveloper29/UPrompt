@@ -1,13 +1,16 @@
+<!-- Do not change structure of html, body, form or the === XML CODE WILL GENERATE THIS VIEW === . You could add css to style and add html under the form-->
 <html>
 <head>
+    <!-- All style element are normal css exept for the element under # thease one will represent a setting value in xml -->
     <style>
+        /*This is the css for general element*/
         body {
             font-family: #FONT_NAME#;
             color: #TEXT_COLOR#;
             background-color: #BACKGROUND_COLOR#;
         }
 
-        .container {
+        .root {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -15,8 +18,16 @@
             height: 100vh;
             margin: 1%;
         }
+    </style>
 
-        .title {
+    <style>
+        /*
+            This css represent all kind of input or ui element in xml
+            You can create you own class to create you custom element
+            but if you only want to edit a detail of existing one
+            you could use Style property directly inside xml
+        */
+        .Title {
             margin: 5px;
             margin-bottom: #ITEM_MARGIN#;
             margin-top: #ITEM_MARGIN#;
@@ -41,12 +52,12 @@
             transition: background-color 0.3s ease-in-out;
         }
 
-            .Button:hover {
-                cursor: grab;
-                background-color: #FADE_MAIN_COLOR#;
-            }
+        .Button:hover {
+            cursor: grab;
+            background-color: #FADE_MAIN_COLOR#;
+        }
 
-        .box {
+        .LabelBox {
             margin: 5px;
             margin-bottom: #ITEM_MARGIN#;
             margin-top: #ITEM_MARGIN#;
@@ -56,7 +67,7 @@
             padding: 1rem;
         }
 
-        .label {
+        .Label {
             margin: 5px;
             margin-bottom: #ITEM_MARGIN#;
             margin-top: #ITEM_MARGIN#;
@@ -64,7 +75,7 @@
             padding: 1rem;
         }
 
-        .row {
+        .Row {
             margin-top: #ITEM_MARGIN#;
             display: flex;
             justify-content: space-between;
@@ -84,19 +95,24 @@
             color: #TEXT_COLOR#;
         }
 
-            .TextBox:focus {
-                outline: none;
-                box-shadow: 0px 0px 8px #MAIN_COLOR#;
-            }
+        .TextBox:focus
+        {
+            outline: none;
+            box-shadow: 0px 0px 8px #MAIN_COLOR#;
+        }
+
         .Spacer {
             width: 50px;
             color: #MAIN_COLOR#;
         }
     </style>
 </head>
+
 <body>
-    <form id="UForm" action="view.html?LOCAL:" method="get" class="container">
+    <form id="UForm" action="view.html?LOCAL:" method="get" class="root">
+        <!-- If you want to add a default html item for all futur page you could do it here -->
         === XML CODE WILL GENERATE THIS VIEW ===
+        <!-- If you want to add a default html item for all futur page you could do it here -->
     </form>
 </body>
 </html>

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml;
+using UPrompt.Class;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 
@@ -15,15 +17,16 @@ namespace UPrompt
     {
         public string ViewHtml = "";
         public string Xml_Path = @"C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO.xml";
-        public string Application_Path = (AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/");
+        public static string Application_Path = (AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/");
 
         internal XmlDocument xmlDoc = new XmlDocument();
         internal bool IconLigthMode = false;
+        
 
-        protected bool isDragging = false;
-        protected Point dragOffset;
-        protected Point initialMousePos;
-        protected Size initialFormSize;
+        protected private bool isDragging = false;
+        protected private Point dragOffset;
+        protected private Point initialMousePos;
+        protected private Size initialFormSize;
 
         protected private void titleBar_MouseMove(object sender, MouseEventArgs e)
         {
@@ -50,12 +53,12 @@ namespace UPrompt
         protected private void minimizeButton_MouseLeave(object sender, EventArgs e) { minpan.BackColor = Color.Transparent; }
         protected private void maximizeButton_MouseEnter(object sender, EventArgs e) { maxpan.BackColor = Color.Gray; }
         protected private void maximizeButton_MouseLeave(object sender, EventArgs e) { maxpan.BackColor = Color.Transparent; }
-        protected void SideBorder_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeWE; }
-        protected void CornerRight_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNWSE; }
-        protected void CornerLeft_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNESW; }
-        protected void Bottom_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNS; }
-        protected void Border_MouseLeave(object sender, EventArgs e) { this.Cursor = Cursors.Default; }
-        protected void Border_MouseDown(object sender, MouseEventArgs e)
+        protected private void SideBorder_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeWE; }
+        protected private void CornerRight_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNWSE; }
+        protected private void CornerLeft_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNESW; }
+        protected private void Bottom_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNS; }
+        protected private void Border_MouseLeave(object sender, EventArgs e) { this.Cursor = Cursors.Default; }
+        protected private void Border_MouseDown(object sender, MouseEventArgs e)
         {
             if (!isDragging)
             {
@@ -65,8 +68,8 @@ namespace UPrompt
             }
             isDragging = true;
         }
-        protected void Border_MouseUp(object sender, MouseEventArgs e) { isDragging = false; this.ResumeLayout(); }
-        protected void CornerLeft_MouseMove(object sender, MouseEventArgs e)
+        protected private void Border_MouseUp(object sender, MouseEventArgs e) { isDragging = false; this.ResumeLayout(); }
+        protected private void CornerLeft_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging)
             {
@@ -77,7 +80,7 @@ namespace UPrompt
                 this.Size = new Size(newWidth, newHeigth);
             }
         }
-        protected void CornerRight_MouseMove(object sender, MouseEventArgs e)
+        protected private void CornerRight_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging)
             {
@@ -88,7 +91,7 @@ namespace UPrompt
                 this.Size = new Size(newWidth, newHeigth);
             }
         }
-        protected void SideBorderLeft_MouseMove(object sender, MouseEventArgs e)
+        protected private void SideBorderLeft_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging)
             {
@@ -97,7 +100,7 @@ namespace UPrompt
                 this.Size = new Size(newWidth, this.Size.Height);
             }
         }
-        protected void BottomBorder_MouseMove(object sender, MouseEventArgs e)
+        protected private void BottomBorder_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging)
             {
@@ -106,7 +109,7 @@ namespace UPrompt
                 this.Size = new Size(this.Size.Width, newHeigth);
             }
         }
-        protected void RightBorder_MouseMove(object sender, MouseEventArgs e)
+        protected private void RightBorder_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging)
             {
@@ -118,7 +121,7 @@ namespace UPrompt
 
         public Prompt()
         {
-            Handler.Windows = this;
+            Common.Windows = this;
             InitializeComponent();
             this.DoubleBuffered = true;
         }
@@ -133,33 +136,32 @@ namespace UPrompt
             catch (Exception ex) { MessageBox.Show($"{ex.Message}\n\n{xmlDoc.InnerXml}", "Fatal error on XML Parsing", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 
             XmlNodeList settingsList = xmlDoc.SelectNodes("//Application/Settings");
-            Handler.LoadSettings(settingsList);
+            Settings.Load(settingsList);
             GenerateView();
         }
         public void GenerateView()
         {
             ViewHtml = ""; HtmlXml.HtmlFromXml = null;
             XmlNode viewNode = xmlDoc.SelectSingleNode("/Application/View");
+            Common.DebugXmlLineNumber = (File.ReadAllLines(Xml_Path).Length - Settings.Count)-5;
             foreach (XmlNode childNode in viewNode.ChildNodes)
             {
                 ViewHtml = HtmlXml.GenrateHtmlFromXML(childNode.OuterXml);
             }
             if (ViewHtml.Length < 5) { ViewHtml = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
 
-            string Template = File.ReadAllText($"{Application_Path}Index.html");
+            string Template = File.ReadAllText($@"{Application_Path}\Resources\Code\Index.html");
             string html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", ViewHtml);
 
-            File.WriteAllText($"{Application_Path}View.html", HtmlXml.SettingsTextParse(html));
-
-            string html_path = $@"file:///{Application_Path}View.html";
+            File.WriteAllText($@"{Application_Path}\Resources\Code\View.html", HtmlXml.SettingsTextParse(html));
+            string html_path = $"file:///{Application_Path}Resources/Code/View.html";
             htmlhandler.Navigate($"{(string)html_path}");
         }
-
         private void htmlhandler_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             if (e.Url.ToString().ToLower().Contains("http"))
             {
-                MessageBox.Show("UPrompt do not support browser any internet url for security reason please stay local on machine !!!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Common.Warning("UPrompt do not support browser any internet url for security reason please stay local on machine !!!");
                 htmlhandler.Navigate($@"file:///{Application_Path}View.html");
             }
             if (e.Url.ToString().Contains("="))

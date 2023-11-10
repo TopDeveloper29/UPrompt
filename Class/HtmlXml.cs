@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using UPrompt.Class;
 
-namespace UPrompt
+namespace UPrompt.Class
 {
     internal static class HtmlXml
     {
@@ -47,11 +49,12 @@ namespace UPrompt
             string ParsedText = Text
                 .Replace("{USER}", Environment.UserName)
                 .Replace("{DEVICE}", Environment.MachineName)
+                .Replace("{n}", "\n")
                 ;
             //Internal Input Variable Replace
-            foreach (string Key in Handler.InternalVariable.Keys)
+            foreach (string Key in Common.InternalVariable.Keys)
             {
-                string Value = Handler.InternalVariable[Key];
+                string Value = Common.InternalVariable[Key];
                 ParsedText = ParsedText.Replace($"[{Key}]", Value);
             }
             return ParsedText;
@@ -64,16 +67,23 @@ namespace UPrompt
                        "});";
             HtmlFromXml += $"<script>{scriptContent}</script>";
         }
-
         public static string GenrateHtmlFromXML(string XML)
         {
+            Common.DebugXmlLineNumber++;
             XmlDocument doc = new XmlDocument(); doc.LoadXml(XML);
             XmlNode childNode = doc.DocumentElement;
 
-            //global value that can be apply on all type
-            string id = childNode.Attributes["Id"]?.Value; if (id == null) { id = FallBackElementId.ToString(); FallBackElementId++; }
+            //get all atribute that can exist in all type
+            string Id = childNode.Attributes["Id"]?.Value; if (Id == null) { Id = FallBackElementId.ToString(); FallBackElementId++; }
+            string Type = childNode.Attributes["Type"]?.Value;
+            string InnerValue = SpecialTextParse(childNode.InnerText);
+         
+            string Action = childNode.Attributes["Action"]?.Value;
+            string Argument = childNode.Attributes["Argument"]?.Value;
+
             string ExtraStyle = childNode.Attributes["Style"]?.Value;
-            // Vérifier le type de l'élément enfant
+
+            // Check what kind of node is it 
             switch (childNode.Name)
             {
                 case "ViewSpacer":
@@ -81,50 +91,36 @@ namespace UPrompt
 
                     break;
                 case "ViewInput":
-                    // Récupérer les attributs Type et Id
-                    string input_type = childNode.Attributes["Type"].Value;
-                    string InputValue = SpecialTextParse(childNode.InnerText);
-                    if (Handler.InternalVariable.ContainsKey(id))
-                    {
-                        InputValue = SpecialTextParse(Handler.InternalVariable[id]);
-                    }
+                    //action that must be apply for all type of ViewInput
+                    if (Common.InternalVariable.ContainsKey(Id)){ InnerValue = SpecialTextParse(Common.InternalVariable[Id]); }
+                    if (Action != null){ GenrateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
 
-                    string HandlerAction = childNode.Attributes["Action"]?.Value;
-                    if (HandlerAction != null)
-                    {
-                        GenrateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{HandlerAction}\">{id}</ViewAction>");
-                    }
-
-                    switch (input_type)
+                    switch (Type)
                     {
                         default:
                         case "TextBox":
-                            HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox\" type=\"text\" name=\"INPUT_{id}\" id=\"{id}\" value=\"{InputValue}\"/>";
-                            AddJsInputHandler(id);
+                            HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
+                            AddJsInputHandler(Id);
                             break;
                     }
                     break;
                 case "ViewItem":
-                    // Récupérer les attributs Type et Action
-                    string type = childNode.Attributes["Type"].Value;
-                    string InnerValue = SpecialTextParse(childNode.InnerText);
-
-                    switch (type)
+                    switch (Type)
                     {
                         case "Title":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" id=\"{id}\" class=\"Title\">{InnerValue}</div>\n";
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title\">{InnerValue}</div>\n";
                             break;
 
                         case "Label":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" id=\"{id}\" class=\"Label\">{InnerValue}</div>\n";
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label\">{InnerValue}</div>\n";
                             break;
 
                         case "LabelBox":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" id=\"{id}\" class=\"Box\">{InnerValue}</div>\n";
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox\">{InnerValue}</div>\n";
                             break;
                         default:
                         case "Row":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" id=\"{id}\" class=\"Row\">\n";
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row\">\n";
                             foreach (XmlNode rowChildNode in childNode.ChildNodes)
                             {
                                 GenrateHtmlFromXML(rowChildNode.OuterXml);
@@ -134,44 +130,33 @@ namespace UPrompt
                     }
                     break;
                 case "ViewAction":
-                    // Récupérer les attributs Type et Action
-                    string action_type = childNode.Attributes["Type"].Value;
-                    string action = childNode.Attributes["Action"]?.Value;
-
-                    string action_name = "";
-                    string action_value = "";
-                    string ActionInnerValue = SpecialTextParse(childNode.InnerText);
-                    if (action != null)
-                    {
-                        try
-                        {
-                            action_name = action.Split('=')[0];
-                            action_value = action.Split('=')[1];
-                        }
-                        catch { MessageBox.Show("An action must be include = so in this format ACTION=VALUE", "Bad XML", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
-                    }
-
-                    // Traiter l'élément en fonction de son type et de son action
-                    switch (action_type)
+                    switch (Type)
                     {
                         case "Linker":
-                            HtmlFromXml += $"<input hidden=\"hidden\" class=\"InputHandler\" id=\"{id}\" name=\"Linker_{action_value}\" value=\"{action_name}\"/>\n";
+                            string source = childNode.Attributes["Source"]?.Value;
+                            string target = childNode.Attributes["Target"]?.Value;
+                            if (source != null && target != null)
+                            {
+                                HtmlFromXml += $"<input hidden=\"hidden\" class=\"InputHandler\" Id=\"{Id}\" name=\"Linker_{source}\" value=\"{target}\"/>\n";
+                            }
+                            else
+                            {
+                                Common.Warning($"Linker must include property Source and Target that is not empty (xml line: {Common.DebugXmlLineNumber})","Linker Error");
+                            }
                             break;
                         default: 
                         case "Button":
-                            HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button\" type=\"submit\" id=\"{id}\" name=\"{id}::ID::{action_name}\" value=\"{action_value}\">{ActionInnerValue}</button>\n";
+                            HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button\" type=\"submit\" Id=\"{Id}\" name=\"{Id}::ID::{Action}\" value=\"{Argument}\">{InnerValue}</button>\n";
                             break;
                         case "InputHandler":
-                            HtmlFromXml += $"<input hidden=\"hidden\" class=\"InputHandler\" id=\"{id}\" name=\"InputHandler_{ActionInnerValue}::Action::{id}::ID::{action_name}\" value=\"{action_value}\"/>\n";
+                            HtmlFromXml += $"<input hidden=\"hidden\" class=\"InputHandler\" Id=\"{Id}\" name=\"InputHandler_{InnerValue}::Action::{Id}::ID::{Action}\" value=\"{Argument}\"/>\n";
                             break;
                     }
                     break;
-
                 default:
                     HtmlFromXml += $"{childNode.OuterXml}\n";
                     break;
             }
-
             return HtmlFromXml;
         }
     }

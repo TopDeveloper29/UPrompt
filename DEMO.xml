@@ -11,21 +11,23 @@
 	<Settings Name="Accent-Text-Color" Value="#fff"/>
 	<Settings Name="Item-Margin" Value="3%"/>
 	<Settings Name="Font-Name" Value="Arial"/>
+	<Settings Id="29" Name="Powershell" Value="C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO.ps1"/>
+	<Settings Name="Production" Value="true"/>
 	<View>
 		<ViewItem Type="Title">Welcome to UPrompt</ViewItem>
 		<ViewItem Type="Row">
 			<ViewInput Type="TextBox" Id="TextBox1">{USER}</ViewInput>
-			<ViewInput Action="SetVariable=NewVar2:[TextBox2]" Type="TextBox" Id="TextBox2">{DEVICE}</ViewInput>
+			<ViewInput Type="TextBox" Action="SetVariable" Argument="NewVar2,[TextBox2]" Id="TextBox2">{DEVICE}</ViewInput>
 		</ViewItem>
 		<ViewItem Type="Row">
 			<ViewItem Type="LabelBox">#TEXT_COLOR# - #MAIN_COLOR# for {USER}</ViewItem>
 			<ViewItem Type="Label">#BACKGROUND_COLOR# - #FADE_BACKGROUND_COLOR#</ViewItem>
 		</ViewItem>
 		<ViewItem Type="Row">
-			<ViewAction Id="yn" Type="Button" Action="YesNoDialog=Hello [TextBox1] and [TextBox2]">Click Me 1</ViewAction>
-			<ViewAction Type="Button">Submit</ViewAction>
-			<ViewAction Type="Button" Action="OkDialog=[NewVar] [NewVar2]">Click Me 2</ViewAction>
-			<ViewAction Type="Linker" Action="NewVar=TextBox1"/>
+			<ViewAction Id="yn" Type="Button" Action="YesNoDialog" Argument="Hello [TextBox1] and [TextBox2]">Click Me 1</ViewAction>
+			<ViewAction Type="Button" Action='RunPowershell' Argument="29,Get-Dir('C:\TEP')">Run Powershell</ViewAction>
+			<ViewAction Type="Button" Action="OkDialog" Argument="[NewVar] [NewVar2]{n}[PS_29]">Click Me 2</ViewAction>
+			<ViewAction Type="Linker" Source="TextBox1"/>
 		</ViewItem>
 		<br/>
 		<ViewAction Type="Button" Action="EXIT=0">Exit</ViewAction>
