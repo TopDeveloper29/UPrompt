@@ -15,13 +15,8 @@ namespace UPrompt
 {
     public partial class Prompt : Form
     {
-        public string ViewHtml = "";
-        public string Xml_Path = @"C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO.xml";
-        public static string Application_Path = (AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/");
-
         internal XmlDocument xmlDoc = new XmlDocument();
         internal bool IconLigthMode = false;
-        
 
         protected private bool isDragging = false;
         protected private Point dragOffset;
@@ -126,43 +121,14 @@ namespace UPrompt
             this.DoubleBuffered = true;
         }
 
-        private void Prompt_Load(object sender, EventArgs e) { LoadXml(Xml_Path); }
-        public void LoadXml(string path)
-        {
-            try
-            {
-                xmlDoc.Load(path);
-            }
-            catch (Exception ex) { MessageBox.Show($"{ex.Message}\n\n{xmlDoc.InnerXml}", "Fatal error on XML Parsing", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        private void Prompt_Load(object sender, EventArgs e) { Settings.LoadXml(Common.Xml_Path); }
 
-            XmlNodeList settingsList = xmlDoc.SelectNodes("//Application/Settings");
-            Settings.Load(settingsList);
-            GenerateView();
-        }
-        public void GenerateView()
-        {
-            ViewHtml = ""; HtmlXml.HtmlFromXml = null;
-            XmlNode viewNode = xmlDoc.SelectSingleNode("/Application/View");
-            Common.DebugXmlLineNumber = (File.ReadAllLines(Xml_Path).Length - Settings.Count)-5;
-            foreach (XmlNode childNode in viewNode.ChildNodes)
-            {
-                ViewHtml = HtmlXml.GenrateHtmlFromXML(childNode.OuterXml);
-            }
-            if (ViewHtml.Length < 5) { ViewHtml = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
-
-            string Template = File.ReadAllText($@"{Application_Path}\Resources\Code\Index.html");
-            string html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", ViewHtml);
-
-            File.WriteAllText($@"{Application_Path}\Resources\Code\View.html", HtmlXml.SettingsTextParse(html));
-            string html_path = $"file:///{Application_Path}Resources/Code/View.html";
-            htmlhandler.Navigate($"{(string)html_path}");
-        }
         private void htmlhandler_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             if (e.Url.ToString().ToLower().Contains("http"))
             {
-                Common.Warning("UPrompt do not support browser any internet url for security reason please stay local on machine !!!");
-                htmlhandler.Navigate($@"file:///{Application_Path}View.html");
+                Common.Warning("UPrompt do not support browse any internet url for security reason please stay local on machine !!!");
+                htmlhandler.Navigate($@"file:///{Common.Application_Path}View.html");
             }
             if (e.Url.ToString().Contains("="))
             {
@@ -173,7 +139,7 @@ namespace UPrompt
                     foreach (string action in actions)
                     {
                         string action_name = action.Split('=')[0];
-                        string action_value = HtmlXml.SpecialTextParse(action.Split('=')[1]);
+                        string action_value = ViewParser.ParseSystemText(action.Split('=')[1]);
                         if (action_name.Contains("INPUT_"))
                         {
                             Handler.RunAction(action_name, action_value);
@@ -182,7 +148,7 @@ namespace UPrompt
                     foreach (string action in actions)
                     {
                         string action_name = action.Split('=')[0];
-                        string action_value = HtmlXml.SpecialTextParse(action.Split('=')[1]);
+                        string action_value = ViewParser.ParseSystemText(action.Split('=')[1]);
                         if (!action_name.Contains("INPUT_"))
                         {
                             Handler.RunAction(action_name, action_value);
@@ -193,17 +159,17 @@ namespace UPrompt
                 {
                     string action_code = System.Net.WebUtility.UrlDecode(e.Url.ToString()).Split('?')[1];
                     string action_name = action_code.Split('=')[0];
-                    string action_value = HtmlXml.SpecialTextParse(action_code.Split('=')[1]);
+                    string action_value = ViewParser.ParseSystemText(action_code.Split('=')[1]);
                     Handler.RunAction(action_name, action_value);
                 }
             }
         }
-        public static bool IsDark(Color color)
+        internal static bool IsDark(Color color)
         {
             double perceivedBrightness = (color.R * 0.299 + color.G * 0.587 + color.B * 0.114) / 255;
             return perceivedBrightness <= 0.5;
         }
-        public void ReverseImageColors(PictureBox[] pictureBoxs)
+        internal void ReverseImageColors(PictureBox[] pictureBoxs)
         {
             foreach (PictureBox pictureBox in pictureBoxs)
             {

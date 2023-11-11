@@ -47,7 +47,7 @@ namespace UPrompt.Class
                     Powershell.StartInfo.FileName = @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe";
                 }
 
-                Powershell.StartInfo.Arguments = $"-File \"{Prompt.Application_Path}\\Resources\\Code\\PsHandler.ps1\" -Path \"{Path}\"";
+                Powershell.StartInfo.Arguments = $"-File \"{Common.Application_Path}\\Resources\\Code\\PsHandler.ps1\" -Path \"{Path}\"";
                 Powershell.StartInfo.CreateNoWindow = true;
                 Powershell.StartInfo.RedirectStandardOutput = true;
                 Powershell.StartInfo.RedirectStandardError = true;
@@ -87,7 +87,7 @@ namespace UPrompt.Class
                     ErrorHistory.Append(LastError);
                 }
             }
-            catch (Exception ex) { /*Handler.Error(ex.Message,"Read Error Fail");*/ }
+            catch {  }
         }
         internal void SendInput(string Command)
         {
@@ -113,7 +113,7 @@ namespace UPrompt.Class
     }
     internal static class Handler
     {
-        internal static string ActionOutput { get; private set; } = "";
+        internal static string LastActionOutput { get; private set; } = "";
         public static Collection<PowershellHandler> PowershellHandlers { get; private set; } = new Collection<PowershellHandler>();
         
         public static void RunAction(string ActionName, string ActionValue)
@@ -124,9 +124,9 @@ namespace UPrompt.Class
                 {
                     string Runner_Input_Id = ActionName.Split(new string[] { "InputHandler_" }, StringSplitOptions.None)[1].Split(new string[] { "::Action::" }, StringSplitOptions.None)[0];
                     string Runner_Action = ActionName.Split(new string[] { "::Action::" }, StringSplitOptions.None)[1];
-                    if (Common.InternalLastVariable.ContainsKey(Runner_Input_Id))
+                    if (Common.PreviousVariable.ContainsKey(Runner_Input_Id))
                     {
-                        if (Common.InternalVariable[Runner_Input_Id] != Common.InternalLastVariable[Runner_Input_Id])
+                        if (Common.Variable[Runner_Input_Id] != Common.PreviousVariable[Runner_Input_Id])
                         {
                             RunAction(Runner_Action, ActionValue);
                         }
@@ -135,13 +135,13 @@ namespace UPrompt.Class
                 if (ActionName.Contains("INPUT_"))
                 {
                     string ActionInputId = ActionName.Split(new string[] { "INPUT_" }, StringSplitOptions.None)[1];
-                    Common.SetInternalVariable(ActionInputId, ActionValue);
+                    Common.SetVariable(ActionInputId, ActionValue);
                 }
                 if (ActionName.Contains("Linker_"))
                 {
                     string LinkerSource = ActionName.Split(new string[] { "Linker_" }, StringSplitOptions.None)[1];
                     string LinkerDestination = ActionValue;
-                    if(Common.GetInternalVariable(LinkerSource) != null) { Common.SetInternalVariable(LinkerDestination, Common.GetInternalVariable(LinkerSource)); }
+                    if(Common.GetVariable(LinkerSource) != null) { Common.SetVariable(LinkerDestination, Common.GetVariable(LinkerSource)); }
                 }
             }
             else
@@ -156,10 +156,10 @@ namespace UPrompt.Class
                     ActionName = ActionName.Replace($"{ActionId}::ID::", null);
                 }
 
-                ActionOutput = "";
+                LastActionOutput = "";
                 try
                 {
-                    ActionValue = HtmlXml.SpecialTextParse(ActionValue);
+                    ActionValue = ViewParser.ParseSystemText(ActionValue);
                     switch (ActionName)
                     {
                         case "RunPowershell":
@@ -179,7 +179,7 @@ namespace UPrompt.Class
                                             string Output = PSH.ReadOutput();
                                             if (Output != null && !Output.Contains("ERROR:"))
                                             {
-                                                Common.SetInternalVariable($"PS_{psid}", Output);
+                                                Common.SetVariable($"PS_{psid}", Output);
                                             }
                                             else
                                             {
@@ -201,54 +201,110 @@ namespace UPrompt.Class
                                     }).Start();
                                 }
                             }
-                            catch (Exception ex) { Common.Warning($"RunPowershell action value must be formated as this way PowershellInstamceId,FunctionToRunOrCode\n If you don't know id, please note it will be auto filled starting from 0 and increment by one each time you create an new powershell instance you can also set the id by specifing in xml configuration\n\nXml line: {Common.DebugXmlLineNumber}", "Wrong Format"); }
+                            catch { Common.Warning($"RunPowershell action value must be formated as this way PowershellInstamceId,FunctionToRunOrCode\n If you don't know id, please note it will be auto filled starting from 0 and increment by one each time you create an new powershell instance you can also set the id by specifing in xml configuration\n\nXml line: {Common.DebugXmlLineNumber}", "Wrong Format"); }
                             break;
                         case "GetVariable":
-                            Common.ShowInternalVariable(ActionValue);
+                            Common.ShowVariable(ActionValue);
                             break;
                         case "SetVariable":
                             try
                             {
-                                Common.SetInternalVariable(ActionValue.Split(',')[0], ActionValue.Split(',')[1]);
-                            }catch { Common.Warning($"SetInternalVariable action value must specify name and value as argument like: Argument=\"NewVar,Hello User\" (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
+                                Common.SetVariable(ActionValue.Split(',')[0], ActionValue.Split(',')[1]);
+                            }catch { Common.Warning($"SetInternalVariable arguments must specify name and value as argument like: Argument=\"NewVar,Hello User\" (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
                             break;
                         case "YesNoDialog":
-                            if (MessageBox.Show(ActionValue, Common.Windows.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            if (Common.Output(ActionValue, Common.Windows.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
-                                ActionOutput = "true";
+                                LastActionOutput = "true";
                             }
                             else
                             {
-                                ActionOutput = "false";
+                                LastActionOutput = "false";
                             }
 
                             break;
                         case "OkDialog":
 
-                            if (MessageBox.Show(ActionValue, Common.Windows.Text, MessageBoxButtons.OK, MessageBoxIcon.None) == DialogResult.OK)
+                            if (Common.Output(ActionValue, Common.Windows.Text) == DialogResult.OK)
                             {
-                                ActionOutput = "true";
+                                LastActionOutput = "true";
                             }
                             else
                             {
-                                ActionOutput = "false";
+                                LastActionOutput = "false";
                             }
                             break;
+                        case "Browse":
+                            try
+                            {
+                                Process.Start(ActionValue.Split(',')[0], ActionValue.Split(',')[1]);
+                            }
+                            catch { Common.Warning($"RunExe action argument must specify exe path and exe argument like: Argument=\"cmd.exe,/C echo Helllo User\" (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
+
+                            break;
+                        case "RunExe":
+                            try
+                            {
+                                Process.Start(ActionValue.Split(',')[0], ActionValue.Split(',')[1]);
+                            }
+                            catch { Common.Warning($"RunExe action argument must specify exe path and exe argument like: Argument=\"cmd.exe,/C echo Helllo User\" (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
+                            break;
+                        case "RunPs1":
+                            try
+                            {
+                                if (File.Exists(ActionValue) && ActionValue.ToLower().Contains(".ps1"))
+                                {
+                                    Process powershell = new Process();
+                                    if (File.Exists(@"C:\Program Files\PowerShell\7\pwsh.exe"))
+                                    { powershell.StartInfo.FileName = @"C:\Program Files\PowerShell\7\pwsh.exe"; }
+                                    else
+                                    { powershell.StartInfo.FileName = @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"; }
+                                    powershell.StartInfo.Arguments = $"-ExecutionPolicy Bypass -File {ActionValue}";
+                                    powershell.StartInfo.UseShellExecute = false;
+                                    powershell.StartInfo.CreateNoWindow = true;
+                                    powershell.Start();
+                                }
+                                else
+                                {
+                                    Common.Warning($"The ps1 file do not exist: {ActionValue}");
+                                }
+                            }
+                            catch { Common.Warning($"RunPs1 action argument must specify exe path that is a ps1 file (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
+                            break;
+                        case "LoadPage":
+                            if (File.Exists(ActionValue) && ActionValue.ToLower().Contains(".xml"))
+                            {
+                                Settings.LoadXml(ActionValue,false);
+                            }
+                            else
+                            {
+                                Common.Warning($"The xml file do not exist: {ActionValue}");
+                            }
+                            break;
+                        case "ReloadPage":
+                            try
+                            {
+                                Settings.LoadXml(Common.Xml_Path, bool.Parse(ActionValue));
+                            }
+                            catch { Common.Warning("Argument must be a boolean to specify if you reload setting or not (take note you must be on your main page to load it or require to have setting define in your page)"); }
+                            break;
                         case "EXIT":
+                        case "exit":
+                        case "Exit":
                             int value = 0;
                             int.TryParse(ActionValue, out value);
                             Environment.Exit(value);
                             break;
                     }
                 }
-                catch (Exception ex) { ActionOutput = $"UPrompt Internal error:\n {ex.Message}"; }
+                catch (Exception ex) { LastActionOutput = $"UPrompt Internal error:\n {ex.Message}"; }
 
-                if (ActionOutput.Length > 0)
+                if (LastActionOutput.Length > 0)
                 {
-                    Common.SetInternalVariable(ActionId, ActionOutput);
+                    Common.SetVariable(ActionId, LastActionOutput);
                 }
             }
-            Common.Windows.GenerateView();
+            ViewParser.GenerateView(Common.Windows.xmlDoc.SelectSingleNode("/Application/View"));
         }
-        }
+    }
 }

@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>u.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -52,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class\Common.cs" />
-    <Compile Include="Class\HtmlXml.cs" />
+    <Compile Include="Class\ViewParser.cs" />
     <Compile Include="Class\Handler.cs" />
     <Compile Include="Prompt.cs">
       <SubType>Form</SubType>
@@ -93,6 +96,13 @@
     <Content Include="Resources\Code\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="u.ico" />
+    <Resource Include="Resources\Icon\u.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icon\u.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <None Include="Resources\Code\PsHandler.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

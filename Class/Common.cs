@@ -8,15 +8,33 @@ using System.Windows.Forms;
 
 namespace UPrompt.Class
 {
-    internal class Common
+    internal static class Common
     {
-        public static Dictionary<string, string> InternalVariable = new Dictionary<string, string>();
-        public static Dictionary<string, string> InternalLastVariable = new Dictionary<string, string>();
-        internal static Prompt Windows { get; set; }
-        internal static int DebugXmlLineNumber = 0;
+        public static Dictionary<string, string> Variable = new Dictionary<string, string>();
+        public static Dictionary<string, string> PreviousVariable = new Dictionary<string, string>();
+        public static string LastWarning { get; internal set; } = "";
+        public static List<string> WarningHistory { get; internal set; } = new List<string>();
+        public static string LastError { get; internal set; } = "";
+        public static List<string> ErrorHistory { get; internal set; } = new List<string>();
+        public static string LastOutput { get; internal set; }  = "";
+        public static List<string> OutputHistory { get; internal set; } = new List<string>();
+        public static Prompt Windows { get; set; } = new Prompt();
+        public static string Application_Path { get; set; } = (AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/");
+        public static string Xml_Path { get; set; } = @"C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO.xml";
+        internal static int DebugXmlLineNumber { get; set; } = 0;
+
+        public static DialogResult Output(string Text, string Title = "Output", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
+        {
+            LastOutput = Text;
+            OutputHistory.Add(Text);
+            return MessageBox.Show(Text, Title, buttons, icon);
+
+        }
         public static DialogResult Warning(string Text, string Title = "Warning", MessageBoxButtons buttons = MessageBoxButtons.OK)
         {
-            if (Settings.Release == false)
+            LastWarning = Text;
+            WarningHistory.Add(Text);
+            if (Settings.Production == false)
             {
                 return MessageBox.Show(Text, Title, buttons, MessageBoxIcon.Warning);
             }
@@ -24,22 +42,24 @@ namespace UPrompt.Class
         }
         public static DialogResult Error(string Text, string Title = "Error", MessageBoxButtons buttons = MessageBoxButtons.OK)
         {
-            if (Settings.Release == false)
+            LastError = Text;
+            ErrorHistory.Add(Text);
+            if (Settings.Production == false)
             {
                 return MessageBox.Show(Text, Title, buttons, MessageBoxIcon.Error);
             }
             return DialogResult.Ignore;
         }
-        public static Dictionary<string, string> ShowInternalVariable(string Id = "Show::All::Id", bool ShowDialog = true)
+        public static Dictionary<string, string> ShowVariable(string Id = "Show::All::Id", bool ShowDialog = true)
         {
             Dictionary<string, string> variables = new Dictionary<string, string>();
             string PlainVariable = "";
             if (Id == "Show::All::Id")
             {
-                foreach (string key in InternalVariable.Keys)
+                foreach (string key in Variable.Keys)
                 {
-                    variables.Add(key, GetInternalVariable(key));
-                    PlainVariable += $"{key} | {GetInternalVariable(key)}\n";
+                    variables.Add(key, GetVariable(key));
+                    PlainVariable += $"{key} | {GetVariable(key)}\n";
                 }
             }
             else
@@ -49,14 +69,14 @@ namespace UPrompt.Class
                     string[] Ids = Id.Split(',');
                     foreach (string IdIn in Ids)
                     {
-                        variables.Add(IdIn, GetInternalVariable(IdIn));
-                        PlainVariable += $"{IdIn} | {GetInternalVariable(IdIn)}\n";
+                        variables.Add(IdIn, GetVariable(IdIn));
+                        PlainVariable += $"{IdIn} | {GetVariable(IdIn)}\n";
                     }
                 }
                 else
                 {
-                    variables.Add(Id, GetInternalVariable(Id));
-                    PlainVariable = $"{Id} | {GetInternalVariable(Id)}";
+                    variables.Add(Id, GetVariable(Id));
+                    PlainVariable = $"{Id} | {GetVariable(Id)}";
                 }
             }
 
@@ -69,29 +89,29 @@ namespace UPrompt.Class
             }
             return variables;
         }
-        public static void SetInternalVariable(string Id, string Value)
+        public static void SetVariable(string Id, string Value)
         {
-            if (!InternalVariable.ContainsKey(Id))
+            if (!Variable.ContainsKey(Id))
             {
-                InternalVariable.Add(Id, Value);
-                InternalLastVariable.Add(Id, "|VOID|");
+                Variable.Add(Id, Value);
+                PreviousVariable.Add(Id, "|VOID|");
             }
             else
             {
-                if (InternalLastVariable.ContainsKey(Id))
+                if (PreviousVariable.ContainsKey(Id))
                 {
-                    InternalLastVariable[Id] = InternalVariable[Id];
+                    PreviousVariable[Id] = Variable[Id];
                 }
                 else
                 {
-                    InternalLastVariable.Add(Id, InternalVariable[Id]);
+                    PreviousVariable.Add(Id, Variable[Id]);
                 }
-                InternalVariable[Id] = Value;
+                Variable[Id] = Value;
             }
         }
-        public static string GetInternalVariable(string Id)
+        public static string GetVariable(string Id)
         {
-            InternalVariable.TryGetValue(Id, out var Value);
+            Variable.TryGetValue(Id, out var Value);
             return Value;
         }
 

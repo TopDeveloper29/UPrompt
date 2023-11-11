@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,40 +12,42 @@ using UPrompt.Class;
 
 namespace UPrompt.Class
 {
-    internal static class HtmlXml
+    internal static class ViewParser
     {
-        internal static string HtmlFromXml = "";
-        internal static string Text_Color = "#000000";
-        internal static string Back_Color = "#ffffff";
-        internal static string Main_Color = "#2d89e5";
-        internal static string Text_Main_Color = "#ffffff";
-        internal static string Fade_Back_Color = "#ffffff";
-        internal static string Fade_Main_Color = "#ffffff";
-        internal static int Current_Width = 0;
-        internal static string Item_Margin = "10px";
-        internal static string Font_Name = "Arial";
+        private static string HtmlFromXml = "";
         private static int FallBackElementId = 0;
-        
-        internal static void GetNewFadeColor()
+
+        public static void GenerateView(XmlNode viewNode)
         {
-            Fade_Back_Color = ColorTranslator.ToHtml(ControlPaint.Light(ColorTranslator.FromHtml(Back_Color),0.1f));
-            Fade_Main_Color = ColorTranslator.ToHtml(ControlPaint.Light(ColorTranslator.FromHtml(Main_Color), 0.2f));
+            HtmlFromXml = null;
+            Common.DebugXmlLineNumber = (File.ReadAllLines(Common.Xml_Path).Length - Settings.Count) - 5;
+            foreach (XmlNode childNode in viewNode.ChildNodes)
+            {
+                HtmlFromXml = GenerateHtmlFromXML(childNode.OuterXml);
+            }
+            if (HtmlFromXml.Length < 5) { HtmlFromXml = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
+
+            string Template = File.ReadAllText($@"{Common.Application_Path}\Resources\Code\Index.html");
+            string html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", HtmlFromXml);
+
+            File.WriteAllText($@"{Common.Application_Path}\Resources\Code\View.html", ViewParser.ParseSettingsText(html));
+
         }
-        public static string SettingsTextParse(string Text)
+        public static string ParseSettingsText(string Text)
         {
             string ParsedText = Text
-                .Replace("#TEXT_COLOR#", Text_Color)
-                .Replace("#MAIN_COLOR#", Main_Color)
-                .Replace("#BACKGROUND_COLOR#", Back_Color)
-                .Replace("#FADE_BACKGROUND_COLOR#", Fade_Back_Color)
-                .Replace("#FADE_MAIN_COLOR#", Fade_Main_Color)
-                .Replace("#ITEM_MARGIN#", Item_Margin)
-                .Replace("#MAIN_TEXT_COLOR#", Text_Main_Color)
-                .Replace("#FONT_NAME#", Font_Name);
+                .Replace("#TEXT_COLOR#", Settings.Text_Color)
+                .Replace("#MAIN_COLOR#", Settings.Main_Color)
+                .Replace("#BACKGROUND_COLOR#", Settings.Back_Color)
+                .Replace("#FADE_BACKGROUND_COLOR#", Settings.Fade_Back_Color)
+                .Replace("#FADE_MAIN_COLOR#", Settings.Fade_Main_Color)
+                .Replace("#ITEM_MARGIN#", Settings.Item_Margin)
+                .Replace("#MAIN_TEXT_COLOR#", Settings.Text_Main_Color)
+                .Replace("#FONT_NAME#", Settings.Font_Name);
 
             return ParsedText;
         }
-        public static string SpecialTextParse(string Text)
+        public static string ParseSystemText(string Text)
         {
             string ParsedText = Text
                 .Replace("{USER}", Environment.UserName)
@@ -52,9 +55,9 @@ namespace UPrompt.Class
                 .Replace("{n}", "\n")
                 ;
             //Internal Input Variable Replace
-            foreach (string Key in Common.InternalVariable.Keys)
+            foreach (string Key in Common.Variable.Keys)
             {
-                string Value = Common.InternalVariable[Key];
+                string Value = Common.Variable[Key];
                 ParsedText = ParsedText.Replace($"[{Key}]", Value);
             }
             return ParsedText;
@@ -67,7 +70,7 @@ namespace UPrompt.Class
                        "});";
             HtmlFromXml += $"<script>{scriptContent}</script>";
         }
-        public static string GenrateHtmlFromXML(string XML)
+        public static string GenerateHtmlFromXML(string XML)
         {
             Common.DebugXmlLineNumber++;
             XmlDocument doc = new XmlDocument(); doc.LoadXml(XML);
@@ -76,7 +79,7 @@ namespace UPrompt.Class
             //get all atribute that can exist in all type
             string Id = childNode.Attributes["Id"]?.Value; if (Id == null) { Id = FallBackElementId.ToString(); FallBackElementId++; }
             string Type = childNode.Attributes["Type"]?.Value;
-            string InnerValue = SpecialTextParse(childNode.InnerText);
+            string InnerValue = ParseSystemText(childNode.InnerText);
          
             string Action = childNode.Attributes["Action"]?.Value;
             string Argument = childNode.Attributes["Argument"]?.Value;
@@ -92,8 +95,8 @@ namespace UPrompt.Class
                     break;
                 case "ViewInput":
                     //action that must be apply for all type of ViewInput
-                    if (Common.InternalVariable.ContainsKey(Id)){ InnerValue = SpecialTextParse(Common.InternalVariable[Id]); }
-                    if (Action != null){ GenrateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
+                    if (Common.Variable.ContainsKey(Id)){ InnerValue = ParseSystemText(Common.Variable[Id]); }
+                    if (Action != null){ GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
 
                     switch (Type)
                     {
@@ -123,7 +126,7 @@ namespace UPrompt.Class
                             HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row\">\n";
                             foreach (XmlNode rowChildNode in childNode.ChildNodes)
                             {
-                                GenrateHtmlFromXML(rowChildNode.OuterXml);
+                                GenerateHtmlFromXML(rowChildNode.OuterXml);
                             }
                             HtmlFromXml += "</div>\n";
                             break;
@@ -159,5 +162,6 @@ namespace UPrompt.Class
             }
             return HtmlFromXml;
         }
+    
     }
 }

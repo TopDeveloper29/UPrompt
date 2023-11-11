@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Prompt));
             this.htmlhandler = new System.Windows.Forms.WebBrowser();
             this.TitleBar = new System.Windows.Forms.Panel();
             this.ButtonSplitPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -279,6 +280,7 @@
             this.Controls.Add(this.Left);
             this.Controls.Add(this.TitleBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Prompt";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -300,8 +302,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.WebBrowser htmlhandler;
         private System.Windows.Forms.TableLayoutPanel ButtonSplitPanel;
         private System.Windows.Forms.PictureBox minimizeButton;
         private System.Windows.Forms.PictureBox maximizeButton;
@@ -316,6 +316,7 @@
         private System.Windows.Forms.Panel cornerleft;
         private System.Windows.Forms.Panel cornerright;
         private System.Windows.Forms.Panel body;
+        internal System.Windows.Forms.WebBrowser htmlhandler;
     }
 }
 

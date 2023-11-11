@@ -1,18 +1,19 @@
 <Application>
-	<Settings Name="Width" Value="600"/>
-	<Settings Name="Height" Value="600"/>
-	<Settings Name="WindowsOpenMode" Value="Normal"/>
-	<Settings Name="AllowMinimize" Value="true"/>
-	<Settings Name="AllowMaximize" Value="false"/>
-	<Settings Name="AllowClose" Value="true"/>
-	<Settings Name="Text-Color" Value="#fff"/>
-	<Settings Name="Application-Color" Value="#22252e"/>
-	<Settings Name="Accent-Color" Value="#272c33"/>
-	<Settings Name="Accent-Text-Color" Value="#fff"/>
-	<Settings Name="Item-Margin" Value="3%"/>
-	<Settings Name="Font-Name" Value="Arial"/>
-	<Settings Id="29" Name="Powershell" Value="C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO.ps1"/>
-	<Settings Name="Production" Value="true"/>
+	<Setting Name="Width" Value="600"/>
+	<Setting Name="Height" Value="600"/>
+	<Setting Name="WindowsOpenMode" Value="Normal"/>
+	<Setting Name="AllowMinimize" Value="true"/>
+	<Setting Name="AllowMaximize" Value="false"/>
+	<Setting Name="AllowClose" Value="true"/>
+	<Setting Name="Text-Color" Value="#fff"/>
+	<Setting Name="Application-Color" Value="#22252e"/>
+	<Setting Name="Accent-Color" Value="#272c33"/>
+	<Setting Name="Accent-Text-Color" Value="#fff"/>
+	<Setting Name="Item-Margin" Value="3%"/>
+	<Setting Name="Font-Name" Value="Arial"/>
+	<Setting Name="Powershell" Value="C:\Users\{USER}\source\repos\TopDeveloper29\UPrompt\DEMO.ps1" Id="29"/>
+	<Setting Name="Production" Value="false"/>
+	<Setting Name="Variable" Value="yn,N/A"/>
 	<View>
 		<ViewItem Type="Title">Welcome to UPrompt</ViewItem>
 		<ViewItem Type="Row">
@@ -24,10 +25,10 @@
 			<ViewItem Type="Label">#BACKGROUND_COLOR# - #FADE_BACKGROUND_COLOR#</ViewItem>
 		</ViewItem>
 		<ViewItem Type="Row">
-			<ViewAction Id="yn" Type="Button" Action="YesNoDialog" Argument="Hello [TextBox1] and [TextBox2]">Click Me 1</ViewAction>
-			<ViewAction Type="Button" Action='RunPowershell' Argument="29,Get-Dir('C:\TEP')">Run Powershell</ViewAction>
-			<ViewAction Type="Button" Action="OkDialog" Argument="[NewVar] [NewVar2]{n}[PS_29]">Click Me 2</ViewAction>
-			<ViewAction Type="Linker" Source="TextBox1"/>
+			<ViewAction Id="yn" Type="Button" Action="YesNoDialog" Argument="Last result [yn]">Click Me</ViewAction>
+			<ViewAction Type="Button" Action='RunPowershell' Argument="29,Get-Dir('C:\TEMP')">Run Powershell</ViewAction>
+			<ViewAction Type="Button" Action="LoadPage" Argument="C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO_PAGE.xml">Page 2</ViewAction>
+			<ViewAction Type="Linker" Source="TextBox1" Target="NewVar"/>
 		</ViewItem>
 		<br/>
 		<ViewAction Type="Button" Action="EXIT=0">Exit</ViewAction>
