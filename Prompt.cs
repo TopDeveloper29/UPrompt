@@ -119,6 +119,7 @@ namespace UPrompt
             Common.Windows = this;
             InitializeComponent();
             this.DoubleBuffered = true;
+            htmlhandler.ScrollBarsEnabled = false;
         }
 
         private void Prompt_Load(object sender, EventArgs e) { Settings.LoadXml(Common.Xml_Path); }

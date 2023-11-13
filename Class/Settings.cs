@@ -386,6 +386,10 @@ namespace UPrompt.Class
                         Common.Warning($"Could not find this file: \"{value}\"!!!");
                     }
                     break;
+
+                case "Application-Title":
+                    Common.Windows.Text = value;
+                    break;
                 default:
                     Common.Warning($"This setting \"{name}\" is unknow please provide valid settings", WarningTitle);
                     break;

@@ -86,6 +86,8 @@ namespace UPrompt.Class
             string Argument = childNode.Attributes["Argument"]?.Value;
 
             string ExtraStyle = childNode.Attributes["Style"]?.Value;
+            string Class = childNode.Attributes["Class"]?.Value;
+            if (Class == null) { Class = ""; }
             string ImageObject = childNode.Attributes["Image"]?.Value;
             string ImagePath = "";
             string ImageSize = "";
@@ -138,7 +140,7 @@ namespace UPrompt.Class
                     {
                         default:
                         case "TextBox":
-                            HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
+                            HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
                             AddJsInputHandler(Id);
                             break;
                     }
@@ -147,19 +149,19 @@ namespace UPrompt.Class
                     switch (Type)
                     {
                         case "Title":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title\">{InnerValue}</div>\n";
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title {Class}\">{InnerValue}</div>\n";
                             break;
 
                         case "Label":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label\">{InnerValue}</div>\n";
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label {Class}\">{InnerValue}</div>\n";
                             break;
 
                         case "LabelBox":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox\">{InnerValue}</div>\n";
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
                             break;
                         default:
                         case "Row":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row\">\n";
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row {Class}\">\n";
                             foreach (XmlNode rowChildNode in childNode.ChildNodes)
                             {
                                 GenerateHtmlFromXML(rowChildNode.OuterXml);
@@ -185,7 +187,7 @@ namespace UPrompt.Class
                             break;
                         default: 
                         case "Button":
-                            HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button\" type=\"submit\" Id=\"{Id}\" name=\"{Id}::ID::{Action}\" value=\"{Argument}\">{InnerValue}</button>\n";
+                            HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"{Id}::ID::{Action}\" value=\"{Argument}\">{InnerValue}</button>\n";
                             break;
                         case "InputHandler":
                             HtmlFromXml += $"<input hidden=\"hidden\" class=\"InputHandler\" Id=\"{Id}\" name=\"InputHandler_{InnerValue}::Action::{Id}::ID::{Action}\" value=\"{Argument}\"/>\n";

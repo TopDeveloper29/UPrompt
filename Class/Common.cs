@@ -24,7 +24,7 @@ namespace UPrompt.Class
         public static List<string> OutputHistory { get; internal set; } = new List<string>();
         public static Prompt Windows { get; set; } = new Prompt();
         public static string Application_Path { get; set; } = (AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/");
-        public static string Xml_Path { get; set; } = @"C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO.xml";
+        public static string Xml_Path { get; set; } = $@"{Application_Path}\MainPage.xml";
         internal static int DebugXmlLineNumber { get; set; } = 0;
 
 

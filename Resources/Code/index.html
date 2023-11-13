@@ -8,16 +8,25 @@
             font-family: #FONT_NAME#;
             color: #TEXT_COLOR#;
             background-color: #BACKGROUND_COLOR#;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            margin: 1%;
         }
+            body::-webkit-scrollbar
+            {
+                display: none;
+            }
+
 
         .root {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 95%;
-            width: 95%;
-            margin: 1%;
+            height: 90%;
+            width: 90%;
+            padding: 1%;
         }
     </style>
 
