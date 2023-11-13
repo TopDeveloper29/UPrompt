@@ -40,7 +40,7 @@ namespace UPrompt.Class
             this.Id = Id;
         }
     }
-    internal class Settings
+    public class Settings
     {
         public static string Text_Color { get; private set; } = "#fff";
         public static string Back_Color { get; private set; } = "#22252e";
@@ -57,9 +57,11 @@ namespace UPrompt.Class
         public static string Item_Margin { get; private set; } = "3%";
         public static string Font_Name { get; private set; } = "Arial";
         public static bool Production { get; private set; } = false;
-        internal static string Raw { get; private set; } = string.Empty;
-        internal static int Count { get; private set; } = 0;
-        public static void Load(XmlNodeList settingsList)
+        public static string Raw { get; private set; } = string.Empty;
+        public static int Count { get; private set; } = 0;
+        internal static int PowershellFallbackId { get; private set; } = 0 ;
+        internal static int ExtentionFallbackId { get; private set; } = 0;
+        internal static void Load(XmlNodeList settingsList)
         {
             Raw = settingsList.ToString();
 
@@ -106,7 +108,7 @@ namespace UPrompt.Class
         private static void ParseSettingsFromXml(string name, string value, string id = null)
         {
             string WarningTitle = "Wrong settings format";
-            int PowershellId = 0;
+            
             value = ViewParser.ParseSystemText(value);
             switch (name)
             {
@@ -127,7 +129,27 @@ namespace UPrompt.Class
                 case "C#":
                 case "CSharp":
                 case "DLL":
+                    string path = "";
+                    string namespc = "";
+                    try
+                    {
+                        path = value.Split(',')[0];
+                        namespc = value.Split(',')[1];
+                    }
+                    catch { Common.Warning($"The settings {name} as invalid argument ({value}) or id ({id})\n The value must be Argument=\"PATH,NAMESPACE.CLASS\"\nThe id must be an integer", WarningTitle); }
 
+                    if (File.Exists(path))
+                    {
+                        if (id == null)
+                        {
+                            Handler.ExtentionHandlers.Add(new ExtentionHandler(ExtentionFallbackId, path, namespc));
+                        }
+                        else
+                        {
+                            Handler.ExtentionHandlers.Add(new ExtentionHandler(int.Parse(id), path, namespc));
+                        }
+                    }
+                    else { Common.Warning($"The file could not be found {path}"); }
                     break;
                 case "Powershell":
                 case "PS":
@@ -135,7 +157,7 @@ namespace UPrompt.Class
                     {
                         if (id == null)
                         {
-                            Handler.PowershellHandlers.Add(new PowershellHandler(PowershellId, value));
+                            Handler.PowershellHandlers.Add(new PowershellHandler(PowershellFallbackId, value));
                         }
                         else
                         {
@@ -153,7 +175,7 @@ namespace UPrompt.Class
                     {
                         Common.Warning($"This setting {name} as invalid path or file do not exist: \"{value}\"", WarningTitle);
                     }
-                    PowershellId++;
+                    PowershellFallbackId++;
                     break;
 
                 case "Font-Name":

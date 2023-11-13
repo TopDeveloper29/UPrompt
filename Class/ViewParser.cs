@@ -12,12 +12,12 @@ using UPrompt.Class;
 
 namespace UPrompt.Class
 {
-    internal static class ViewParser
+    public static class ViewParser
     {
         private static string HtmlFromXml = "";
         private static int FallBackElementId = 0;
 
-        public static void GenerateView(XmlNode viewNode)
+        internal static void GenerateView(XmlNode viewNode)
         {
             HtmlFromXml = null;
             Common.DebugXmlLineNumber = (File.ReadAllLines(Common.Xml_Path).Length - Settings.Count) - 5;
@@ -62,7 +62,7 @@ namespace UPrompt.Class
             }
             return ParsedText;
         }
-        public static void AddJsInputHandler(string ID)
+        internal static void AddJsInputHandler(string ID)
         {
             string scriptContent = $"const Input_{ID} = document.getElementById(\"{ID}\");\n" +
                        $"Input_{ID}.addEventListener(\"change\", function() {{\n" +
@@ -70,7 +70,7 @@ namespace UPrompt.Class
                        "});";
             HtmlFromXml += $"<script>{scriptContent}</script>";
         }
-        public static string GenerateHtmlFromXML(string XML)
+        internal static string GenerateHtmlFromXML(string XML)
         {
             Common.DebugXmlLineNumber++;
             XmlDocument doc = new XmlDocument(); doc.LoadXml(XML);

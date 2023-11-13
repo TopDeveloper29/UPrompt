@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Lifetime;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Windows.Forms;
 
 namespace UPrompt.Class
 {
-    internal static class Common
+    public static class Common
     {
         public static Dictionary<string, string> Variable = new Dictionary<string, string>();
         public static Dictionary<string, string> PreviousVariable = new Dictionary<string, string>();
@@ -107,6 +108,11 @@ namespace UPrompt.Class
                     PreviousVariable.Add(Id, Variable[Id]);
                 }
                 Variable[Id] = Value;
+            }
+            File.WriteAllText($@"{Application_Path}\Resources\Code\Variables.ps1","");
+            foreach (string Key in Variable.Keys)
+            {
+                File.AppendAllText($@"{Application_Path}\Resources\Code\Variables.ps1",$"[string]$Global:{Key} = \"{Variable[Key]}\";\n");
             }
         }
         public static string GetVariable(string Id)

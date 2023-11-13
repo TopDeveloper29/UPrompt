@@ -11,3 +11,7 @@ function Get-Dir([string]$Path = "C:\TEMP")
         Write-Error "Could not find the folder or it do not exist: `"$path`"";
     }
 }
+function Test()
+{
+    Write-Host "TEST:$Global:yn";
+}

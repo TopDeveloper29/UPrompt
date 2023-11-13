@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -11,7 +12,49 @@ using System.Windows.Forms;
 
 namespace UPrompt.Class
 {
-    internal class PowershellHandler
+    public class ExtentionHandler
+    {
+        internal int Id;
+        private Assembly extensionAssembly;
+        private Type extensionType;
+
+        internal ExtentionHandler(int _id,string _path,string _namespace)
+        {
+            this.Id = _id;
+            this.LoadExtension(_path, _namespace);
+        }
+        public void LoadExtension(string pathToDll, string extensionNamespace)
+        {
+            try
+            {
+                extensionAssembly = Assembly.LoadFrom(pathToDll);
+                extensionType = extensionAssembly.GetType(extensionNamespace);
+            }
+            catch (Exception ex)
+            {
+                Common.Error($"Could not load extension: {ex.Message}");
+            }
+        }
+        public void CallExtensionMethod(string methodName, params object[] arguments)
+        {
+            try
+            {
+                MethodInfo methodInfo = extensionType.GetMethod(methodName);
+                methodInfo.Invoke(methodInfo, arguments);
+            }
+            catch (Exception ex)
+            {
+                Common.Error($"Could not run extension method: {ex.Message}");
+            }
+        }
+
+        public void T_T(string methodName)
+        {
+           // MethodInfo method = extensionInstance.GetType().GetMethod(methodName);
+           // method.Invoke(extensionInstance, arguments);
+        }
+    }
+    public class PowershellHandler
     {
         internal int Id { get; private set; }
         internal bool NewOutput { get; private set; }
@@ -111,10 +154,11 @@ namespace UPrompt.Class
             return LastOutput;
         }
     }
-    internal static class Handler
+    public static class Handler
     {
-        internal static string LastActionOutput { get; private set; } = "";
+        public static string LastActionOutput { get; private set; } = "";
         public static Collection<PowershellHandler> PowershellHandlers { get; private set; } = new Collection<PowershellHandler>();
+        public static Collection<ExtentionHandler> ExtentionHandlers { get; private set; } = new Collection<ExtentionHandler>();
         
         public static void RunAction(string ActionName, string ActionValue)
         {
@@ -162,6 +206,44 @@ namespace UPrompt.Class
                     ActionValue = ViewParser.ParseSystemText(ActionValue);
                     switch (ActionName)
                     {
+                        case "RunMethod":
+                            try
+                            {
+                                foreach (ExtentionHandler EH in Handler.ExtentionHandlers)
+                                {
+                                    if (EH.Id == int.Parse(ActionValue.Split(',')[0]))
+                                    {
+
+                                        if (ActionValue.Contains("(") && ActionValue.Contains(")"))
+                                        {
+                                            string pattern = @"\((.*?)\)";
+                                            MatchCollection matches = Regex.Matches(ActionValue, pattern);
+
+                                            if (matches.Count > 0)
+                                            {
+                                                string _value = "";
+                                                foreach (Match match in matches)
+                                                {
+                                                    _value = match.Groups[1].Value;
+                                                }
+                                                EH.CallExtensionMethod(ActionValue.Split(',')[1].Replace(_value,null).Replace("(",null).Replace(")",null), _value.Split(','));
+                                            }
+                                            else
+                                            {
+                                                EH.CallExtensionMethod(ActionValue.Split(',')[1]);
+                                            }
+                                            
+                                        }
+                                        else
+                                        {
+                                            EH.CallExtensionMethod(ActionValue.Split(',')[1]);
+                                        }
+                                        
+                                        return;
+                                    }
+                                }
+                            } catch { Common.Warning($"The argument of {ActionName} must be in format \"Id,MethodName\""); }
+                            break;
                         case "RunPowershell":
                             try
                             {
@@ -185,10 +267,7 @@ namespace UPrompt.Class
                                             {
                                                 if (Output.Contains("ERROR:"))
                                                 {
-                                                    Regex regex = new Regex("[^a-zA-Z0-9\\s\\p{P}]");
-                                                    string stderror = regex.Replace(Output.Split(new string[] { "ERROR:" }, StringSplitOptions.None)[1], "")
-                                                    .Replace("[31;1m",null).Split(new string[] { "Write-Error:" },StringSplitOptions.None)[1].Replace("[0m",null);
-                                                    Common.Error($"Powershell instance #{psid} throw an error:\n {stderror}");
+                                                    Common.Error($"Powershell instance #{psid} throw an error:\n {Output}");
                                                 }
                                                 else
                                                 {
@@ -224,7 +303,6 @@ namespace UPrompt.Class
 
                             break;
                         case "OkDialog":
-
                             if (Common.Output(ActionValue, Common.Windows.Text) == DialogResult.OK)
                             {
                                 LastActionOutput = "true";
@@ -237,9 +315,45 @@ namespace UPrompt.Class
                         case "Browse":
                             try
                             {
-                                Process.Start(ActionValue.Split(',')[0], ActionValue.Split(',')[1]);
+                               string Type = ActionValue.Split(',')[0];
+                               string Mode = ActionValue.Split(',')[1];
+                                if (Type.Contains("File"))
+                                {
+                                    if (Mode.Contains("Save"))
+                                    {
+                                        SaveFileDialog saveFileDialog = new SaveFileDialog();
+                                        saveFileDialog.Filter = "All Files|*.*";
+                                        saveFileDialog.Title = "Save a File";
+                                        
+                                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                                        {
+                                            LastActionOutput = saveFileDialog.FileName;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        OpenFileDialog openFileDialog = new OpenFileDialog();
+                                        openFileDialog.Filter = "All Files|*.*";
+                                        openFileDialog.Title = "Select a File";
+                                        
+                                        if (openFileDialog.ShowDialog() == DialogResult.OK)
+                                        {
+                                            LastActionOutput = openFileDialog.FileName;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    FolderBrowserDialog Folderdialog = new FolderBrowserDialog();
+                                    Folderdialog.Description = "Select a Folder";
+
+                                    if (Folderdialog.ShowDialog() == DialogResult.OK)
+                                    {
+                                        LastActionOutput = Folderdialog.SelectedPath;
+                                    }
+                                }
                             }
-                            catch { Common.Warning($"RunExe action argument must specify exe path and exe argument like: Argument=\"cmd.exe,/C echo Helllo User\" (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
+                            catch { Common.Warning($"Browse action argument must be like: Argument=\"Type(File/Folder),Mode(Save/Load)\" (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
 
                             break;
                         case "RunExe":

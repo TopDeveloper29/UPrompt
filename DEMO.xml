@@ -3,7 +3,7 @@
 	<Setting Name="Height" Value="600"/>
 	<Setting Name="WindowsOpenMode" Value="Normal"/>
 	<Setting Name="AllowMinimize" Value="true"/>
-	<Setting Name="AllowMaximize" Value="false"/>
+	<Setting Name="AllowMaximize" Value="true"/>
 	<Setting Name="AllowClose" Value="true"/>
 	<Setting Name="Text-Color" Value="#fff"/>
 	<Setting Name="Application-Color" Value="#22252e"/>
@@ -12,8 +12,10 @@
 	<Setting Name="Item-Margin" Value="3%"/>
 	<Setting Name="Font-Name" Value="Arial"/>
 	<Setting Name="Powershell" Value="C:\Users\{USER}\source\repos\TopDeveloper29\UPrompt\DEMO.ps1" Id="29"/>
+	<Setting Name="DLL" Value="C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO\DEMO\bin\Debug\DEMO.dll,DEMO.DemoPrompt" Id="2001"/>
 	<Setting Name="Production" Value="false"/>
 	<Setting Name="Variable" Value="yn,N/A"/>
+	<Setting Name="Variable" Value="Page2,C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO_PAGE.xml"/>
 	<View>
 		<ViewItem Type="Title">Welcome to UPrompt</ViewItem>
 		<ViewItem Type="Row">
@@ -25,12 +27,11 @@
 			<ViewItem Type="Label">#BACKGROUND_COLOR# - #FADE_BACKGROUND_COLOR#</ViewItem>
 		</ViewItem>
 		<ViewItem Type="Row">
-			<ViewAction Id="yn" Type="Button" Action="YesNoDialog" Argument="Last result [yn]">Click Me</ViewAction>
+			<ViewAction Id="yn" Type="Button" Action="Browse" Argument="Folder,Load">Click Me</ViewAction>
 			<ViewAction Type="Button" Action='RunPowershell' Argument="29,Get-Dir('C:\TEMP')">Run Powershell</ViewAction>
-			<ViewAction Type="Button" Action="LoadPage" Argument="C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO_PAGE.xml">Page 2</ViewAction>
-			<ViewAction Type="Linker" Source="TextBox1" Target="NewVar"/>
+			<ViewAction Type="Button" Action="LoadPage" Argument="[Page2]">Page 2</ViewAction>
 		</ViewItem>
-		<br/>
+		<ViewAction Type="Linker" Source="TextBox1" Target="NewVar"/>
 		<ViewAction Type="Button" Action="EXIT=0">Exit</ViewAction>
 	</View>
 </Application>

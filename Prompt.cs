@@ -122,7 +122,6 @@ namespace UPrompt
         }
 
         private void Prompt_Load(object sender, EventArgs e) { Settings.LoadXml(Common.Xml_Path); }
-
         private void htmlhandler_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             if (e.Url.ToString().ToLower().Contains("http"))
