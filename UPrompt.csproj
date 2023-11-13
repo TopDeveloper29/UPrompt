@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class\Common.cs" />
+    <Compile Include="Class\ImageParser.cs" />
     <Compile Include="Class\ViewParser.cs" />
     <Compile Include="Class\Handler.cs" />
     <Compile Include="Prompt.cs">
@@ -78,6 +79,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Resources\Code\DemoPrompt.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

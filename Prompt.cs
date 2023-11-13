@@ -163,12 +163,8 @@ namespace UPrompt
                 }
             }
         }
-        internal static bool IsDark(Color color)
-        {
-            double perceivedBrightness = (color.R * 0.299 + color.G * 0.587 + color.B * 0.114) / 255;
-            return perceivedBrightness <= 0.5;
-        }
-        internal void ReverseImageColors(PictureBox[] pictureBoxs)
+
+        internal void ReversePictureBoxColors(PictureBox[] pictureBoxs)
         {
             foreach (PictureBox pictureBox in pictureBoxs)
             {
@@ -201,9 +197,9 @@ namespace UPrompt
         internal void UpdateTitleBarColor()
         {
             Color currentColor = TitleBar.BackColor;
-            if (IsDark(currentColor))
+            if (ImageParser.IsDark(currentColor))
             {
-                ReverseImageColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
+                ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
                 IconLigthMode = true;
                 float brightness = 0.2f;
                 Color newColor = ControlPaint.Light(currentColor, brightness);
@@ -214,7 +210,7 @@ namespace UPrompt
                 if (IconLigthMode == true)
                 {
                     IconLigthMode = false;
-                    ReverseImageColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
+                    ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
                 }
                 float brightness = 0.1f;
                 Color newColor = ControlPaint.Dark(currentColor, brightness);

@@ -70,6 +70,7 @@ namespace UPrompt.Class
                        "});";
             HtmlFromXml += $"<script>{scriptContent}</script>";
         }
+
         internal static string GenerateHtmlFromXML(string XML)
         {
             Common.DebugXmlLineNumber++;
@@ -85,6 +86,41 @@ namespace UPrompt.Class
             string Argument = childNode.Attributes["Argument"]?.Value;
 
             string ExtraStyle = childNode.Attributes["Style"]?.Value;
+            string ImageObject = childNode.Attributes["Image"]?.Value;
+            string ImagePath = "";
+            string ImageSize = "";
+            string ImageAutoColor = "";
+            string RealImagePath = "";
+            if (ImageObject != null)
+            {
+                if (!Directory.Exists($@"{Common.Application_Path}\Resources\Icon\")) { Directory.CreateDirectory($@"{Common.Application_Path}\Resources\Icon\"); }
+                try
+                {
+                    ImagePath = ImageObject.Split(',')[0];
+                    ImageSize = ImageObject.Split(',')[1];
+                    ImageAutoColor = ImageObject.Split(',')[2];
+                }
+                catch { Common.Warning($"ImageObject property should be write like ImageObject=\"Path (string),Size (integer),AutoColor (boolean)\""); }
+                if (ImageParser.IsUrl(ImagePath))
+                {
+                    RealImagePath = $@"{Common.Application_Path}\Resources\Icon\{ImageParser.GetImageNameFromUrl(ImagePath)}";
+                    ImageParser.DownloadImage(ImagePath, RealImagePath);
+                    
+                }
+                else
+                {
+                    RealImagePath = $@"{Common.Application_Path}\Resources\Icon\{ImageParser.GetImageNameFromLocalPath(ImagePath)}";
+                    File.Move(ImagePath, RealImagePath);
+                }
+
+                if (ImageParser.IsDark(Common.Windows.TitleBar.BackColor) && ImageAutoColor.ToLower().Contains("true"))
+                {
+                    Image TempImage = Image.FromFile(RealImagePath);
+                    
+                    ImageParser.ReverseImageColors(TempImage, RealImagePath);
+                }
+                ExtraStyle += $"background-image: url('{Common.Application_Path}Resources/Icon/{ImageParser.GetImageNameFromLocalPath(RealImagePath)}');background-size: {ImageSize}%;background-repeat: no-repeat;background-position: center;";
+            }
 
             // Check what kind of node is it 
             switch (childNode.Name)

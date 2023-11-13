@@ -1,5 +1,5 @@
 <Application>
-	<Setting Name="Width" Value="600"/>
+	<Setting Name="Width" Value="700"/>
 	<Setting Name="Height" Value="600"/>
 	<Setting Name="WindowsOpenMode" Value="Normal"/>
 	<Setting Name="AllowMinimize" Value="true"/>
@@ -29,6 +29,7 @@
 		<ViewItem Type="Row">
 			<ViewAction Id="yn" Type="Button" Action="Browse" Argument="Folder,Load">Click Me</ViewAction>
 			<ViewAction Type="Button" Action='RunPowershell' Argument="29,Get-Dir('C:\TEMP')">Run Powershell</ViewAction>
+			<ViewAction Type="Button" Image="https://cdn-icons-png.flaticon.com/512/1827/1827938.png,60,true" Action='SetClipboard' Argument="[yn]"></ViewAction>
 			<ViewAction Type="Button" Action="LoadPage" Argument="[Page2]">Page 2</ViewAction>
 		</ViewItem>
 		<ViewAction Type="Linker" Source="TextBox1" Target="NewVar"/>

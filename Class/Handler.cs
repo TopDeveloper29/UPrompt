@@ -206,6 +206,12 @@ namespace UPrompt.Class
                     ActionValue = ViewParser.ParseSystemText(ActionValue);
                     switch (ActionName)
                     {
+                        case "GetClipboard":
+                            LastActionOutput = Clipboard.GetText();
+                            break;
+                        case "SetClipboard":
+                            Clipboard.SetText(ActionValue);
+                            break;
                         case "RunMethod":
                             try
                             {

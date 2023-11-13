@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Remoting.Lifetime;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +26,7 @@ namespace UPrompt.Class
         public static string Application_Path { get; set; } = (AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/");
         public static string Xml_Path { get; set; } = @"C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO.xml";
         internal static int DebugXmlLineNumber { get; set; } = 0;
+
 
         public static DialogResult Output(string Text, string Title = "Output", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
         {
