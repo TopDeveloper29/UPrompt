@@ -1,0 +1,37 @@
+<Application>
+	<Setting Name="Width" Value="1000"/>
+	<Setting Name="Height" Value="800"/>
+	<Setting Name="AllowMinimize" Value="true"/>
+	<Setting Name="AllowMaximize" Value="true"/>
+	<Setting Name="Text-Color" Value="#fff"/>
+	<Setting Name="Application-Color" Value="#22252e"/>
+	<Setting Name="Accent-Color" Value="#272c33"/>
+	<Setting Name="Accent-Text-Color" Value="#fff"/>
+	<Setting Name="Production" Value="false"/>
+	<Setting Name="Application-Title" Value="Uprompt Designer"/>
+	<Setting Name="Item-Margin" Value="0%"/>
+	<Setting Name="Variable" Value="SavedPath,[]"/>
+	<View>
+		<Style>
+			.top-div
+			{
+			  position: fixed;
+			  top: 0;
+			  left: 0;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  width: 100%;
+			  border-bottom: 1px #fff solid;
+			}
+		</Style>
+		<ViewItem Type="Row" Class="top-div">
+			<ViewAction Id="SavedPath" Type="Button" Action="ReloadPage" Argument="true" Image="https://m.media-amazon.com/images/I/41R2Kt9o2XL.png,60,false"></ViewAction>
+			<ViewAction Id="SavedPath" Type="Button" Action="Browse" Argument="File,Save">New</ViewAction>
+			<ViewAction Id="SavedPath" Type="Button" Action="Browse" Argument="File,Load">Load</ViewAction>
+			<ViewAction Type="Button">Save</ViewAction>
+			<ViewAction Type="Button" Action="exit">Exit</ViewAction>
+		</ViewItem>
+		<ViewItem Type="Title">Uprompt Designer</ViewItem>
+		<ViewItem Style="Text-Align:Center;" Type="Label">[SavedPath]</ViewItem>
+	</View>
+</Application>
