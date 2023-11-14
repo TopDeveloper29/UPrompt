@@ -12,10 +12,23 @@ using System.Windows.Forms;
 
 namespace UPrompt.Class
 {
+    internal class ActionStorage
+    {
+        internal string Action {  get; set; }
+        internal string Arguments { get; set; }
+        internal string LastValue { get; set; }
+        internal ActionStorage(string _Action,string _Arguments,string _LastValue)
+        {
+            Action = _Action;
+            Arguments = _Arguments;
+            LastValue = _LastValue;
+        }
+    }
     public static class Common
     {
         public static Dictionary<string, string> Variable = new Dictionary<string, string>();
-        public static Dictionary<string, string> PreviousVariable = new Dictionary<string, string>();
+        internal static Dictionary<string, string> PreviousVariable = new Dictionary<string, string>();
+        internal static Dictionary<string,ActionStorage> TrackedVariable = new Dictionary<string, ActionStorage>();
         public static string LastWarning { get; internal set; } = "";
         public static List<string> WarningHistory { get; internal set; } = new List<string>();
         public static string LastError { get; internal set; } = "";
@@ -118,11 +131,30 @@ namespace UPrompt.Class
             {
                 File.AppendAllText($@"{Application_Path}\Resources\Code\Variables.ps1",$"[string]$Global:{Key} = \"{Variable[Key]}\";\n");
             }
+            if (Variable != PreviousVariable)
+            {
+                foreach (string key in TrackedVariable.Keys)
+                {
+                    if (key.ToLower().Contains(Id.ToLower()))
+                    {
+                        ActionStorage AS = TrackedVariable[key];
+                        if (Value.ToLower() != AS.LastValue.ToLower())
+                        {
+                            Handler.RunAction(AS.Action, AS.Arguments);
+                            AS.LastValue = Value;
+                        }
+                    }
+                }
+            }
         }
         public static string GetVariable(string Id)
         {
-            Variable.TryGetValue(Id, out var Value);
-            return Value;
+            if (Variable.TryGetValue(Id, out var Value) == false)
+            {
+                return null;
+            }
+            else
+            { return Value; }
         }
 
     }

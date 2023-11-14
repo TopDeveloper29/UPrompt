@@ -14,6 +14,7 @@ namespace UPrompt.Class
 {
     public static class ViewParser
     {
+        internal static string CSSLink = "";
         private static string HtmlFromXml = "";
         private static int FallBackElementId = 0;
 
@@ -26,7 +27,7 @@ namespace UPrompt.Class
                 HtmlFromXml = GenerateHtmlFromXML(childNode.OuterXml);
             }
             if (HtmlFromXml.Length < 5) { HtmlFromXml = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
-
+            HtmlFromXml = $"{CSSLink}\n{HtmlFromXml}";
             string Template = File.ReadAllText($@"{Common.Application_Path}\Resources\Code\Index.html");
             string html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", HtmlFromXml);
 
@@ -53,6 +54,9 @@ namespace UPrompt.Class
                 .Replace("{USER}", Environment.UserName)
                 .Replace("{DEVICE}", Environment.MachineName)
                 .Replace("{n}", "\n")
+                .Replace("{c}",",")
+                .Replace("{Application_Path}",Common.Application_Path)
+                .Replace("{AppPath}", Common.Application_Path)
                 ;
             //Internal Input Variable Replace
             foreach (string Key in Common.Variable.Keys)
@@ -81,7 +85,7 @@ namespace UPrompt.Class
             string Id = childNode.Attributes["Id"]?.Value; if (Id == null) { Id = FallBackElementId.ToString(); FallBackElementId++; }
             string Type = childNode.Attributes["Type"]?.Value;
             string InnerValue = ParseSystemText(childNode.InnerText);
-         
+
             string Action = childNode.Attributes["Action"]?.Value;
             string Argument = childNode.Attributes["Argument"]?.Value;
 
@@ -143,6 +147,10 @@ namespace UPrompt.Class
                             HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
                             AddJsInputHandler(Id);
                             break;
+                        case "LinesBox":
+                            HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
+                            AddJsInputHandler(Id);
+                            break;
                     }
                     break;
                 case "ViewItem":
@@ -178,19 +186,29 @@ namespace UPrompt.Class
                             string target = childNode.Attributes["Target"]?.Value;
                             if (source != null && target != null)
                             {
-                                HtmlFromXml += $"<input hidden=\"hidden\" class=\"InputHandler\" Id=\"{Id}\" name=\"Linker_{source}\" value=\"{target}\"/>\n";
+                                HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"Linker_{source}\" value=\"{target}\"/>\n";
                             }
                             else
                             {
-                                Common.Warning($"Linker must include property Source and Target that is not empty (xml line: {Common.DebugXmlLineNumber})","Linker Error");
+                                Common.Warning($"Linker must include property Source and Target that is not empty (xml line: {Common.DebugXmlLineNumber})", "Linker Error");
                             }
                             break;
-                        default: 
+                        default:
                         case "Button":
                             HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"{Id}::ID::{Action}\" value=\"{Argument}\">{InnerValue}</button>\n";
                             break;
                         case "InputHandler":
-                            HtmlFromXml += $"<input hidden=\"hidden\" class=\"InputHandler\" Id=\"{Id}\" name=\"InputHandler_{InnerValue}::Action::{Id}::ID::{Action}\" value=\"{Argument}\"/>\n";
+                            HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"InputHandler_{InnerValue}::Action::{Id}::ID::{Action}\" value=\"{Argument}\"/>\n";
+                            break;
+                        case "VariableHandler":
+                            try
+                            {
+                                if (!Common.TrackedVariable.TryGetValue(InnerValue,out ActionStorage acs))
+                                {
+                                    Common.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument,Common.GetVariable(InnerValue)));
+                                }
+                            }
+                            catch(Exception ex) { MessageBox.Show(ex.Message); }
                             break;
                     }
                     break;

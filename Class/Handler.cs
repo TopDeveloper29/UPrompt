@@ -176,6 +176,7 @@ namespace UPrompt.Class
                         }
                     }
                 }
+
                 if (ActionName.Contains("INPUT_"))
                 {
                     string ActionInputId = ActionName.Split(new string[] { "INPUT_" }, StringSplitOptions.None)[1];
@@ -323,12 +324,14 @@ namespace UPrompt.Class
                             {
                                string Type = ActionValue.Split(',')[0];
                                string Mode = ActionValue.Split(',')[1];
+                               string Filter = "All Files|*.*";
+                                if (ActionValue.Split(',').Length > 2) { Filter = ActionValue.Split(',')[3]; }
                                 if (Type.Contains("File"))
                                 {
                                     if (Mode.Contains("Save"))
                                     {
                                         SaveFileDialog saveFileDialog = new SaveFileDialog();
-                                        saveFileDialog.Filter = "All Files|*.*";
+                                        saveFileDialog.Filter = Filter;
                                         saveFileDialog.Title = "Save a File";
                                         
                                         if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -339,7 +342,7 @@ namespace UPrompt.Class
                                     else
                                     {
                                         OpenFileDialog openFileDialog = new OpenFileDialog();
-                                        openFileDialog.Filter = "All Files|*.*";
+                                        openFileDialog.Filter = Filter;
                                         openFileDialog.Title = "Select a File";
                                         
                                         if (openFileDialog.ShowDialog() == DialogResult.OK)

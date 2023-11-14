@@ -200,7 +200,10 @@ namespace UPrompt
             Color currentColor = TitleBar.BackColor;
             if (ImageParser.IsDark(currentColor))
             {
-                ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
+                if (Settings.FirstLoadCompleted == false)
+                {
+                    ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
+                }
                 IconLigthMode = true;
                 float brightness = 0.2f;
                 Color newColor = ControlPaint.Light(currentColor, brightness);
@@ -211,7 +214,10 @@ namespace UPrompt
                 if (IconLigthMode == true)
                 {
                     IconLigthMode = false;
-                    ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
+                    if (Settings.FirstLoadCompleted == false)
+                    {
+                        ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
+                    }
                 }
                 float brightness = 0.1f;
                 Color newColor = ControlPaint.Dark(currentColor, brightness);

@@ -36,7 +36,7 @@ namespace UPrompt.Class
         public Setting(string Name,string Value,string Id)
         {
             this.Name = Name;
-            this.Value = Value;
+            this.Value = ViewParser.ParseSystemText(Value);
             this.Id = Id;
         }
     }
@@ -61,6 +61,7 @@ namespace UPrompt.Class
         public static int Count { get; private set; } = 0;
         internal static int PowershellFallbackId { get; private set; } = 0 ;
         internal static int ExtentionFallbackId { get; private set; } = 0;
+        internal static bool FirstLoadCompleted = false;
         internal static void Load(XmlNodeList settingsList)
         {
             Raw = settingsList.ToString();
@@ -112,17 +113,35 @@ namespace UPrompt.Class
             value = ViewParser.ParseSystemText(value);
             switch (name)
             {
+                case "Style":
+                case "css":
+                case "CSS":
+                    if (File.Exists(value) && value.ToLower().Contains(".css"))
+                    {
+                        ViewParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{value}\">";
+                    }
+                    else
+                    {
+                        Common.Warning($"The setting for {name} file do not exist or is not a css file: \"{value}\"",WarningTitle);
+                    }
+                    break;
                 case "Variable":
                 case "Var":
                 case "var":
+
                     if (value.Contains(","))
                     {
-                        Common.SetVariable(value.Split(',')[0], value.Split(',')[1]);
+                        if (value.Split(',')[1].Contains($"[{value.Split(',')[0]}]"))
+                        {
+                            if (Common.GetVariable(value.Split(',')[0]) == null) { Common.SetVariable(value.Split(',')[0], ""); break; }
+                        }
+                        Common.SetVariable(value.Split(',')[0], ViewParser.ParseSystemText(value.Split(',')[1]));
                     }
                     else
                     {
                         Common.SetVariable(value, "");
                     }
+  
                     break;
                
                 case "Extention":
@@ -231,6 +250,7 @@ namespace UPrompt.Class
                             Common.Windows.Bottom.BackColor = RealColor;
                             Common.Windows.TitleBar.BackColor = RealColor;
                             Common.Windows.UpdateTitleBarColor();
+                            FirstLoadCompleted = true;
                         }
                         else
                         {

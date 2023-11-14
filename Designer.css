@@ -1,0 +1,10 @@
+			.top-div
+			{
+			  position: fixed;
+			  top: 0;
+			  left: 0;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  width: 100%;
+			  border-bottom: 1px #fff solid;
+			}
