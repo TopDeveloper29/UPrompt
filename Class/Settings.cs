@@ -49,6 +49,7 @@ namespace UPrompt.Class
         public static string Fade_Back_Color { get; private set; } = "#000";
         public static string Fade_Main_Color { get; private set; } = "#fff";
         public static string WindowsOpenMode { get; private set; } = "Normal";
+        public static string WindowsResizeMode { get; private set; } = "All";
         public static bool AllowMinimize { get; private set; } = true;
         public static bool AllowMaximize { get; private set; } = true;
         public static bool AllowClose { get; private set; } = true;
@@ -321,7 +322,54 @@ namespace UPrompt.Class
                         Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an integer", WarningTitle);
                     }
                     break;
-
+                case "WindowsResizeMode":
+                    switch (value)
+                    {
+                        case "All":
+                            Common.Windows.Left.Enabled = true;
+                            Common.Windows.Right.Enabled = true;
+                            Common.Windows.Bottom.Enabled = true;
+                            Common.Windows.cornerleft.Enabled = true;
+                            Common.Windows.cornerright.Enabled = true;
+                            WindowsResizeMode = value;
+                            break;
+                        case "Horizontal":
+                            Common.Windows.Left.Enabled = true;
+                            Common.Windows.Right.Enabled = true;
+                            Common.Windows.Bottom.Enabled = false;
+                            Common.Windows.cornerleft.Enabled = false;
+                            Common.Windows.cornerright.Enabled = false;
+                            WindowsResizeMode = value;
+                            break;
+                        case "Vertical":
+                            Common.Windows.Left.Enabled = false;
+                            Common.Windows.Right.Enabled = false;
+                            Common.Windows.Bottom.Enabled = true;
+                            Common.Windows.cornerleft.Enabled = false;
+                            Common.Windows.cornerright.Enabled = false;
+                            WindowsResizeMode = value;
+                            break;
+                        case "Diagonal":
+                            Common.Windows.Left.Enabled = false;
+                            Common.Windows.Right.Enabled = false;
+                            Common.Windows.Bottom.Enabled = false;
+                            Common.Windows.cornerleft.Enabled = true;
+                            Common.Windows.cornerright.Enabled = true;
+                            WindowsResizeMode = value;
+                            break;
+                        case "None":
+                            Common.Windows.Left.Enabled = false;
+                            Common.Windows.Right.Enabled = false;
+                            Common.Windows.Bottom.Enabled = false;
+                            Common.Windows.cornerleft.Enabled = false;
+                            Common.Windows.cornerright.Enabled = false;
+                            WindowsResizeMode = value;
+                            break;
+                        default:
+                            Common.Warning($"The settings {name} must be one of this All,Horizontal,Vertical,Diagonal,None", WarningTitle);
+                            break;
+                    }
+                    break;
                 case "WindowsOpenMode":
                 case "OpenMode":
                     string WindowsMode = value;
