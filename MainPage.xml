@@ -11,13 +11,15 @@
 	<Setting Name="Application-Title" Value="Uprompt Designer"/>
 	<Setting Name="Item-Margin" Value="0%"/>
 	<Setting Name="Variable" Value="SavedPath,[SavedPath]"/>
+	<Setting Name="Variable" Value="CurrentXml,[CurrentXml]"/>
 	<Setting Name="CSS" Value="{AppPath}Designer.css"/>
+	<Setting Id="210129" Name="DLL" Value="C:\Users\beah\source\repos\TopDeveloper29\Designer\bin\Debug\Designer.dll,Designer.DesignerHandler"/>
 	<View>
 		<ViewItem Type="Row" Class="top-div">
 			<ViewAction Type="Button" Action="ReloadPage" Argument="true" Image="https://m.media-amazon.com/images/I/41R2Kt9o2XL.png,60,false"></ViewAction>
 			<ViewAction Id="SavedPath" Type="Button" Action="Browse" Argument="File,Save">New</ViewAction>
 			<ViewAction Id="SavedPath" Type="Button" Action="Browse" Argument="File,Load">Load</ViewAction>
-			<ViewAction Type="Button">Save</ViewAction>
+			<ViewAction Type="Button" Action="RunMethod" Argument="210129,SaveXml([SavedPath],false),">Save</ViewAction>
 			<ViewAction Type="Button" Action="exit">Exit</ViewAction>
 		</ViewItem>
 		<ViewItem Type="Title">Uprompt Designer</ViewItem>
@@ -26,6 +28,8 @@
 			<ViewInput Type="TextBox" Id="GeneratedCode"></ViewInput>
 			<ViewAction Type="Button" Action="SetClipboard" Argument="[GeneratedCode]" Image="https://cdn-icons-png.flaticon.com/512/1827/1827938.png,40,true"></ViewAction>
 		</ViewItem>
-		<ViewAction Type="VariableHandler" Action="OkDialog" Argument="[SavedPath]">SavedPath</ViewAction>
+
+		<ViewInput Type="Designer" Id="main-designer">[CurrentXml]</ViewInput>
+		<ViewAction Type="VariableHandler" Action="RunMethod" Argument="210129,SaveXml([SavedPath])">SavedPath</ViewAction>
 	</View>
 </Application>

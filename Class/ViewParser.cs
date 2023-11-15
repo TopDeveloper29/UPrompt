@@ -66,6 +66,38 @@ namespace UPrompt.Class
             }
             return ParsedText;
         }
+        internal static void AddJsXmlEditor(string Id)
+        {
+            string scriptContent = "    // Define custom keywords\r\n" +
+                "var myKeywords = [\"<Application>\", \"<Settings>\", \"<View>\", \"<ViewItem>\", \"<ViewInput>\", \"<ViewAction>\"];\r\n\r\n" +
+                "// Initialize the CodeMirror editor with the hint addon\r\n" +
+                $"    var editor = CodeMirror.fromTextArea(document.getElementById(\"{Id}\"), {{\r\n" +
+                "      lineNumbers: true,\r\n" +
+                "      mode: \"xml\",\r\n" +
+                "      extraKeys: {\r\n" +
+                "        Tab: \"autocomplete\" // Enable autocomplete on Tab key\r\n" +
+                "      },\r\n" +
+                "      hintOptions: {\r\n" +
+                "        hint: function(editor) {\r\n" +
+                "          // Get the current cursor position\r\n" +
+                "          var cur = editor.getCursor();\r\n\r\n" +
+                "          // Get the current line and text before the cursor\r\n" +
+                "          var line = editor.getLine(cur.line);\r\n" +
+                "          var start = cur.ch;\r\n" +
+                "          while (start && /\\w/.test(line.charAt(start - 1))) --start;\r\n" +
+                "          var prefix = line.slice(start, cur.ch);\r\n\r\n" +
+                "          // Return a list of suggestions that start with the prefix\r\n" +
+                "          return {\r\n            list: myKeywords.filter(function(keyword) {\r\n" +
+                "              return keyword.startsWith(prefix);\r\n" +
+                "            }),\r\n" +
+                "            from: CodeMirror.Pos(cur.line, start),\r\n" +
+                "            to: CodeMirror.Pos(cur.line, cur.ch)\r\n" +
+                "          };\r\n" +
+                "        }\r\n" +
+                "      }\r\n" +
+                "    });";
+            HtmlFromXml += $"<script>{scriptContent}</script>";
+        }
         internal static void AddJsInputHandler(string ID)
         {
             string scriptContent = $"const Input_{ID} = document.getElementById(\"{ID}\");\n" +
@@ -150,6 +182,10 @@ namespace UPrompt.Class
                         case "LinesBox":
                             HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
                             AddJsInputHandler(Id);
+                            break;
+                        case "Designer":
+                            HtmlFromXml += $"<div style=\"margin:1%;width: 99%;{ExtraStyle}\" class=\"TextBox {Class}\"><textarea name=\"INPUT_{Id}\" id=\"{Id}\">{InnerValue}</textarea></div>";
+                            AddJsXmlEditor(Id);
                             break;
                     }
                     break;

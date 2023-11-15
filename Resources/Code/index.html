@@ -13,8 +13,8 @@
             -ms-overflow-style: none;
             margin: 1%;
         }
-            body::-webkit-scrollbar
-            {
+
+            body::-webkit-scrollbar {
                 display: none;
             }
 
@@ -62,10 +62,10 @@
             transition: background-color 0.3s ease-in-out;
         }
 
-        .Button:hover {
-            cursor: grab;
-            background-color: #FADE_MAIN_COLOR#;
-        }
+            .Button:hover {
+                cursor: grab;
+                background-color: #FADE_MAIN_COLOR#;
+            }
 
         .LabelBox {
             margin: 5px;
@@ -105,17 +105,22 @@
             color: #TEXT_COLOR#;
         }
 
-        .TextBox:focus
-        {
-            outline: none;
-            box-shadow: 0px 0px 8px #MAIN_COLOR#;
-        }
+            .TextBox:focus {
+                outline: none;
+                box-shadow: 0px 0px 8px #MAIN_COLOR#;
+            }
 
         .Spacer {
             width: 50px;
             color: #MAIN_COLOR#;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/xml/xml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/addon/hint/xml-hint.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/addon/hint/show-hint.min.css">
 </head>
 
 <body>
