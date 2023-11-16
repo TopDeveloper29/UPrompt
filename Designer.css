@@ -1,10 +1,36 @@
-			.top-div
-			{
-			  position: fixed;
-			  top: 0;
-			  left: 0;
-			  padding-top: 10px;
-			  padding-bottom: 10px;
-			  width: 100%;
-			  border-bottom: 1px #fff solid;
-			}
+.top-div {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    border-bottom: 1px #fff solid;
+}
+.preview-div {
+    width: 99%;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    box-shadow: 0px 0px 20px #FADE_BACKGROUND_COLOR#;
+    border-radius: 4px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.new_image {
+    background-position: 10px 10px !important;
+    padding-left: 50px;
+    padding-right:unset !important;
+}
+.load_image {
+    background-position: 1px 5px !important;
+    padding-left: 50px;
+    padding-right: unset !important;
+}
+.exit_image {
+    background-position: 12px 13px !important;
+    padding-left: 50px;
+    padding-right: unset !important;
+}

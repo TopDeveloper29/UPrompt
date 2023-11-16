@@ -42,6 +42,7 @@ namespace UPrompt.Class
     }
     public class Settings
     {
+        public static bool SkipSystemParsing {  get; set; } = false;
         public static string Text_Color { get; private set; } = "#fff";
         public static string Back_Color { get; private set; } = "#22252e";
         public static string Main_Color { get; private set; } = "#272c33";
@@ -63,7 +64,7 @@ namespace UPrompt.Class
         internal static int PowershellFallbackId { get; private set; } = 0 ;
         internal static int ExtentionFallbackId { get; private set; } = 0;
         internal static bool FirstLoadCompleted = false;
-        internal static void Load(XmlNodeList settingsList)
+        public static void Load(XmlNodeList settingsList)
         {
             Raw = settingsList.ToString();
 
@@ -93,13 +94,13 @@ namespace UPrompt.Class
         public static void LoadXml(string path,bool loadsettings = true)
         {
             Common.Xml_Path = path;
-            try{ Common.Windows.xmlDoc.Load(path);}
-            catch (Exception ex) { Common.Error($"{ex.Message}\n\n{Common.Windows.xmlDoc.InnerXml}", "Fatal error on XML Parsing"); }
+            try{ Common.xmlDoc.Load(path);}
+            catch (Exception ex) { Common.Error($"{ex.Message}\n\n{Common.xmlDoc.InnerXml}", "Fatal error on XML Parsing"); }
             if (loadsettings)
             {
-                Load(Common.Windows.xmlDoc.SelectNodes("//Application/Setting"));
+                Load(Common.xmlDoc.SelectNodes("//Application/Setting"));
             }
-            ViewParser.GenerateView(Common.Windows.xmlDoc.SelectSingleNode("/Application/View"));
+            ViewParser.GenerateView(Common.xmlDoc.SelectSingleNode("/Application/View"));
             Common.Windows.htmlhandler.Navigate($"file:///{Common.Application_Path}Resources/Code/View.html");
         }
         private static void NewFadeColor()
@@ -119,7 +120,11 @@ namespace UPrompt.Class
                 case "CSS":
                     if (File.Exists(value) && value.ToLower().Contains(".css"))
                     {
-                        ViewParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{value}\">";
+                        NewFadeColor();
+                        string css = ViewParser.ParseSettingsText(File.ReadAllText(value));
+                        string copy = $@"{Common.Application_Path_Windows}Resources\Code\{ImageParser.GetImageNameFromLocalPath(value)}";
+                        File.WriteAllText(copy,css);
+                        ViewParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{copy}\">";
                     }
                     else
                     {
@@ -400,6 +405,7 @@ namespace UPrompt.Class
                     {
                         AllowMinimize = bool.Parse(value);
                         Common.Windows.MinimizeBox = AllowMinimize;
+                        Common.Windows.UpdateTitleBarIconAndFunction();
                     }
                     catch
                     {
@@ -414,6 +420,7 @@ namespace UPrompt.Class
                     {
                         AllowMaximize = bool.Parse(value);
                         Common.Windows.MaximizeBox = AllowMaximize;
+                        Common.Windows.UpdateTitleBarIconAndFunction();
                     }
                     catch
                     {
@@ -425,7 +432,6 @@ namespace UPrompt.Class
                 case "Close":
                     bool Frame = bool.Parse(value);
                     Common.Windows.ControlBox = Frame;
-
                     Common.Windows.UpdateTitleBarIconAndFunction();
                     break;
 

@@ -1,6 +1,8 @@
 <!-- Do not change structure of html, body, form or the == XML CODE WILL GENERATE THIS VIEW == . You could add css to style and add html under the form-->
 <html>
 <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+
     <!-- All style element are normal css exept for the element under # thease one will represent a setting value in xml -->
     <style>
         /*This is the css for general element*/
@@ -32,11 +34,11 @@
 
     <style>
         /*
-            This css represent all kind of input or ui element in xml
-            You can create you own class to create you custom element
-            but if you only want to edit a detail of existing one
-            you could use Style property directly inside xml
-        */
+                This css represent all kind of input or ui element in xml
+                You can create you own class to create you custom element
+                but if you only want to edit a detail of existing one
+                you could use Style property directly inside xml
+            */
         .Title {
             margin: 5px;
             margin-bottom: #ITEM_MARGIN#;
@@ -114,7 +116,68 @@
             width: 50px;
             color: #MAIN_COLOR#;
         }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+            .dropdown input[type="text"] {
+                padding: 10px;
+                border: 1px solid #MAIN_COLOR#;
+                border-radius: 4px;
+                background-color: #FADE_BACKGROUND_COLOR#;
+                font-size: 16px;
+                color: #TEXT_COLOR#;
+                width: 200px;
+            }
+
+            .dropdown .dropdown-content {
+                display: none;
+                position: absolute;
+                z-index: 1;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: #MAIN_COLOR#;
+                box-shadow: 0px 0px 5px #FADE_MAIN_COLOR#;
+                border-top: none;
+                border-radius: 2px 2px 4px 4px;
+            }
+
+                .dropdown .dropdown-content a {
+                    display: block;
+                    padding: 10px;
+                    text-decoration: none;
+                    font-family: #FONT_NAME#;
+                    color: #MAIN_TEXT_COLOR#;
+                    background-color: #MAIN_COLOR#;
+                }
+
+                    .dropdown .dropdown-content a:hover {
+                        background-color: #FADE_MAIN_COLOR#;
+                    }
+
+            .dropdown.open .dropdown-content {
+                display: block;
+                font-family: #FONT_NAME#;
+                color: #MAIN_TEXT_COLOR#;
+                background-color: #MAIN_COLOR#;
+            }
+
+            .dropdown input[type="text"] {
+                padding: 10px 30px 10px 10px; /* Add padding to the right for the arrow */
+                background-repeat: no-repeat;
+                background-position: right 10px center;
+                background-size: 16px 16px;
+            }
+
+            .dropdown input[type="text"],
+            .dropdown:hover input[type="text"] {
+                cursor: pointer;
+            }
     </style>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/xml/xml.js"></script>
@@ -123,11 +186,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/addon/hint/show-hint.min.css">
 </head>
 
-<body>
-    <form id="UForm" action="view.html?LOCAL:" method="get" class="root">
-        <!-- If you want to add a default html item for all futur page you could do it here -->
-        === XML CODE WILL GENERATE THIS VIEW ===
-        <!-- If you want to add a default html item for all futur page you could do it here -->
-    </form>
-</body>
+    <body>
+        <form id="UForm" action="view.html?LOCAL:" method="get" class="root">
+            <!-- If you want to add a default html item for all futur page you could do it here -->
+            === XML CODE WILL GENERATE THIS VIEW ===
+            <!-- If you want to add a default html item for all futur page you could do it here -->
+        </form>
+        <script>
+            const dropdowns = document.querySelectorAll(".dropdown");
+
+            for (let i = 0; i < dropdowns.length; i++) {
+                const dropdown = dropdowns[i];
+                const input = dropdown.querySelector("input[type='text']");
+                const options = dropdown.querySelectorAll(".dropdown-content a");
+
+                input.addEventListener("click", function () {
+                    dropdown.classList.toggle("open");
+                });
+
+                for (let j = 0; j < options.length; j++) {
+                    const option = options[j];
+                    option.addEventListener("click", function (event) {
+                        const selectedOption = event.target.textContent;
+                        input.value = selectedOption;
+                        dropdown.classList.remove("open");
+                        event.preventDefault();
+                    });
+                }
+
+                document.addEventListener("click", function (event) {
+                    if (!dropdown.contains(event.target)) {
+                        dropdown.classList.remove("open");
+                    }
+                });
+            }
+
+        </script>
+    </body>
 </html>

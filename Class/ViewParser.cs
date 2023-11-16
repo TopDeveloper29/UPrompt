@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Shapes;
 using System.Xml;
 using UPrompt.Class;
 
@@ -18,6 +19,10 @@ namespace UPrompt.Class
         private static string HtmlFromXml = "";
         private static int FallBackElementId = 0;
 
+        public static void ClearHtml()
+        {
+            HtmlFromXml = null;
+        }
         internal static void GenerateView(XmlNode viewNode)
         {
             HtmlFromXml = null;
@@ -50,53 +55,25 @@ namespace UPrompt.Class
         }
         public static string ParseSystemText(string Text)
         {
-            string ParsedText = Text
-                .Replace("{USER}", Environment.UserName)
-                .Replace("{DEVICE}", Environment.MachineName)
-                .Replace("{n}", "\n")
-                .Replace("{c}",",")
-                .Replace("{Application_Path}",Common.Application_Path)
-                .Replace("{AppPath}", Common.Application_Path)
-                ;
-            //Internal Input Variable Replace
-            foreach (string Key in Common.Variable.Keys)
+            if (Settings.SkipSystemParsing == false)
             {
-                string Value = Common.Variable[Key];
-                ParsedText = ParsedText.Replace($"[{Key}]", Value);
+                string ParsedText = Text
+                    .Replace("{USER}", Environment.UserName)
+                    .Replace("{DEVICE}", Environment.MachineName)
+                    .Replace("{n}", "\n")
+                    .Replace("{c}", ",")
+                    .Replace("{Application_Path}", Common.Application_Path)
+                    .Replace("{AppPath}", Common.Application_Path)
+                    ;
+                //Internal Input Variable Replace
+                foreach (string Key in Common.Variable.Keys)
+                {
+                    string Value = Common.Variable[Key];
+                    ParsedText = ParsedText.Replace($"[{Key}]", Value);
+                }
+                return ParsedText;
             }
-            return ParsedText;
-        }
-        internal static void AddJsXmlEditor(string Id)
-        {
-            string scriptContent = "    // Define custom keywords\r\n" +
-                "var myKeywords = [\"<Application>\", \"<Settings>\", \"<View>\", \"<ViewItem>\", \"<ViewInput>\", \"<ViewAction>\"];\r\n\r\n" +
-                "// Initialize the CodeMirror editor with the hint addon\r\n" +
-                $"    var editor = CodeMirror.fromTextArea(document.getElementById(\"{Id}\"), {{\r\n" +
-                "      lineNumbers: true,\r\n" +
-                "      mode: \"xml\",\r\n" +
-                "      extraKeys: {\r\n" +
-                "        Tab: \"autocomplete\" // Enable autocomplete on Tab key\r\n" +
-                "      },\r\n" +
-                "      hintOptions: {\r\n" +
-                "        hint: function(editor) {\r\n" +
-                "          // Get the current cursor position\r\n" +
-                "          var cur = editor.getCursor();\r\n\r\n" +
-                "          // Get the current line and text before the cursor\r\n" +
-                "          var line = editor.getLine(cur.line);\r\n" +
-                "          var start = cur.ch;\r\n" +
-                "          while (start && /\\w/.test(line.charAt(start - 1))) --start;\r\n" +
-                "          var prefix = line.slice(start, cur.ch);\r\n\r\n" +
-                "          // Return a list of suggestions that start with the prefix\r\n" +
-                "          return {\r\n            list: myKeywords.filter(function(keyword) {\r\n" +
-                "              return keyword.startsWith(prefix);\r\n" +
-                "            }),\r\n" +
-                "            from: CodeMirror.Pos(cur.line, start),\r\n" +
-                "            to: CodeMirror.Pos(cur.line, cur.ch)\r\n" +
-                "          };\r\n" +
-                "        }\r\n" +
-                "      }\r\n" +
-                "    });";
-            HtmlFromXml += $"<script>{scriptContent}</script>";
+            return Text;
         }
         internal static void AddJsInputHandler(string ID)
         {
@@ -107,7 +84,7 @@ namespace UPrompt.Class
             HtmlFromXml += $"<script>{scriptContent}</script>";
         }
 
-        internal static string GenerateHtmlFromXML(string XML)
+        public static string GenerateHtmlFromXML(string XML)
         {
             Common.DebugXmlLineNumber++;
             XmlDocument doc = new XmlDocument(); doc.LoadXml(XML);
@@ -119,6 +96,7 @@ namespace UPrompt.Class
             string InnerValue = ParseSystemText(childNode.InnerText);
 
             string Action = childNode.Attributes["Action"]?.Value;
+            string DropList = childNode.Attributes["DropList"]?.Value;
             string Argument = childNode.Attributes["Argument"]?.Value;
 
             string ExtraStyle = childNode.Attributes["Style"]?.Value;
@@ -183,9 +161,36 @@ namespace UPrompt.Class
                             HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
                             AddJsInputHandler(Id);
                             break;
-                        case "Designer":
-                            HtmlFromXml += $"<div style=\"margin:1%;width: 99%;{ExtraStyle}\" class=\"TextBox {Class}\"><textarea name=\"INPUT_{Id}\" id=\"{Id}\">{InnerValue}</textarea></div>";
-                            AddJsXmlEditor(Id);
+                        case "DropDown":
+                        case "Drop":
+                        case "dropdown":
+                            string url = "https://static.thenounproject.com/png/1590826-200.png";
+                            string RealDropImagePath = $@"{Common.Application_Path}\Resources\Icon\{ImageParser.GetImageNameFromUrl(url)}";
+                            ImageParser.DownloadImage(url, RealDropImagePath);
+                            if (ImageParser.IsDark(Common.Windows.TitleBar.BackColor))
+                            {
+                                Image TempImage = Image.FromFile(RealDropImagePath);
+                                ImageParser.ReverseImageColors(TempImage, RealDropImagePath);
+                            }
+                            string dropstyle = $"background-image: url('{Common.Application_Path}Resources/Icon/{ImageParser.GetImageNameFromLocalPath(RealDropImagePath)}');";
+
+ 
+                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" class=\"dropdown {Class}\">\n";
+                            HtmlFromXml += $"<input style=\"{dropstyle}\" readonly type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>\n";
+                            HtmlFromXml += $"<div class=\"dropdown-content\">\n";
+                            if (DropList == null)
+                            {
+                                HtmlFromXml += $"<a href=\"#\">{InnerValue}</a>\n";
+                            }
+                            else
+                            {
+                                foreach (string line in DropList.Split(','))
+                                {
+                                    HtmlFromXml += $"<a href=\"#\">{line}</a>\n";
+                                }
+                            }
+                            HtmlFromXml += $"</div>\n";
+                            HtmlFromXml += $"</div>\n";
                             break;
                     }
                     break;
@@ -236,6 +241,9 @@ namespace UPrompt.Class
                         case "InputHandler":
                             HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"InputHandler_{InnerValue}::Action::{Id}::ID::{Action}\" value=\"{Argument}\"/>\n";
                             break;
+                        case "ViewLoad":
+                            HtmlFromXml += $"<input hidden=\"hidden\" name=\"OnLoad_{Action}\" value=\"{Argument}\"/>\n";
+                            break;
                         case "VariableHandler":
                             try
                             {
@@ -249,7 +257,8 @@ namespace UPrompt.Class
                     }
                     break;
                 default:
-                    HtmlFromXml += $"{childNode.OuterXml}\n";
+                    HtmlFromXml += ParseSystemText($"{childNode.OuterXml}\n");
+
                     break;
             }
             return HtmlFromXml;

@@ -47,12 +47,6 @@ namespace UPrompt.Class
                 Common.Error($"Could not run extension method: {ex.Message}");
             }
         }
-
-        public void T_T(string methodName)
-        {
-           // MethodInfo method = extensionInstance.GetType().GetMethod(methodName);
-           // method.Invoke(extensionInstance, arguments);
-        }
     }
     public class PowershellHandler
     {
@@ -162,7 +156,7 @@ namespace UPrompt.Class
         
         public static void RunAction(string ActionName, string ActionValue)
         {
-            if (ActionName.Contains("InputHandler_") || ActionName.Contains("INPUT_") || ActionName.Contains("Linker_"))
+            if (ActionName.Contains("InputHandler_") || ActionName.Contains("INPUT_") || ActionName.Contains("Linker_") || ActionName.Contains("OnLoad_"))
             {
                 if (ActionName.Contains("InputHandler_"))
                 {
@@ -176,7 +170,11 @@ namespace UPrompt.Class
                         }
                     }
                 }
-
+                if (ActionName.Contains("OnLoad_"))
+                {
+                    string Runner_Action = ActionName.Split(new string[] { "OnLoad_" }, StringSplitOptions.None)[1];
+                    RunAction(Runner_Action, ActionValue);
+                }
                 if (ActionName.Contains("INPUT_"))
                 {
                     string ActionInputId = ActionName.Split(new string[] { "INPUT_" }, StringSplitOptions.None)[1];
@@ -220,11 +218,12 @@ namespace UPrompt.Class
                                 {
                                     if (EH.Id == int.Parse(ActionValue.Split(',')[0]))
                                     {
-
                                         if (ActionValue.Contains("(") && ActionValue.Contains(")"))
                                         {
+                                            string[] splitString = ActionValue.Split(',');
+                                            string methodtext = string.Join(",", splitString.Skip(1).ToArray());
                                             string pattern = @"\((.*?)\)";
-                                            MatchCollection matches = Regex.Matches(ActionValue, pattern);
+                                            MatchCollection matches = Regex.Matches(methodtext, pattern);
 
                                             if (matches.Count > 0)
                                             {
@@ -233,7 +232,7 @@ namespace UPrompt.Class
                                                 {
                                                     _value = match.Groups[1].Value;
                                                 }
-                                                EH.CallExtensionMethod(ActionValue.Split(',')[1].Replace(_value,null).Replace("(",null).Replace(")",null), _value.Split(','));
+                                                EH.CallExtensionMethod(methodtext.Split('(')[0], _value.Split(','));
                                             }
                                             else
                                             {
@@ -325,7 +324,7 @@ namespace UPrompt.Class
                                string Type = ActionValue.Split(',')[0];
                                string Mode = ActionValue.Split(',')[1];
                                string Filter = "All Files|*.*";
-                                if (ActionValue.Split(',').Length > 2) { Filter = ActionValue.Split(',')[3]; }
+                                if (ActionValue.Split(',').Length > 2) { Filter = ActionValue.Split(',')[2]; }
                                 if (Type.Contains("File"))
                                 {
                                     if (Mode.Contains("Save"))
@@ -362,7 +361,7 @@ namespace UPrompt.Class
                                     }
                                 }
                             }
-                            catch { Common.Warning($"Browse action argument must be like: Argument=\"Type(File/Folder),Mode(Save/Load)\" (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
+                            catch { Common.Warning($"Browse action argument must be like: Argument=\"Type(File/Folder),Mode(Save/Load), Filter|*.*\" the filter is optional (xml line: {Common.DebugXmlLineNumber})", "Wrong Format"); }
 
                             break;
                         case "RunExe":
@@ -427,7 +426,7 @@ namespace UPrompt.Class
                     Common.SetVariable(ActionId, LastActionOutput);
                 }
             }
-            ViewParser.GenerateView(Common.Windows.xmlDoc.SelectSingleNode("/Application/View"));
+            ViewParser.GenerateView(Common.xmlDoc.SelectSingleNode("/Application/View"));
         }
     }
 }

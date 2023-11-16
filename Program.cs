@@ -50,7 +50,7 @@ namespace UPrompt
                             {
                                 if (File.Exists(arg))
                                 {
-                                    Common.Application_Path = arg;
+                                    Common.Xml_Path = arg;
                                 }
                             }
                             Path = false;

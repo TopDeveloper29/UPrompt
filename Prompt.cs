@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -15,7 +16,6 @@ namespace UPrompt
 {
     public partial class Prompt : Form
     {
-        internal XmlDocument xmlDoc = new XmlDocument();
         internal bool IconLigthMode = false;
 
         protected private bool isDragging = false;
@@ -125,7 +125,7 @@ namespace UPrompt
         private void Prompt_Load(object sender, EventArgs e) { Settings.LoadXml(Common.Xml_Path); }
         private void htmlhandler_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
-            if (e.Url.ToString().ToLower().Contains("http"))
+            if (e.Url.ToString().ToLower().Split('?')[0].Contains("http"))
             {
                 Common.Warning("UPrompt do not support browse any internet url for security reason please stay local on machine !!!");
                 htmlhandler.Navigate($@"file:///{Common.Application_Path}View.html");
@@ -139,7 +139,8 @@ namespace UPrompt
                     foreach (string action in actions)
                     {
                         string action_name = action.Split('=')[0];
-                        string action_value = ViewParser.ParseSystemText(action.Split('=')[1]);
+                        string[] splitString = action.Split('=');
+                        string action_value = ViewParser.ParseSystemText(string.Join(",", splitString.Skip(1).ToArray()));
                         if (action_name.Contains("INPUT_"))
                         {
                             Handler.RunAction(action_name, action_value);

@@ -59,18 +59,17 @@
             // 
             // htmlhandler
             // 
-            this.htmlhandler.AllowWebBrowserDrop = false;
             this.htmlhandler.Dock = System.Windows.Forms.DockStyle.Fill;
             this.htmlhandler.IsWebBrowserContextMenuEnabled = false;
             this.htmlhandler.Location = new System.Drawing.Point(0, 0);
             this.htmlhandler.Margin = new System.Windows.Forms.Padding(0);
             this.htmlhandler.MinimumSize = new System.Drawing.Size(20, 20);
             this.htmlhandler.Name = "htmlhandler";
-            this.htmlhandler.ScriptErrorsSuppressed = true;
             this.htmlhandler.ScrollBarsEnabled = false;
             this.htmlhandler.Size = new System.Drawing.Size(759, 402);
             this.htmlhandler.TabIndex = 0;
             this.htmlhandler.Url = new System.Uri("", System.UriKind.Relative);
+            this.htmlhandler.WebBrowserShortcutsEnabled = false;
             this.htmlhandler.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.htmlhandler_Navigating);
             // 
             // TitleBar
@@ -78,7 +77,7 @@
             this.TitleBar.Controls.Add(this.ButtonSplitPanel);
             this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.TitleBar.Location = new System.Drawing.Point(0, 0);
-            this.TitleBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.TitleBar.Margin = new System.Windows.Forms.Padding(2);
             this.TitleBar.Name = "TitleBar";
             this.TitleBar.Size = new System.Drawing.Size(800, 21);
             this.TitleBar.TabIndex = 1;
@@ -197,7 +196,7 @@
             this.Left.Controls.Add(this.cornerleft);
             this.Left.Dock = System.Windows.Forms.DockStyle.Left;
             this.Left.Location = new System.Drawing.Point(0, 21);
-            this.Left.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Left.Margin = new System.Windows.Forms.Padding(2);
             this.Left.Name = "Left";
             this.Left.Size = new System.Drawing.Size(21, 429);
             this.Left.TabIndex = 2;
@@ -211,7 +210,7 @@
             // 
             this.cornerleft.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.cornerleft.Location = new System.Drawing.Point(0, 402);
-            this.cornerleft.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cornerleft.Margin = new System.Windows.Forms.Padding(2);
             this.cornerleft.Name = "cornerleft";
             this.cornerleft.Size = new System.Drawing.Size(21, 27);
             this.cornerleft.TabIndex = 1;
@@ -226,7 +225,7 @@
             this.Bottom.Controls.Add(this.cornerright);
             this.Bottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.Bottom.Location = new System.Drawing.Point(21, 423);
-            this.Bottom.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Bottom.Margin = new System.Windows.Forms.Padding(2);
             this.Bottom.Name = "Bottom";
             this.Bottom.Size = new System.Drawing.Size(779, 27);
             this.Bottom.TabIndex = 3;
@@ -240,7 +239,7 @@
             // 
             this.cornerright.Dock = System.Windows.Forms.DockStyle.Right;
             this.cornerright.Location = new System.Drawing.Point(759, 0);
-            this.cornerright.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cornerright.Margin = new System.Windows.Forms.Padding(2);
             this.cornerright.Name = "cornerright";
             this.cornerright.Size = new System.Drawing.Size(20, 27);
             this.cornerright.TabIndex = 0;
@@ -254,7 +253,7 @@
             // 
             this.Right.Dock = System.Windows.Forms.DockStyle.Right;
             this.Right.Location = new System.Drawing.Point(780, 21);
-            this.Right.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Right.Margin = new System.Windows.Forms.Padding(2);
             this.Right.Name = "Right";
             this.Right.Size = new System.Drawing.Size(20, 402);
             this.Right.TabIndex = 4;
@@ -318,9 +317,9 @@
         private System.Windows.Forms.Panel minpan;
         internal System.Windows.Forms.Panel TitleBar;
         private System.Windows.Forms.Panel body;
-        internal System.Windows.Forms.WebBrowser htmlhandler;
         internal System.Windows.Forms.Panel cornerleft;
         internal System.Windows.Forms.Panel cornerright;
+        public System.Windows.Forms.WebBrowser htmlhandler;
     }
 }
 

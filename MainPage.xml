@@ -1,6 +1,6 @@
 <Application>
-	<Setting Name="Width" Value="1000"/>
-	<Setting Name="Height" Value="800"/>
+	<Setting Name="Width" Value="800"/>
+	<Setting Name="Height" Value="900"/>
 	<Setting Name="AllowMinimize" Value="true"/>
 	<Setting Name="AllowMaximize" Value="true"/>
 	<Setting Name="Text-Color" Value="#fff"/>
@@ -11,25 +11,45 @@
 	<Setting Name="Application-Title" Value="Uprompt Designer"/>
 	<Setting Name="Item-Margin" Value="0%"/>
 	<Setting Name="Variable" Value="SavedPath,[SavedPath]"/>
-	<Setting Name="Variable" Value="CurrentXml,[CurrentXml]"/>
+	<Setting Name="Variable" Value="NewPath,[NewPath]"/>
+	<Setting Name="Variable" Value="LoadPath,[LoadPath]"/>
+	<Setting Name="Variable" Value="PreviewHtml,[PreviewHtml]"/>
 	<Setting Name="CSS" Value="{AppPath}Designer.css"/>
 	<Setting Id="210129" Name="DLL" Value="C:\Users\beah\source\repos\TopDeveloper29\Designer\bin\Debug\Designer.dll,Designer.DesignerHandler"/>
 	<View>
 		<ViewItem Type="Row" Class="top-div">
 			<ViewAction Type="Button" Action="ReloadPage" Argument="true" Image="https://m.media-amazon.com/images/I/41R2Kt9o2XL.png,60,false"></ViewAction>
-			<ViewAction Id="SavedPath" Type="Button" Action="Browse" Argument="File,Save">New</ViewAction>
-			<ViewAction Id="SavedPath" Type="Button" Action="Browse" Argument="File,Load">Load</ViewAction>
-			<ViewAction Type="Button" Action="RunMethod" Argument="210129,SaveXml([SavedPath],false),">Save</ViewAction>
-			<ViewAction Type="Button" Action="exit">Exit</ViewAction>
+			<ViewAction Id="NewPath" Type="Button" Action="Browse" Argument="File,Save,Xml Files|*.xml" Class="new_image" Image="https://cdn-icons-png.flaticon.com/512/5825/5825337.png,22,true">New XML</ViewAction>
+			<ViewAction Id="LoadPath" Type="Button" Action="Browse" Argument="File,Load,Xml Files|*.xml" Class="load_image" Image="https://static.thenounproject.com/png/196595-200.png,28,true">Load XML</ViewAction>
+			<ViewAction Type="Button" Action="exit" Class="exit_image" Image="https://static-00.iconduck.com/assets.00/exit-icon-1821x2048-50xh00pv.png,22,true">Exit</ViewAction>
 		</ViewItem>
 		<ViewItem Type="Title">Uprompt Designer</ViewItem>
 		<ViewItem Style="Text-Align:Center;" Type="Label">[SavedPath]</ViewItem>
 		<ViewItem Type="Row">
+			<ViewInput Type="DropDown" Id="GlobalType" DropList="Application,Setting,View,ViewItem,ViewInput,ViewAction,ViewSpacer">Application</ViewInput>
+			<ViewInput Type="DropDown" Id="LocalType">localtype</ViewInput>
+			<ViewInput Type="DropDown" Id="LocalValue">localvalue</ViewInput>
+		</ViewItem>
+		<br/>
+		<ViewItem Type="Row">
 			<ViewInput Type="TextBox" Id="GeneratedCode"></ViewInput>
 			<ViewAction Type="Button" Action="SetClipboard" Argument="[GeneratedCode]" Image="https://cdn-icons-png.flaticon.com/512/1827/1827938.png,40,true"></ViewAction>
 		</ViewItem>
-
-		<ViewInput Type="Designer" Id="main-designer">[CurrentXml]</ViewInput>
-		<ViewAction Type="VariableHandler" Action="RunMethod" Argument="210129,SaveXml([SavedPath])">SavedPath</ViewAction>
+		<br/>
+		<ViewItem Type="Row">
+			<ViewItem Type="Title">Preview:</ViewItem>
+			<ViewSpacer></ViewSpacer>
+			<ViewAction Type="Button" Action="RunMethod" Argument="210129,OpenNewUprompt">Open new UPrompt</ViewAction>
+		</ViewItem>
+		<br/>
+		<br/>
+		<ViewItem Type="Row" Class="preview-div">
+			<div>
+				[PreviewHtml]
+			</div>
+		</ViewItem>
+		<ViewAction Type="VariableHandler" Action="RunMethod" Argument="210129,CallEditor(true)">NewPath</ViewAction>
+		<ViewAction Type="VariableHandler" Action="RunMethod" Argument="210129,CallEditor(false)">LoadPath</ViewAction>
+		<ViewAction Type="ViewLoad" Action="RunMethod" Argument="210129,PreviewXML"></ViewAction>
 	</View>
 </Application>

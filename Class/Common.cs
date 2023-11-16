@@ -5,10 +5,12 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.Remoting.Lifetime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace UPrompt.Class
 {
@@ -29,6 +31,7 @@ namespace UPrompt.Class
         public static Dictionary<string, string> Variable = new Dictionary<string, string>();
         internal static Dictionary<string, string> PreviousVariable = new Dictionary<string, string>();
         internal static Dictionary<string,ActionStorage> TrackedVariable = new Dictionary<string, ActionStorage>();
+        internal static XmlDocument xmlDoc { get; set; } = new XmlDocument();
         public static string LastWarning { get; internal set; } = "";
         public static List<string> WarningHistory { get; internal set; } = new List<string>();
         public static string LastError { get; internal set; } = "";
@@ -37,6 +40,8 @@ namespace UPrompt.Class
         public static List<string> OutputHistory { get; internal set; } = new List<string>();
         public static Prompt Windows { get; set; } = new Prompt();
         public static string Application_Path { get; set; } = (AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/");
+        public static string Application_Path_Windows { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
+        public static string UPrompt_exe = Assembly.GetEntryAssembly().Location;
         public static string Xml_Path { get; set; } = $@"{Application_Path}\MainPage.xml";
         internal static int DebugXmlLineNumber { get; set; } = 0;
 
