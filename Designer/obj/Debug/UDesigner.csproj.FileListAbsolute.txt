@@ -1,0 +1,6 @@
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\UDesigner.dll
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\UDesigner.pdb
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.AssemblyReference.cache
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.CoreCompileInputs.cache
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.dll
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.pdb
