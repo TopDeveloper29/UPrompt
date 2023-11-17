@@ -14,8 +14,8 @@
 	<Setting Name="Variable" Value="NewPath,[NewPath]"/>
 	<Setting Name="Variable" Value="LoadPath,[LoadPath]"/>
 	<Setting Name="Variable" Value="PreviewHtml,[PreviewHtml]"/>
-	<Setting Name="CSS" Value="{AppPath}Designer.css"/>
-	<Setting Id="210129" Name="DLL" Value="C:\Users\beah\source\repos\TopDeveloper29\Designer\bin\Debug\Designer.dll,Designer.DesignerHandler"/>
+	<Setting Name="CSS" Value="{AppPath}UDesigner.css"/>
+	<Setting Id="210129" Name="DLL" Value="C:\Users\{USER}\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\UDesigner.dll,UPrompt.UDesigner.UDesignerLoader"/>
 	<View>
 		<ViewItem Type="Row" Class="top-div">
 			<ViewAction Type="Button" Action="ReloadPage" Argument="true" Image="https://m.media-amazon.com/images/I/41R2Kt9o2XL.png,60,false"></ViewAction>

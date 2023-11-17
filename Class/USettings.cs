@@ -36,11 +36,11 @@ namespace UPrompt.Class
         public Setting(string Name,string Value,string Id)
         {
             this.Name = Name;
-            this.Value = ViewParser.ParseSystemText(Value);
+            this.Value = UParser.ParseSystemText(Value);
             this.Id = Id;
         }
     }
-    public class Settings
+    public class USettings
     {
         public static bool SkipSystemParsing {  get; set; } = false;
         public static string Text_Color { get; private set; } = "#fff";
@@ -93,15 +93,15 @@ namespace UPrompt.Class
         }
         public static void LoadXml(string path,bool loadsettings = true)
         {
-            Common.Xml_Path = path;
-            try{ Common.xmlDoc.Load(path);}
-            catch (Exception ex) { Common.Error($"{ex.Message}\n\n{Common.xmlDoc.InnerXml}", "Fatal error on XML Parsing"); }
+            UCommon.Xml_Path = path;
+            try{ UCommon.xmlDoc.Load(path);}
+            catch (Exception ex) { UCommon.Error($"{ex.Message}\n\n{UCommon.xmlDoc.InnerXml}", "Fatal error on XML Parsing"); }
             if (loadsettings)
             {
-                Load(Common.xmlDoc.SelectNodes("//Application/Setting"));
+                Load(UCommon.xmlDoc.SelectNodes("//Application/Setting"));
             }
-            ViewParser.GenerateView(Common.xmlDoc.SelectSingleNode("/Application/View"));
-            Common.Windows.htmlhandler.Navigate($"file:///{Common.Application_Path}Resources/Code/View.html");
+            UParser.GenerateView(UCommon.xmlDoc.SelectSingleNode("/Application/View"));
+            UCommon.Windows.htmlhandler.Navigate($"file:///{UCommon.Application_Path}Resources/Code/View.html");
         }
         private static void NewFadeColor()
         {
@@ -112,7 +112,7 @@ namespace UPrompt.Class
         {
             string WarningTitle = "Wrong settings format";
             
-            value = ViewParser.ParseSystemText(value);
+            value = UParser.ParseSystemText(value);
             switch (name)
             {
                 case "Style":
@@ -121,14 +121,14 @@ namespace UPrompt.Class
                     if (File.Exists(value) && value.ToLower().Contains(".css"))
                     {
                         NewFadeColor();
-                        string css = ViewParser.ParseSettingsText(File.ReadAllText(value));
-                        string copy = $@"{Common.Application_Path_Windows}Resources\Code\{ImageParser.GetImageNameFromLocalPath(value)}";
+                        string css = UParser.ParseSettingsText(File.ReadAllText(value));
+                        string copy = $@"{UCommon.Application_Path_Windows}Resources\Code\{UImage.GetImageNameFromLocalPath(value)}";
                         File.WriteAllText(copy,css);
-                        ViewParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{copy}\">";
+                        UParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{copy}\">";
                     }
                     else
                     {
-                        Common.Warning($"The setting for {name} file do not exist or is not a css file: \"{value}\"",WarningTitle);
+                        UCommon.Warning($"The setting for {name} file do not exist or is not a css file: \"{value}\"",WarningTitle);
                     }
                     break;
                 case "Variable":
@@ -139,13 +139,13 @@ namespace UPrompt.Class
                     {
                         if (value.Split(',')[1].Contains($"[{value.Split(',')[0]}]"))
                         {
-                            if (Common.GetVariable(value.Split(',')[0]) == null) { Common.SetVariable(value.Split(',')[0], ""); break; }
+                            if (UCommon.GetVariable(value.Split(',')[0]) == null) { UCommon.SetVariable(value.Split(',')[0], ""); break; }
                         }
-                        Common.SetVariable(value.Split(',')[0], ViewParser.ParseSystemText(value.Split(',')[1]));
+                        UCommon.SetVariable(value.Split(',')[0], UParser.ParseSystemText(value.Split(',')[1]));
                     }
                     else
                     {
-                        Common.SetVariable(value, "");
+                        UCommon.SetVariable(value, "");
                     }
   
                     break;
@@ -161,20 +161,20 @@ namespace UPrompt.Class
                         path = value.Split(',')[0];
                         namespc = value.Split(',')[1];
                     }
-                    catch { Common.Warning($"The settings {name} as invalid argument ({value}) or id ({id})\n The value must be Argument=\"PATH,NAMESPACE.CLASS\"\nThe id must be an integer", WarningTitle); }
+                    catch { UCommon.Warning($"The settings {name} as invalid argument ({value}) or id ({id})\n The value must be Argument=\"PATH,NAMESPACE.CLASS\"\nThe id must be an integer", WarningTitle); }
 
                     if (File.Exists(path))
                     {
                         if (id == null)
                         {
-                            Handler.ExtentionHandlers.Add(new ExtentionHandler(ExtentionFallbackId, path, namespc));
+                            UHandler.ExtentionHandlers.Add(new UHandler.ExtentionHandler(ExtentionFallbackId, path, namespc));
                         }
                         else
                         {
-                            Handler.ExtentionHandlers.Add(new ExtentionHandler(int.Parse(id), path, namespc));
+                            UHandler.ExtentionHandlers.Add(new UHandler.ExtentionHandler(int.Parse(id), path, namespc));
                         }
                     }
-                    else { Common.Warning($"The file could not be found {path}"); }
+                    else { UCommon.Warning($"The file could not be found {path}"); }
                     break;
                 case "Powershell":
                 case "PS":
@@ -182,23 +182,23 @@ namespace UPrompt.Class
                     {
                         if (id == null)
                         {
-                            Handler.PowershellHandlers.Add(new PowershellHandler(PowershellFallbackId, value));
+                            UHandler.PowershellHandlers.Add(new UHandler.PowershellHandler(PowershellFallbackId, value));
                         }
                         else
                         {
                             try
                             {
-                                Handler.PowershellHandlers.Add(new PowershellHandler(int.Parse(id), value));
+                                UHandler.PowershellHandlers.Add(new UHandler.PowershellHandler(int.Parse(id), value));
                             }
                             catch
                             {
-                                Common.Warning($"This setting {name} as invalid id ({value}) it must be an integer", WarningTitle);
+                                UCommon.Warning($"This setting {name} as invalid id ({value}) it must be an integer", WarningTitle);
                             }
                         }
                     }
                     else
                     {
-                        Common.Warning($"This setting {name} as invalid path or file do not exist: \"{value}\"", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid path or file do not exist: \"{value}\"", WarningTitle);
                     }
                     PowershellFallbackId++;
                     break;
@@ -217,12 +217,12 @@ namespace UPrompt.Class
                         }
                         else
                         {
-                            Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be a size like ({value}px or {value}%)", WarningTitle);
+                            UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a size like ({value}px or {value}%)", WarningTitle);
                         }
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be a size like ({value}px or {value}%)", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a size like ({value}px or {value}%)", WarningTitle);
                     }
                     break;
                 case "Text-Color":
@@ -235,12 +235,12 @@ namespace UPrompt.Class
                         }
                         else
                         {
-                            Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                            UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                         }
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                     }
                     break;
                 case "Application-Color":
@@ -251,21 +251,21 @@ namespace UPrompt.Class
                         {
                             Back_Color = color;
                             Color RealColor = ColorTranslator.FromHtml(color);
-                            Common.Windows.Left.BackColor = RealColor;
-                            Common.Windows.Right.BackColor = RealColor;
-                            Common.Windows.Bottom.BackColor = RealColor;
-                            Common.Windows.TitleBar.BackColor = RealColor;
-                            Common.Windows.UpdateTitleBarColor();
+                            UCommon.Windows.Left.BackColor = RealColor;
+                            UCommon.Windows.Right.BackColor = RealColor;
+                            UCommon.Windows.Bottom.BackColor = RealColor;
+                            UCommon.Windows.TitleBar.BackColor = RealColor;
+                            UCommon.Windows.UpdateTitleBarColor();
                             FirstLoadCompleted = true;
                         }
                         else
                         {
-                            Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                            UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                         }
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                     }
                     break;
                 case "Accent-Color":
@@ -278,12 +278,12 @@ namespace UPrompt.Class
                         }
                         else
                         {
-                            Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                            UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                         }
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                     }
                     break;
                 case "Accent-Text-Color":
@@ -296,12 +296,12 @@ namespace UPrompt.Class
                         }
                         else
                         {
-                            Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                            UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                         }
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                     }
                     break;
 
@@ -309,69 +309,69 @@ namespace UPrompt.Class
                     try
                     {
                         Width = int.Parse(value);
-                        Common.Windows.Width = Width;
+                        UCommon.Windows.Width = Width;
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an integer", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an integer", WarningTitle);
                     }
                     break;
                 case "Height":
                     try
                     {
                         Height = int.Parse(value);
-                        Common.Windows.Height = Height;
+                        UCommon.Windows.Height = Height;
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be an integer", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an integer", WarningTitle);
                     }
                     break;
                 case "WindowsResizeMode":
                     switch (value)
                     {
                         case "All":
-                            Common.Windows.Left.Enabled = true;
-                            Common.Windows.Right.Enabled = true;
-                            Common.Windows.Bottom.Enabled = true;
-                            Common.Windows.cornerleft.Enabled = true;
-                            Common.Windows.cornerright.Enabled = true;
+                            UCommon.Windows.Left.Enabled = true;
+                            UCommon.Windows.Right.Enabled = true;
+                            UCommon.Windows.Bottom.Enabled = true;
+                            UCommon.Windows.cornerleft.Enabled = true;
+                            UCommon.Windows.cornerright.Enabled = true;
                             WindowsResizeMode = value;
                             break;
                         case "Horizontal":
-                            Common.Windows.Left.Enabled = true;
-                            Common.Windows.Right.Enabled = true;
-                            Common.Windows.Bottom.Enabled = false;
-                            Common.Windows.cornerleft.Enabled = false;
-                            Common.Windows.cornerright.Enabled = false;
+                            UCommon.Windows.Left.Enabled = true;
+                            UCommon.Windows.Right.Enabled = true;
+                            UCommon.Windows.Bottom.Enabled = false;
+                            UCommon.Windows.cornerleft.Enabled = false;
+                            UCommon.Windows.cornerright.Enabled = false;
                             WindowsResizeMode = value;
                             break;
                         case "Vertical":
-                            Common.Windows.Left.Enabled = false;
-                            Common.Windows.Right.Enabled = false;
-                            Common.Windows.Bottom.Enabled = true;
-                            Common.Windows.cornerleft.Enabled = false;
-                            Common.Windows.cornerright.Enabled = false;
+                            UCommon.Windows.Left.Enabled = false;
+                            UCommon.Windows.Right.Enabled = false;
+                            UCommon.Windows.Bottom.Enabled = true;
+                            UCommon.Windows.cornerleft.Enabled = false;
+                            UCommon.Windows.cornerright.Enabled = false;
                             WindowsResizeMode = value;
                             break;
                         case "Diagonal":
-                            Common.Windows.Left.Enabled = false;
-                            Common.Windows.Right.Enabled = false;
-                            Common.Windows.Bottom.Enabled = false;
-                            Common.Windows.cornerleft.Enabled = true;
-                            Common.Windows.cornerright.Enabled = true;
+                            UCommon.Windows.Left.Enabled = false;
+                            UCommon.Windows.Right.Enabled = false;
+                            UCommon.Windows.Bottom.Enabled = false;
+                            UCommon.Windows.cornerleft.Enabled = true;
+                            UCommon.Windows.cornerright.Enabled = true;
                             WindowsResizeMode = value;
                             break;
                         case "None":
-                            Common.Windows.Left.Enabled = false;
-                            Common.Windows.Right.Enabled = false;
-                            Common.Windows.Bottom.Enabled = false;
-                            Common.Windows.cornerleft.Enabled = false;
-                            Common.Windows.cornerright.Enabled = false;
+                            UCommon.Windows.Left.Enabled = false;
+                            UCommon.Windows.Right.Enabled = false;
+                            UCommon.Windows.Bottom.Enabled = false;
+                            UCommon.Windows.cornerleft.Enabled = false;
+                            UCommon.Windows.cornerright.Enabled = false;
                             WindowsResizeMode = value;
                             break;
                         default:
-                            Common.Warning($"The settings {name} must be one of this All,Horizontal,Vertical,Diagonal,None", WarningTitle);
+                            UCommon.Warning($"The settings {name} must be one of this All,Horizontal,Vertical,Diagonal,None", WarningTitle);
                             break;
                     }
                     break;
@@ -382,18 +382,18 @@ namespace UPrompt.Class
                     {
                         case "Normal":
                             WindowsOpenMode = "Normal";
-                            Common.Windows.WindowState = FormWindowState.Normal;
+                            UCommon.Windows.WindowState = FormWindowState.Normal;
                             break;
                         case "Minimized":
                             WindowsOpenMode = "Minimized";
-                            Common.Windows.WindowState = FormWindowState.Minimized;
+                            UCommon.Windows.WindowState = FormWindowState.Minimized;
                             break;
                         case "Maximized":
                             WindowsOpenMode = "Maximized";
-                            Common.Windows.WindowState = FormWindowState.Maximized;
+                            UCommon.Windows.WindowState = FormWindowState.Maximized;
                             break;
                         default:
-                            Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be Normal, Minimized or Maximized", WarningTitle);
+                            UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be Normal, Minimized or Maximized", WarningTitle);
                             break;
                     }
                     break;
@@ -404,12 +404,12 @@ namespace UPrompt.Class
                     try
                     {
                         AllowMinimize = bool.Parse(value);
-                        Common.Windows.MinimizeBox = AllowMinimize;
-                        Common.Windows.UpdateTitleBarIconAndFunction();
+                        UCommon.Windows.MinimizeBox = AllowMinimize;
+                        UCommon.Windows.UpdateTitleBarIconAndFunction();
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be a boolean", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a boolean", WarningTitle);
                     }
                     break;
 
@@ -419,20 +419,20 @@ namespace UPrompt.Class
                     try
                     {
                         AllowMaximize = bool.Parse(value);
-                        Common.Windows.MaximizeBox = AllowMaximize;
-                        Common.Windows.UpdateTitleBarIconAndFunction();
+                        UCommon.Windows.MaximizeBox = AllowMaximize;
+                        UCommon.Windows.UpdateTitleBarIconAndFunction();
                     }
                     catch
                     {
-                        Common.Warning($"This setting {name} as invalid value \"{value}\" the value must be a boolean", WarningTitle);
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a boolean", WarningTitle);
                     }
                     break;
 
                 case "AllowClose":
                 case "Close":
                     bool Frame = bool.Parse(value);
-                    Common.Windows.ControlBox = Frame;
-                    Common.Windows.UpdateTitleBarIconAndFunction();
+                    UCommon.Windows.ControlBox = Frame;
+                    UCommon.Windows.UpdateTitleBarIconAndFunction();
                     break;
 
                 case "Production":
@@ -442,7 +442,7 @@ namespace UPrompt.Class
                     {
                         Production = bool.Parse(value);
                     }
-                    catch { Common.Warning($"The setting {name} as invalid value \"{value}\" it must be a boolean", WarningTitle); }
+                    catch { UCommon.Warning($"The setting {name} as invalid value \"{value}\" it must be a boolean", WarningTitle); }
                     break;
                 case "Application-Icon":
                 case "Icon":
@@ -451,21 +451,21 @@ namespace UPrompt.Class
                         try
                         {
                             Icon icon = new Icon(value);
-                            Common.Windows.Icon = icon;
+                            UCommon.Windows.Icon = icon;
                         }
-                        catch { Common.Error("Could not load this file as image"); }
+                        catch { UCommon.Error("Could not load this file as image"); }
                     }
                     else
                     {
-                        Common.Warning($"Could not find this file: \"{value}\"!!!");
+                        UCommon.Warning($"Could not find this file: \"{value}\"!!!");
                     }
                     break;
 
                 case "Application-Title":
-                    Common.Windows.Text = value;
+                    UCommon.Windows.Text = value;
                     break;
                 default:
-                    Common.Warning($"This setting \"{name}\" is unknow please provide valid settings", WarningTitle);
+                    UCommon.Warning($"This setting \"{name}\" is unknow please provide valid settings", WarningTitle);
                     break;
             }
 

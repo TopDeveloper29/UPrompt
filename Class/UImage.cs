@@ -10,7 +10,7 @@ using System.IO;
 
 namespace UPrompt.Class
 {
-    internal class ImageParser
+    internal class UImage
     {
         internal static bool IsDark(Color color)
         {

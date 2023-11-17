@@ -7,7 +7,7 @@ namespace DEMO
     {
         public static void ShowDemo(string value)
         {
-            MessageBox.Show("Extension method called with value: " + value, Settings.Width.ToString());
+            MessageBox.Show("Extension method called with value: " + value, USettings.Width.ToString());
         }
     }
 }

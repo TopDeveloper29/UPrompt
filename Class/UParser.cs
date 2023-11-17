@@ -13,7 +13,7 @@ using UPrompt.Class;
 
 namespace UPrompt.Class
 {
-    public static class ViewParser
+    public static class UParser
     {
         internal static string CSSLink = "";
         private static string HtmlFromXml = "";
@@ -26,49 +26,49 @@ namespace UPrompt.Class
         internal static void GenerateView(XmlNode viewNode)
         {
             HtmlFromXml = null;
-            Common.DebugXmlLineNumber = (File.ReadAllLines(Common.Xml_Path).Length - Settings.Count) - 5;
+            UCommon.DebugXmlLineNumber = (File.ReadAllLines(UCommon.Xml_Path).Length - USettings.Count) - 5;
             foreach (XmlNode childNode in viewNode.ChildNodes)
             {
                 HtmlFromXml = GenerateHtmlFromXML(childNode.OuterXml);
             }
             if (HtmlFromXml.Length < 5) { HtmlFromXml = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
             HtmlFromXml = $"{CSSLink}\n{HtmlFromXml}";
-            string Template = File.ReadAllText($@"{Common.Application_Path}\Resources\Code\Index.html");
+            string Template = File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\Index.html");
             string html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", HtmlFromXml);
 
-            File.WriteAllText($@"{Common.Application_Path}\Resources\Code\View.html", ViewParser.ParseSettingsText(html));
+            File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\View.html", UParser.ParseSettingsText(html));
 
         }
         public static string ParseSettingsText(string Text)
         {
             string ParsedText = Text
-                .Replace("#TEXT_COLOR#", Settings.Text_Color)
-                .Replace("#MAIN_COLOR#", Settings.Main_Color)
-                .Replace("#BACKGROUND_COLOR#", Settings.Back_Color)
-                .Replace("#FADE_BACKGROUND_COLOR#", Settings.Fade_Back_Color)
-                .Replace("#FADE_MAIN_COLOR#", Settings.Fade_Main_Color)
-                .Replace("#ITEM_MARGIN#", Settings.Item_Margin)
-                .Replace("#MAIN_TEXT_COLOR#", Settings.Text_Main_Color)
-                .Replace("#FONT_NAME#", Settings.Font_Name);
+                .Replace("#TEXT_COLOR#", USettings.Text_Color)
+                .Replace("#MAIN_COLOR#", USettings.Main_Color)
+                .Replace("#BACKGROUND_COLOR#", USettings.Back_Color)
+                .Replace("#FADE_BACKGROUND_COLOR#", USettings.Fade_Back_Color)
+                .Replace("#FADE_MAIN_COLOR#", USettings.Fade_Main_Color)
+                .Replace("#ITEM_MARGIN#", USettings.Item_Margin)
+                .Replace("#MAIN_TEXT_COLOR#", USettings.Text_Main_Color)
+                .Replace("#FONT_NAME#", USettings.Font_Name);
 
             return ParsedText;
         }
         public static string ParseSystemText(string Text)
         {
-            if (Settings.SkipSystemParsing == false)
+            if (USettings.SkipSystemParsing == false)
             {
                 string ParsedText = Text
                     .Replace("{USER}", Environment.UserName)
                     .Replace("{DEVICE}", Environment.MachineName)
                     .Replace("{n}", "\n")
                     .Replace("{c}", ",")
-                    .Replace("{Application_Path}", Common.Application_Path)
-                    .Replace("{AppPath}", Common.Application_Path)
+                    .Replace("{Application_Path}", UCommon.Application_Path)
+                    .Replace("{AppPath}", UCommon.Application_Path)
                     ;
                 //Internal Input Variable Replace
-                foreach (string Key in Common.Variable.Keys)
+                foreach (string Key in UCommon.Variable.Keys)
                 {
-                    string Value = Common.Variable[Key];
+                    string Value = UCommon.Variable[Key];
                     ParsedText = ParsedText.Replace($"[{Key}]", Value);
                 }
                 return ParsedText;
@@ -86,7 +86,7 @@ namespace UPrompt.Class
 
         public static string GenerateHtmlFromXML(string XML)
         {
-            Common.DebugXmlLineNumber++;
+            UCommon.DebugXmlLineNumber++;
             XmlDocument doc = new XmlDocument(); doc.LoadXml(XML);
             XmlNode childNode = doc.DocumentElement;
 
@@ -109,33 +109,33 @@ namespace UPrompt.Class
             string RealImagePath = "";
             if (ImageObject != null)
             {
-                if (!Directory.Exists($@"{Common.Application_Path}\Resources\Icon\")) { Directory.CreateDirectory($@"{Common.Application_Path}\Resources\Icon\"); }
+                if (!Directory.Exists($@"{UCommon.Application_Path}\Resources\Icon\")) { Directory.CreateDirectory($@"{UCommon.Application_Path}\Resources\Icon\"); }
                 try
                 {
                     ImagePath = ImageObject.Split(',')[0];
                     ImageSize = ImageObject.Split(',')[1];
                     ImageAutoColor = ImageObject.Split(',')[2];
                 }
-                catch { Common.Warning($"ImageObject property should be write like ImageObject=\"Path (string),Size (integer),AutoColor (boolean)\""); }
-                if (ImageParser.IsUrl(ImagePath))
+                catch { UCommon.Warning($"ImageObject property should be write like ImageObject=\"Path (string),Size (integer),AutoColor (boolean)\""); }
+                if (UImage.IsUrl(ImagePath))
                 {
-                    RealImagePath = $@"{Common.Application_Path}\Resources\Icon\{ImageParser.GetImageNameFromUrl(ImagePath)}";
-                    ImageParser.DownloadImage(ImagePath, RealImagePath);
+                    RealImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromUrl(ImagePath)}";
+                    UImage.DownloadImage(ImagePath, RealImagePath);
                     
                 }
                 else
                 {
-                    RealImagePath = $@"{Common.Application_Path}\Resources\Icon\{ImageParser.GetImageNameFromLocalPath(ImagePath)}";
+                    RealImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromLocalPath(ImagePath)}";
                     File.Move(ImagePath, RealImagePath);
                 }
 
-                if (ImageParser.IsDark(Common.Windows.TitleBar.BackColor) && ImageAutoColor.ToLower().Contains("true"))
+                if (UImage.IsDark(UCommon.Windows.TitleBar.BackColor) && ImageAutoColor.ToLower().Contains("true"))
                 {
                     Image TempImage = Image.FromFile(RealImagePath);
                     
-                    ImageParser.ReverseImageColors(TempImage, RealImagePath);
+                    UImage.ReverseImageColors(TempImage, RealImagePath);
                 }
-                ExtraStyle += $"background-image: url('{Common.Application_Path}Resources/Icon/{ImageParser.GetImageNameFromLocalPath(RealImagePath)}');background-size: {ImageSize}%;background-repeat: no-repeat;background-position: center;";
+                ExtraStyle += $"background-image: url('{UCommon.Application_Path}Resources/Icon/{UImage.GetImageNameFromLocalPath(RealImagePath)}');background-size: {ImageSize}%;background-repeat: no-repeat;background-position: center;";
             }
 
             // Check what kind of node is it 
@@ -147,7 +147,7 @@ namespace UPrompt.Class
                     break;
                 case "ViewInput":
                     //action that must be apply for all type of ViewInput
-                    if (Common.Variable.ContainsKey(Id)){ InnerValue = ParseSystemText(Common.Variable[Id]); }
+                    if (UCommon.Variable.ContainsKey(Id)){ InnerValue = ParseSystemText(UCommon.Variable[Id]); }
                     if (Action != null){ GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
 
                     switch (Type)
@@ -165,14 +165,14 @@ namespace UPrompt.Class
                         case "Drop":
                         case "dropdown":
                             string url = "https://static.thenounproject.com/png/1590826-200.png";
-                            string RealDropImagePath = $@"{Common.Application_Path}\Resources\Icon\{ImageParser.GetImageNameFromUrl(url)}";
-                            ImageParser.DownloadImage(url, RealDropImagePath);
-                            if (ImageParser.IsDark(Common.Windows.TitleBar.BackColor))
+                            string RealDropImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromUrl(url)}";
+                            UImage.DownloadImage(url, RealDropImagePath);
+                            if (UImage.IsDark(UCommon.Windows.TitleBar.BackColor))
                             {
                                 Image TempImage = Image.FromFile(RealDropImagePath);
-                                ImageParser.ReverseImageColors(TempImage, RealDropImagePath);
+                                UImage.ReverseImageColors(TempImage, RealDropImagePath);
                             }
-                            string dropstyle = $"background-image: url('{Common.Application_Path}Resources/Icon/{ImageParser.GetImageNameFromLocalPath(RealDropImagePath)}');";
+                            string dropstyle = $"background-image: url('{UCommon.Application_Path}Resources/Icon/{UImage.GetImageNameFromLocalPath(RealDropImagePath)}');";
 
  
                             HtmlFromXml += $"<div style=\"{ExtraStyle}\" class=\"dropdown {Class}\">\n";
@@ -231,7 +231,7 @@ namespace UPrompt.Class
                             }
                             else
                             {
-                                Common.Warning($"Linker must include property Source and Target that is not empty (xml line: {Common.DebugXmlLineNumber})", "Linker Error");
+                                UCommon.Warning($"Linker must include property Source and Target that is not empty (xml line: {UCommon.DebugXmlLineNumber})", "Linker Error");
                             }
                             break;
                         default:
@@ -247,9 +247,9 @@ namespace UPrompt.Class
                         case "VariableHandler":
                             try
                             {
-                                if (!Common.TrackedVariable.TryGetValue(InnerValue,out ActionStorage acs))
+                                if (!UCommon.TrackedVariable.TryGetValue(InnerValue,out ActionStorage acs))
                                 {
-                                    Common.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument,Common.GetVariable(InnerValue)));
+                                    UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument,UCommon.GetVariable(InnerValue)));
                                 }
                             }
                             catch(Exception ex) { MessageBox.Show(ex.Message); }

@@ -26,7 +26,7 @@ namespace UPrompt.Class
             LastValue = _LastValue;
         }
     }
-    public static class Common
+    public static class UCommon
     {
         public static Dictionary<string, string> Variable = new Dictionary<string, string>();
         internal static Dictionary<string, string> PreviousVariable = new Dictionary<string, string>();
@@ -57,7 +57,7 @@ namespace UPrompt.Class
         {
             LastWarning = Text;
             WarningHistory.Add(Text);
-            if (Settings.Production == false)
+            if (USettings.Production == false)
             {
                 return MessageBox.Show(Text, Title, buttons, MessageBoxIcon.Warning);
             }
@@ -67,7 +67,7 @@ namespace UPrompt.Class
         {
             LastError = Text;
             ErrorHistory.Add(Text);
-            if (Settings.Production == false)
+            if (USettings.Production == false)
             {
                 return MessageBox.Show(Text, Title, buttons, MessageBoxIcon.Error);
             }
@@ -145,7 +145,7 @@ namespace UPrompt.Class
                         ActionStorage AS = TrackedVariable[key];
                         if (Value.ToLower() != AS.LastValue.ToLower())
                         {
-                            Handler.RunAction(AS.Action, AS.Arguments);
+                            UHandler.RunAction(AS.Action, AS.Arguments);
                             AS.LastValue = Value;
                         }
                     }

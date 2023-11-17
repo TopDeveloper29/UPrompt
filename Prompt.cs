@@ -116,19 +116,19 @@ namespace UPrompt
 
         public Prompt()
         {
-            Common.Windows = this;
+            UCommon.Windows = this;
             InitializeComponent();
             this.DoubleBuffered = true;
             htmlhandler.ScrollBarsEnabled = false;
         }
 
-        private void Prompt_Load(object sender, EventArgs e) { Settings.LoadXml(Common.Xml_Path); }
+        private void Prompt_Load(object sender, EventArgs e) { USettings.LoadXml(UCommon.Xml_Path); }
         private void htmlhandler_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             if (e.Url.ToString().ToLower().Split('?')[0].Contains("http"))
             {
-                Common.Warning("UPrompt do not support browse any internet url for security reason please stay local on machine !!!");
-                htmlhandler.Navigate($@"file:///{Common.Application_Path}View.html");
+                UCommon.Warning("UPrompt do not support browse any internet url for security reason please stay local on machine !!!");
+                htmlhandler.Navigate($@"file:///{UCommon.Application_Path}View.html");
             }
             if (e.Url.ToString().Contains("="))
             {
@@ -140,19 +140,19 @@ namespace UPrompt
                     {
                         string action_name = action.Split('=')[0];
                         string[] splitString = action.Split('=');
-                        string action_value = ViewParser.ParseSystemText(string.Join(",", splitString.Skip(1).ToArray()));
+                        string action_value = UParser.ParseSystemText(string.Join(",", splitString.Skip(1).ToArray()));
                         if (action_name.Contains("INPUT_"))
                         {
-                            Handler.RunAction(action_name, action_value);
+                            UHandler.RunAction(action_name, action_value);
                         }
                     }
                     foreach (string action in actions)
                     {
                         string action_name = action.Split('=')[0];
-                        string action_value = ViewParser.ParseSystemText(action.Split('=')[1]);
+                        string action_value = UParser.ParseSystemText(action.Split('=')[1]);
                         if (!action_name.Contains("INPUT_"))
                         {
-                            Handler.RunAction(action_name, action_value);
+                            UHandler.RunAction(action_name, action_value);
                         }
                     }
                 }
@@ -160,8 +160,8 @@ namespace UPrompt
                 {
                     string action_code = System.Net.WebUtility.UrlDecode(e.Url.ToString()).Split('?')[1];
                     string action_name = action_code.Split('=')[0];
-                    string action_value = ViewParser.ParseSystemText(action_code.Split('=')[1]);
-                    Handler.RunAction(action_name, action_value);
+                    string action_value = UParser.ParseSystemText(action_code.Split('=')[1]);
+                    UHandler.RunAction(action_name, action_value);
                 }
             }
         }
@@ -199,9 +199,9 @@ namespace UPrompt
         internal void UpdateTitleBarColor()
         {
             Color currentColor = TitleBar.BackColor;
-            if (ImageParser.IsDark(currentColor))
+            if (UImage.IsDark(currentColor))
             {
-                if (Settings.FirstLoadCompleted == false)
+                if (USettings.FirstLoadCompleted == false)
                 {
                     ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
                 }
@@ -215,7 +215,7 @@ namespace UPrompt
                 if (IconLigthMode == true)
                 {
                     IconLigthMode = false;
-                    if (Settings.FirstLoadCompleted == false)
+                    if (USettings.FirstLoadCompleted == false)
                     {
                         ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
                     }

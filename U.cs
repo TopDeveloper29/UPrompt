@@ -9,9 +9,8 @@ using UPrompt.Class;
 
 namespace UPrompt
 {
-    internal static class Program
+    internal static class U
     {
-
         [STAThread]
         static void Main(string[]Args)
         {
@@ -50,7 +49,7 @@ namespace UPrompt
                             {
                                 if (File.Exists(arg))
                                 {
-                                    Common.Xml_Path = arg;
+                                    UCommon.Xml_Path = arg;
                                 }
                             }
                             Path = false;

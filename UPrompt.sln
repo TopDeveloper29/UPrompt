@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPrompt", "UPrompt.csproj", "{6266F2A6-711B-4C21-94AA-9AE810DB0539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Designer", "..\Designer\Designer.csproj", "{A564B452-C263-4D88-9821-8ABE2BA9561C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UDesigner", "Designer\UDesigner.csproj", "{A564B452-C263-4D88-9821-8ABE2BA9561C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
