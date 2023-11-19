@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Runtime.Remoting.Lifetime;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -31,7 +24,7 @@ namespace UPrompt.Class
         public static Dictionary<string, string> Variable = new Dictionary<string, string>();
         internal static Dictionary<string, string> PreviousVariable = new Dictionary<string, string>();
         internal static Dictionary<string,ActionStorage> TrackedVariable = new Dictionary<string, ActionStorage>();
-        internal static XmlDocument xmlDoc { get; set; } = new XmlDocument();
+        public static XmlDocument XmlDocument { get; set; } = new XmlDocument();
         public static string LastWarning { get; internal set; } = "";
         public static List<string> WarningHistory { get; internal set; } = new List<string>();
         public static string LastError { get; internal set; } = "";
@@ -73,7 +66,7 @@ namespace UPrompt.Class
             }
             return DialogResult.Ignore;
         }
-        public static Dictionary<string, string> ShowVariable(string Id = "Show::All::Id", bool ShowDialog = true)
+        public static Dictionary<string, string> ShowVariable(string Id = "it", bool ShowDialog = true)
         {
             Dictionary<string, string> variables = new Dictionary<string, string>();
             string PlainVariable = "";

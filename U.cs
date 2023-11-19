@@ -9,7 +9,7 @@ using UPrompt.Class;
 
 namespace UPrompt
 {
-    internal static class U
+    public static class U
     {
         [STAThread]
         static void Main(string[]Args)

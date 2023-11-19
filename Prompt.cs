@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
 using UPrompt.Class;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using UPrompt.Internal;
 
 
 namespace UPrompt
@@ -51,7 +47,7 @@ namespace UPrompt
         protected private void SideBorder_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeWE; }
         protected private void CornerRight_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNWSE; }
         protected private void CornerLeft_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNESW; }
-        protected private void Bottom_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNS; }
+        protected private void Vertical_MouseHover(object sender, EventArgs e) { this.Cursor = Cursors.SizeNS; }
         protected private void Border_MouseLeave(object sender, EventArgs e) { this.Cursor = Cursors.Default; }
         protected private void Border_MouseDown(object sender, MouseEventArgs e)
         {
@@ -104,6 +100,15 @@ namespace UPrompt
                 this.Size = new Size(this.Size.Width, newHeigth);
             }
         }
+        protected private void TopBorder_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                int deltaY = initialMousePos.Y - e.Y;
+                int newHeigth = initialFormSize.Height + deltaY;
+                this.Size = new Size(this.Size.Width, newHeigth);
+            }
+        }
         protected private void RightBorder_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging)
@@ -122,13 +127,17 @@ namespace UPrompt
             htmlhandler.ScrollBarsEnabled = false;
         }
 
-        private void Prompt_Load(object sender, EventArgs e) { USettings.LoadXml(UCommon.Xml_Path); }
+        private void Prompt_Load(object sender, EventArgs e)
+        {
+            USettings.LoadXml(UCommon.Xml_Path);
+
+        }
         private void htmlhandler_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             if (e.Url.ToString().ToLower().Split('?')[0].Contains("http"))
             {
                 UCommon.Warning("UPrompt do not support browse any internet url for security reason please stay local on machine !!!");
-                htmlhandler.Navigate($@"file:///{UCommon.Application_Path}View.html");
+                htmlhandler.Navigate($@"file:///{UCommon.Application_Path}UView.html");
             }
             if (e.Url.ToString().Contains("="))
             {
@@ -140,7 +149,8 @@ namespace UPrompt
                     {
                         string action_name = action.Split('=')[0];
                         string[] splitString = action.Split('=');
-                        string action_value = UParser.ParseSystemText(string.Join(",", splitString.Skip(1).ToArray()));
+                        string action_value = string.Join(",", splitString.Skip(1).ToArray());
+
                         if (action_name.Contains("INPUT_"))
                         {
                             UHandler.RunAction(action_name, action_value);
@@ -149,7 +159,7 @@ namespace UPrompt
                     foreach (string action in actions)
                     {
                         string action_name = action.Split('=')[0];
-                        string action_value = UParser.ParseSystemText(action.Split('=')[1]);
+                        string action_value = action.Split('=')[1];
                         if (!action_name.Contains("INPUT_"))
                         {
                             UHandler.RunAction(action_name, action_value);
@@ -160,39 +170,8 @@ namespace UPrompt
                 {
                     string action_code = System.Net.WebUtility.UrlDecode(e.Url.ToString()).Split('?')[1];
                     string action_name = action_code.Split('=')[0];
-                    string action_value = UParser.ParseSystemText(action_code.Split('=')[1]);
+                    string action_value = action_code.Split('=')[1];
                     UHandler.RunAction(action_name, action_value);
-                }
-            }
-        }
-
-        internal void ReversePictureBoxColors(PictureBox[] pictureBoxs)
-        {
-            foreach (PictureBox pictureBox in pictureBoxs)
-            {
-                Image image = pictureBox.Image;
-                if (image != null)
-                {
-                    Bitmap originalBitmap = new Bitmap(image.Width, image.Height);
-                    using (Graphics graphics = Graphics.FromImage(originalBitmap))
-                    {
-                        using (ImageAttributes attributes = new ImageAttributes())
-                        {
-                            ColorMatrix colorMatrix = new ColorMatrix(new float[][]
-                            {
-                                new float[] {-1, 0, 0, 0, 0},
-                                new float[] {0, -1, 0, 0, 0},
-                                new float[] {0, 0, -1, 0, 0},
-                                new float[] {0, 0, 0, 1, 0},
-                                new float[] {1, 1, 1, 0, 1}
-                            });
-
-                            attributes.SetColorMatrix(colorMatrix);
-                            graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height),
-                                0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
-                        }
-                    }
-                    pictureBox.Image = originalBitmap;
                 }
             }
         }
@@ -203,7 +182,7 @@ namespace UPrompt
             {
                 if (USettings.FirstLoadCompleted == false)
                 {
-                    ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
+                    UImage.ReverseImageColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
                 }
                 IconLigthMode = true;
                 float brightness = 0.2f;
@@ -217,7 +196,7 @@ namespace UPrompt
                     IconLigthMode = false;
                     if (USettings.FirstLoadCompleted == false)
                     {
-                        ReversePictureBoxColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
+                        UImage.ReverseImageColors(new PictureBox[] { closeButton, minimizeButton, maximizeButton });
                     }
                 }
                 float brightness = 0.1f;

@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Prompt));
             this.htmlhandler = new System.Windows.Forms.WebBrowser();
             this.TitleBar = new System.Windows.Forms.Panel();
+            this.Top = new System.Windows.Forms.Panel();
             this.ButtonSplitPanel = new System.Windows.Forms.TableLayoutPanel();
             this.closepan = new System.Windows.Forms.Panel();
             this.closeButton = new System.Windows.Forms.PictureBox();
@@ -63,10 +64,10 @@
             this.htmlhandler.IsWebBrowserContextMenuEnabled = false;
             this.htmlhandler.Location = new System.Drawing.Point(0, 0);
             this.htmlhandler.Margin = new System.Windows.Forms.Padding(0);
-            this.htmlhandler.MinimumSize = new System.Drawing.Size(20, 20);
+            this.htmlhandler.MinimumSize = new System.Drawing.Size(30, 31);
             this.htmlhandler.Name = "htmlhandler";
             this.htmlhandler.ScrollBarsEnabled = false;
-            this.htmlhandler.Size = new System.Drawing.Size(759, 402);
+            this.htmlhandler.Size = new System.Drawing.Size(1172, 634);
             this.htmlhandler.TabIndex = 0;
             this.htmlhandler.Url = new System.Uri("", System.UriKind.Relative);
             this.htmlhandler.WebBrowserShortcutsEnabled = false;
@@ -74,16 +75,29 @@
             // 
             // TitleBar
             // 
+            this.TitleBar.Controls.Add(this.Top);
             this.TitleBar.Controls.Add(this.ButtonSplitPanel);
             this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.TitleBar.Location = new System.Drawing.Point(0, 0);
-            this.TitleBar.Margin = new System.Windows.Forms.Padding(2);
             this.TitleBar.Name = "TitleBar";
-            this.TitleBar.Size = new System.Drawing.Size(800, 21);
+            this.TitleBar.Size = new System.Drawing.Size(1200, 39);
             this.TitleBar.TabIndex = 1;
             this.TitleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             this.TitleBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseMove);
             this.TitleBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseUp);
+            // 
+            // Top
+            // 
+            this.Top.Dock = System.Windows.Forms.DockStyle.Top;
+            this.Top.Location = new System.Drawing.Point(0, 0);
+            this.Top.Name = "Top";
+            this.Top.Size = new System.Drawing.Size(1042, 14);
+            this.Top.TabIndex = 1;
+            this.Top.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
+            this.Top.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
+            this.Top.MouseHover += new System.EventHandler(this.Vertical_MouseHover);
+            this.Top.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TopBorder_MouseMove);
+            this.Top.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Border_MouseUp);
             // 
             // ButtonSplitPanel
             // 
@@ -95,23 +109,23 @@
             this.ButtonSplitPanel.Controls.Add(this.maxpan, 1, 0);
             this.ButtonSplitPanel.Controls.Add(this.minpan, 0, 0);
             this.ButtonSplitPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ButtonSplitPanel.Location = new System.Drawing.Point(695, 0);
+            this.ButtonSplitPanel.Location = new System.Drawing.Point(1042, 0);
             this.ButtonSplitPanel.Margin = new System.Windows.Forms.Padding(0);
             this.ButtonSplitPanel.Name = "ButtonSplitPanel";
             this.ButtonSplitPanel.RowCount = 1;
             this.ButtonSplitPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ButtonSplitPanel.Size = new System.Drawing.Size(105, 21);
+            this.ButtonSplitPanel.Size = new System.Drawing.Size(158, 39);
             this.ButtonSplitPanel.TabIndex = 0;
             // 
             // closepan
             // 
             this.closepan.Controls.Add(this.closeButton);
             this.closepan.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.closepan.Location = new System.Drawing.Point(70, 0);
+            this.closepan.Location = new System.Drawing.Point(104, 0);
             this.closepan.Margin = new System.Windows.Forms.Padding(0);
             this.closepan.Name = "closepan";
-            this.closepan.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.closepan.Size = new System.Drawing.Size(35, 21);
+            this.closepan.Padding = new System.Windows.Forms.Padding(4, 8, 4, 8);
+            this.closepan.Size = new System.Drawing.Size(54, 39);
             this.closepan.TabIndex = 2;
             this.closepan.Click += new System.EventHandler(this.closeButton_Click);
             this.closepan.MouseEnter += new System.EventHandler(this.closeButton_MouseEnter);
@@ -122,10 +136,10 @@
             this.closeButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.closeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.closeButton.Image = global::UPrompt.Properties.Resources.CloseIcon;
-            this.closeButton.Location = new System.Drawing.Point(3, 5);
+            this.closeButton.Location = new System.Drawing.Point(4, 8);
             this.closeButton.Margin = new System.Windows.Forms.Padding(0);
             this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(29, 11);
+            this.closeButton.Size = new System.Drawing.Size(46, 23);
             this.closeButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.closeButton.TabIndex = 2;
             this.closeButton.TabStop = false;
@@ -137,11 +151,11 @@
             // 
             this.maxpan.Controls.Add(this.maximizeButton);
             this.maxpan.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.maxpan.Location = new System.Drawing.Point(35, 0);
+            this.maxpan.Location = new System.Drawing.Point(52, 0);
             this.maxpan.Margin = new System.Windows.Forms.Padding(0);
             this.maxpan.Name = "maxpan";
-            this.maxpan.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.maxpan.Size = new System.Drawing.Size(35, 21);
+            this.maxpan.Padding = new System.Windows.Forms.Padding(4, 8, 4, 8);
+            this.maxpan.Size = new System.Drawing.Size(52, 39);
             this.maxpan.TabIndex = 1;
             this.maxpan.Click += new System.EventHandler(this.maximizeButton_Click);
             this.maxpan.MouseEnter += new System.EventHandler(this.maximizeButton_MouseEnter);
@@ -151,10 +165,10 @@
             // 
             this.maximizeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.maximizeButton.Image = global::UPrompt.Properties.Resources.MaximizeIcon;
-            this.maximizeButton.Location = new System.Drawing.Point(3, 5);
+            this.maximizeButton.Location = new System.Drawing.Point(4, 8);
             this.maximizeButton.Margin = new System.Windows.Forms.Padding(0);
             this.maximizeButton.Name = "maximizeButton";
-            this.maximizeButton.Size = new System.Drawing.Size(29, 11);
+            this.maximizeButton.Size = new System.Drawing.Size(44, 23);
             this.maximizeButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.maximizeButton.TabIndex = 1;
             this.maximizeButton.TabStop = false;
@@ -169,8 +183,8 @@
             this.minpan.Location = new System.Drawing.Point(0, 0);
             this.minpan.Margin = new System.Windows.Forms.Padding(0);
             this.minpan.Name = "minpan";
-            this.minpan.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.minpan.Size = new System.Drawing.Size(35, 21);
+            this.minpan.Padding = new System.Windows.Forms.Padding(4, 8, 4, 8);
+            this.minpan.Size = new System.Drawing.Size(52, 39);
             this.minpan.TabIndex = 0;
             this.minpan.Click += new System.EventHandler(this.minimizeButton_Click);
             this.minpan.MouseEnter += new System.EventHandler(this.minimizeButton_MouseEnter);
@@ -180,10 +194,10 @@
             // 
             this.minimizeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.minimizeButton.Image = global::UPrompt.Properties.Resources.MinimizeIcon;
-            this.minimizeButton.Location = new System.Drawing.Point(3, 5);
+            this.minimizeButton.Location = new System.Drawing.Point(4, 8);
             this.minimizeButton.Margin = new System.Windows.Forms.Padding(0);
             this.minimizeButton.Name = "minimizeButton";
-            this.minimizeButton.Size = new System.Drawing.Size(29, 11);
+            this.minimizeButton.Size = new System.Drawing.Size(44, 23);
             this.minimizeButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.minimizeButton.TabIndex = 0;
             this.minimizeButton.TabStop = false;
@@ -195,10 +209,9 @@
             // 
             this.Left.Controls.Add(this.cornerleft);
             this.Left.Dock = System.Windows.Forms.DockStyle.Left;
-            this.Left.Location = new System.Drawing.Point(0, 21);
-            this.Left.Margin = new System.Windows.Forms.Padding(2);
+            this.Left.Location = new System.Drawing.Point(0, 39);
             this.Left.Name = "Left";
-            this.Left.Size = new System.Drawing.Size(21, 429);
+            this.Left.Size = new System.Drawing.Size(13, 653);
             this.Left.TabIndex = 2;
             this.Left.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.Left.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -209,10 +222,9 @@
             // cornerleft
             // 
             this.cornerleft.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.cornerleft.Location = new System.Drawing.Point(0, 402);
-            this.cornerleft.Margin = new System.Windows.Forms.Padding(2);
+            this.cornerleft.Location = new System.Drawing.Point(0, 629);
             this.cornerleft.Name = "cornerleft";
-            this.cornerleft.Size = new System.Drawing.Size(21, 27);
+            this.cornerleft.Size = new System.Drawing.Size(13, 24);
             this.cornerleft.TabIndex = 1;
             this.cornerleft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.cornerleft.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -224,24 +236,22 @@
             // 
             this.Bottom.Controls.Add(this.cornerright);
             this.Bottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.Bottom.Location = new System.Drawing.Point(21, 423);
-            this.Bottom.Margin = new System.Windows.Forms.Padding(2);
+            this.Bottom.Location = new System.Drawing.Point(13, 673);
             this.Bottom.Name = "Bottom";
-            this.Bottom.Size = new System.Drawing.Size(779, 27);
+            this.Bottom.Size = new System.Drawing.Size(1187, 19);
             this.Bottom.TabIndex = 3;
             this.Bottom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.Bottom.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
-            this.Bottom.MouseHover += new System.EventHandler(this.Bottom_MouseHover);
+            this.Bottom.MouseHover += new System.EventHandler(this.Vertical_MouseHover);
             this.Bottom.MouseMove += new System.Windows.Forms.MouseEventHandler(this.BottomBorder_MouseMove);
             this.Bottom.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Border_MouseUp);
             // 
             // cornerright
             // 
             this.cornerright.Dock = System.Windows.Forms.DockStyle.Right;
-            this.cornerright.Location = new System.Drawing.Point(759, 0);
-            this.cornerright.Margin = new System.Windows.Forms.Padding(2);
+            this.cornerright.Location = new System.Drawing.Point(1172, 0);
             this.cornerright.Name = "cornerright";
-            this.cornerright.Size = new System.Drawing.Size(20, 27);
+            this.cornerright.Size = new System.Drawing.Size(15, 19);
             this.cornerright.TabIndex = 0;
             this.cornerright.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.cornerright.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -252,10 +262,9 @@
             // Right
             // 
             this.Right.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Right.Location = new System.Drawing.Point(780, 21);
-            this.Right.Margin = new System.Windows.Forms.Padding(2);
+            this.Right.Location = new System.Drawing.Point(1185, 39);
             this.Right.Name = "Right";
-            this.Right.Size = new System.Drawing.Size(20, 402);
+            this.Right.Size = new System.Drawing.Size(15, 634);
             this.Right.TabIndex = 4;
             this.Right.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.Right.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -267,17 +276,18 @@
             // 
             this.body.Controls.Add(this.htmlhandler);
             this.body.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.body.Location = new System.Drawing.Point(21, 21);
+            this.body.Location = new System.Drawing.Point(13, 39);
+            this.body.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.body.Name = "body";
-            this.body.Size = new System.Drawing.Size(759, 402);
+            this.body.Size = new System.Drawing.Size(1172, 634);
             this.body.TabIndex = 5;
             // 
             // Prompt
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1200, 692);
             this.Controls.Add(this.body);
             this.Controls.Add(this.Right);
             this.Controls.Add(this.Bottom);
@@ -285,6 +295,7 @@
             this.Controls.Add(this.TitleBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Prompt";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "UPrompt DEMO";
@@ -320,6 +331,7 @@
         internal System.Windows.Forms.Panel cornerleft;
         internal System.Windows.Forms.Panel cornerright;
         public System.Windows.Forms.WebBrowser htmlhandler;
+        private System.Windows.Forms.Panel Top;
     }
 }
 

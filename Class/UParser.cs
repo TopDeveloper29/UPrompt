@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Shapes;
 using System.Xml;
-using UPrompt.Class;
+using UPrompt.Internal;
 
 namespace UPrompt.Class
 {
@@ -23,20 +17,27 @@ namespace UPrompt.Class
         {
             HtmlFromXml = null;
         }
+        public static void ReloadView()
+        {
+            ClearHtml();
+            UCommon.XmlDocument.Load(UCommon.Xml_Path);
+            GenerateView(UCommon.XmlDocument.SelectSingleNode("/Application/View"));
+        }
         internal static void GenerateView(XmlNode viewNode)
         {
-            HtmlFromXml = null;
+            ClearHtml();
             UCommon.DebugXmlLineNumber = (File.ReadAllLines(UCommon.Xml_Path).Length - USettings.Count) - 5;
             foreach (XmlNode childNode in viewNode.ChildNodes)
             {
                 HtmlFromXml = GenerateHtmlFromXML(childNode.OuterXml);
             }
+
             if (HtmlFromXml.Length < 5) { HtmlFromXml = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
             HtmlFromXml = $"{CSSLink}\n{HtmlFromXml}";
-            string Template = File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\Index.html");
+            string Template = File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.html");
             string html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", HtmlFromXml);
 
-            File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\View.html", UParser.ParseSettingsText(html));
+            File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UView.html", ParseSettingsText(html));
 
         }
         public static string ParseSettingsText(string Text)
@@ -49,7 +50,17 @@ namespace UPrompt.Class
                 .Replace("#FADE_MAIN_COLOR#", USettings.Fade_Main_Color)
                 .Replace("#ITEM_MARGIN#", USettings.Item_Margin)
                 .Replace("#MAIN_TEXT_COLOR#", USettings.Text_Main_Color)
-                .Replace("#FONT_NAME#", USettings.Font_Name);
+                .Replace("#FONT_NAME#", USettings.Font_Name)
+                .Replace("#WINDOWSOPENMODE#", USettings.WindowsOpenMode)
+                .Replace("#WINDWOWSRESIZEMODE#", USettings.WindowsResizeMode)
+                .Replace("#SHOWMINIMIZE#", USettings.ShowMinimize.ToString())
+                .Replace("#SHOWMAXIMIZE#", USettings.ShowMaximize.ToString())
+                .Replace("#SHOWCLOSE#", USettings.ShowClose.ToString())
+                .Replace("#WIDTH#", USettings.Width.ToString())
+                .Replace("#HEIGHT#", USettings.Height.ToString())
+                .Replace("#PRODUCTION#", USettings.Production.ToString())
+
+                ;
 
             return ParsedText;
         }
@@ -61,9 +72,8 @@ namespace UPrompt.Class
                     .Replace("{USER}", Environment.UserName)
                     .Replace("{DEVICE}", Environment.MachineName)
                     .Replace("{n}", "\n")
-                    .Replace("{c}", ",")
-                    .Replace("{Application_Path}", UCommon.Application_Path)
                     .Replace("{AppPath}", UCommon.Application_Path)
+                    .Replace("{AppPathWindows}", UCommon.Application_Path_Windows)
                     ;
                 //Internal Input Variable Replace
                 foreach (string Key in UCommon.Variable.Keys)
@@ -78,7 +88,7 @@ namespace UPrompt.Class
         internal static void AddJsInputHandler(string ID)
         {
             string scriptContent = $"const Input_{ID} = document.getElementById(\"{ID}\");\n" +
-                       $"Input_{ID}.addEventListener(\"change\", function() {{\n" +
+                       $"Input_{ID}.addEventListener(\"change\" , function() {{\n" +
                        $"const myForm = document.getElementById(\"UForm\");\r\nmyForm.submit();\r\n" +
                        "});";
             HtmlFromXml += $"<script>{scriptContent}</script>";
@@ -121,7 +131,7 @@ namespace UPrompt.Class
                 {
                     RealImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromUrl(ImagePath)}";
                     UImage.DownloadImage(ImagePath, RealImagePath);
-                    
+
                 }
                 else
                 {
@@ -132,137 +142,139 @@ namespace UPrompt.Class
                 if (UImage.IsDark(UCommon.Windows.TitleBar.BackColor) && ImageAutoColor.ToLower().Contains("true"))
                 {
                     Image TempImage = Image.FromFile(RealImagePath);
-                    
+
                     UImage.ReverseImageColors(TempImage, RealImagePath);
                 }
                 ExtraStyle += $"background-image: url('{UCommon.Application_Path}Resources/Icon/{UImage.GetImageNameFromLocalPath(RealImagePath)}');background-size: {ImageSize}%;background-repeat: no-repeat;background-position: center;";
             }
 
-            // Check what kind of node is it 
-            switch (childNode.Name)
+            if (!USettings.ElementsParsingSkip.Contains(Id))
             {
-                case "ViewSpacer":
-                    HtmlFromXml += "<div class=\"Spacer\">.</div>";
 
-                    break;
-                case "ViewInput":
-                    //action that must be apply for all type of ViewInput
-                    if (UCommon.Variable.ContainsKey(Id)){ InnerValue = ParseSystemText(UCommon.Variable[Id]); }
-                    if (Action != null){ GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
+                // Check what kind of node is it 
+                switch (childNode.Name)
+                {
+                    case "ViewInput":
+                        //action that must be apply for all type of ViewInput
+                        if (UCommon.Variable.ContainsKey(Id)) { InnerValue = ParseSystemText(UCommon.Variable[Id]); }
+                        if (Action != null) { GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
 
-                    switch (Type)
-                    {
-                        default:
-                        case "TextBox":
-                            HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
-                            AddJsInputHandler(Id);
-                            break;
-                        case "LinesBox":
-                            HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
-                            AddJsInputHandler(Id);
-                            break;
-                        case "DropDown":
-                        case "Drop":
-                        case "dropdown":
-                            string url = "https://static.thenounproject.com/png/1590826-200.png";
-                            string RealDropImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromUrl(url)}";
-                            UImage.DownloadImage(url, RealDropImagePath);
-                            if (UImage.IsDark(UCommon.Windows.TitleBar.BackColor))
-                            {
-                                Image TempImage = Image.FromFile(RealDropImagePath);
-                                UImage.ReverseImageColors(TempImage, RealDropImagePath);
-                            }
-                            string dropstyle = $"background-image: url('{UCommon.Application_Path}Resources/Icon/{UImage.GetImageNameFromLocalPath(RealDropImagePath)}');";
-
- 
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" class=\"dropdown {Class}\">\n";
-                            HtmlFromXml += $"<input style=\"{dropstyle}\" readonly type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>\n";
-                            HtmlFromXml += $"<div class=\"dropdown-content\">\n";
-                            if (DropList == null)
-                            {
-                                HtmlFromXml += $"<a href=\"#\">{InnerValue}</a>\n";
-                            }
-                            else
-                            {
-                                foreach (string line in DropList.Split(','))
+                        switch (Type)
+                        {
+                            default:
+                            case "TextBox":
+                                HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
+                                break;
+                            case "LinesBox":
+                                HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
+                                break;
+                            case "CheckBox":
+                                break;
+                            case "DropDown":
+                                string url = "https://static.thenounproject.com/png/1590826-200.png";
+                                string RealDropImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromUrl(url)}";
+                                UImage.DownloadImage(url, RealDropImagePath);
+                                if (UImage.IsDark(UCommon.Windows.TitleBar.BackColor))
                                 {
-                                    HtmlFromXml += $"<a href=\"#\">{line}</a>\n";
+                                    Image TempImage = Image.FromFile(RealDropImagePath);
+                                    UImage.ReverseImageColors(TempImage, RealDropImagePath);
                                 }
-                            }
-                            HtmlFromXml += $"</div>\n";
-                            HtmlFromXml += $"</div>\n";
-                            break;
-                    }
-                    break;
-                case "ViewItem":
-                    switch (Type)
-                    {
-                        case "Title":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title {Class}\">{InnerValue}</div>\n";
-                            break;
+                                string dropstyle = $"background-image: url('{UCommon.Application_Path}Resources/Icon/{UImage.GetImageNameFromLocalPath(RealDropImagePath)}');";
 
-                        case "Label":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label {Class}\">{InnerValue}</div>\n";
-                            break;
 
-                        case "LabelBox":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
-                            break;
-                        default:
-                        case "Row":
-                            HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row {Class}\">\n";
-                            foreach (XmlNode rowChildNode in childNode.ChildNodes)
-                            {
-                                GenerateHtmlFromXML(rowChildNode.OuterXml);
-                            }
-                            HtmlFromXml += "</div>\n";
-                            break;
-                    }
-                    break;
-                case "ViewAction":
-                    switch (Type)
-                    {
-                        case "Linker":
-                            string source = childNode.Attributes["Source"]?.Value;
-                            string target = childNode.Attributes["Target"]?.Value;
-                            if (source != null && target != null)
-                            {
-                                HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"Linker_{source}\" value=\"{target}\"/>\n";
-                            }
-                            else
-                            {
-                                UCommon.Warning($"Linker must include property Source and Target that is not empty (xml line: {UCommon.DebugXmlLineNumber})", "Linker Error");
-                            }
-                            break;
-                        default:
-                        case "Button":
-                            HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"{Id}::ID::{Action}\" value=\"{Argument}\">{InnerValue}</button>\n";
-                            break;
-                        case "InputHandler":
-                            HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"InputHandler_{InnerValue}::Action::{Id}::ID::{Action}\" value=\"{Argument}\"/>\n";
-                            break;
-                        case "ViewLoad":
-                            HtmlFromXml += $"<input hidden=\"hidden\" name=\"OnLoad_{Action}\" value=\"{Argument}\"/>\n";
-                            break;
-                        case "VariableHandler":
-                            try
-                            {
-                                if (!UCommon.TrackedVariable.TryGetValue(InnerValue,out ActionStorage acs))
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" class=\"dropdown {Class}\">\n";
+                                HtmlFromXml += $"<input style=\"{dropstyle}\" readonly type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>\n";
+                                HtmlFromXml += $"<div class=\"dropdown-content\">\n";
+                                if (DropList == null)
                                 {
-                                    UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument,UCommon.GetVariable(InnerValue)));
+                                    HtmlFromXml += $"<a href=\"#\">{InnerValue}</a>\n";
                                 }
-                            }
-                            catch(Exception ex) { MessageBox.Show(ex.Message); }
-                            break;
-                    }
-                    break;
-                default:
-                    HtmlFromXml += ParseSystemText($"{childNode.OuterXml}\n");
+                                else
+                                {
+                                    foreach (string line in DropList.Split(','))
+                                    {
+                                        HtmlFromXml += $"<a href=\"#\">{line}</a>\n";
+                                    }
+                                }
+                                HtmlFromXml += $"</div>\n";
+                                HtmlFromXml += $"</div>\n";
+                                break;
+                        }
+                        AddJsInputHandler(Id);
+                        break;
+                    case "ViewItem":
+                        switch (Type)
+                        {
+                            case "Spacer":
+                                HtmlFromXml += "<div class=\"Spacer\">.</div>";
+                                break;
+                            case "Title":
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title {Class}\">{InnerValue}</div>\n";
+                                break;
 
-                    break;
+                            case "Label":
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label {Class}\">{InnerValue}</div>\n";
+                                break;
+
+                            case "LabelBox":
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
+                                break;
+                            default:
+                            case "Row":
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row {Class}\">\n";
+                                foreach (XmlNode rowChildNode in childNode.ChildNodes)
+                                {
+                                    GenerateHtmlFromXML(rowChildNode.OuterXml);
+                                }
+                                HtmlFromXml += "</div>\n";
+                                break;
+                        }
+                        break;
+                    case "ViewAction":
+                        switch (Type)
+                        {
+                            case "Linker":
+                                string source = childNode.Attributes["Source"]?.Value;
+                                string target = childNode.Attributes["Target"]?.Value;
+                                if (source != null && target != null)
+                                {
+                                    HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"Linker_{source}\" value=\"{target}\"/>\n";
+                                }
+                                else
+                                {
+                                    UCommon.Warning($"Linker must include property Source and Target that is not empty (xml line: {UCommon.DebugXmlLineNumber})", "Linker Error");
+                                }
+                                break;
+                            default:
+                            case "Button":
+                                HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"{Id}::ID::{Action}\" value=\"{Argument}\">{InnerValue}</button>\n";
+                                break;
+                            case "InputHandler":
+                                HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"InputHandler_{InnerValue}::Action::{Id}::ID::{Action}\" value=\"{Argument}\"/>\n";
+                                break;
+                            case "ViewLoad":
+                                HtmlFromXml += $"<input hidden=\"hidden\" name=\"OnLoad_{Action}\" value=\"{Argument}\"/>\n";
+                                break;
+                            case "VariableHandler":
+                                try
+                                {
+                                    if (!UCommon.TrackedVariable.TryGetValue(InnerValue, out ActionStorage acs))
+                                    {
+                                        UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue)));
+                                    }
+                                }
+                                catch (Exception ex) { MessageBox.Show(ex.Message); }
+                                break;
+                        }
+                        break;
+                    default:
+                        HtmlFromXml += ParseSystemText($"{childNode.OuterXml}\n");
+
+                        break;
+                }
             }
             return HtmlFromXml;
         }
-    
+
     }
 }

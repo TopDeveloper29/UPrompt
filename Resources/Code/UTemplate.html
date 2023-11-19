@@ -1,0 +1,71 @@
+<!-- Do not change structure of html, body, form or the == XML CODE WILL GENERATE THIS VIEW == . You could add css to style and add html under the form !-->
+<!-- All style element are normal css exept for the element under # thease one will represent a setting value in xml !-->
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta charset="UTF-8">
+
+    <style>
+        /*This is the css for template html element*/
+        body {
+            font-family: #FONT_NAME#;
+            color: #TEXT_COLOR#;
+            background-color: #BACKGROUND_COLOR#;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            margin: 1%;
+        }
+
+            body::-webkit-scrollbar {
+                display: none;
+            }
+
+        .root {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 98%;
+            width: 96%;
+            padding: 1%;
+        }
+    </style>
+    <link rel="stylesheet" href="UTemplate.css">
+</head>
+
+    <body>
+        <form id="UForm" action="UView.html?LOCAL:" method="get" class="root">
+            === XML CODE WILL GENERATE THIS VIEW ===
+        </form>
+
+        <!-- This script is use from dropdown element !-->
+        <script>
+            const dropdowns = document.querySelectorAll(".dropdown");
+            for (let i = 0; i < dropdowns.length; i++) {
+                const dropdown = dropdowns[i];
+                const input = dropdown.querySelector("input[type='text']");
+                const options = dropdown.querySelectorAll(".dropdown-content a");
+
+                input.addEventListener("click", function () {
+                    dropdown.classList.toggle("open");
+                });
+
+                for (let j = 0; j < options.length; j++) {
+                    const option = options[j];
+                    option.addEventListener("click", function (event) {
+                        const selectedOption = event.target.textContent;
+                        input.value = selectedOption;
+                        dropdown.classList.remove("open");
+                        event.preventDefault();
+                    });
+                }
+                document.addEventListener("click", function (event) {
+                    if (!dropdown.contains(event.target)) {
+                        dropdown.classList.remove("open");
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>

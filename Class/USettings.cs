@@ -3,37 +3,31 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Lifetime;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Media.Media3D;
 using System.Xml;
-using System.Xml.Linq;
-using UPrompt.Class;
+using UPrompt.Internal;
 
 namespace UPrompt.Class
 {
-    public class SettingList : List<Setting>
+    public class USettingList : List<USetting>
     {
-        public SettingList() { }
-        public SettingList(IEnumerable<Setting> settings) { this.AddRange(settings); }
-        public new void Add(Setting setting)
+        public USettingList() { }
+        public USettingList(IEnumerable<USetting> settings) { this.AddRange(settings); }
+        public new void Add(USetting setting)
         {
             base.Add(setting);
         }
         public void Add(string Name, string Value, string Id)
         {
-            this.Add(new Setting(Name, Value, Id));
+            this.Add(new USetting(Name, Value, Id));
         }
     }
-    public class Setting
+    public class USetting
     {
         public string Name { get; set; }
         public string Value { get; set; }
         public string Id { get; set; }
-        public Setting(string Name,string Value,string Id)
+        public USetting(string Name,string Value,string Id)
         {
             this.Name = Name;
             this.Value = UParser.ParseSystemText(Value);
@@ -42,7 +36,17 @@ namespace UPrompt.Class
     }
     public class USettings
     {
+        // Properties that do not reflect any system or view setting
         public static bool SkipSystemParsing {  get; set; } = false;
+        public static int Count { get; private set; } = 0;
+        public static string Raw { get; private set; } = string.Empty;
+        public static List<string> ElementsParsingSkip { get; set; } = new List<string>();
+        internal static int PowershellFallbackId { get; private set; } = 0;
+        internal static int ExtentionFallbackId { get; private set; } = 0;
+        internal static bool FirstLoadCompleted { get; private set; } = false;
+        
+
+        // All settings that reflect system and view setting (can be set using Load)
         public static string Text_Color { get; private set; } = "#fff";
         public static string Back_Color { get; private set; } = "#22252e";
         public static string Main_Color { get; private set; } = "#272c33";
@@ -51,19 +55,19 @@ namespace UPrompt.Class
         public static string Fade_Main_Color { get; private set; } = "#fff";
         public static string WindowsOpenMode { get; private set; } = "Normal";
         public static string WindowsResizeMode { get; private set; } = "All";
-        public static bool AllowMinimize { get; private set; } = true;
-        public static bool AllowMaximize { get; private set; } = true;
-        public static bool AllowClose { get; private set; } = true;
+        public static bool ShowMinimize { get; private set; } = true;
+        public static bool ShowMaximize { get; private set; } = true;
+        public static bool ShowClose { get; private set; } = true;
         public static int Width { get; private set; } = 600;
         public static int Height { get; private set; } = 600;
         public static string Item_Margin { get; private set; } = "3%";
         public static string Font_Name { get; private set; } = "Arial";
         public static bool Production { get; private set; } = false;
-        public static string Raw { get; private set; } = string.Empty;
-        public static int Count { get; private set; } = 0;
-        internal static int PowershellFallbackId { get; private set; } = 0 ;
-        internal static int ExtentionFallbackId { get; private set; } = 0;
-        internal static bool FirstLoadCompleted = false;
+
+        public static void ReLoad()
+        {
+            Load(UCommon.XmlDocument.SelectNodes("//Application/Setting"));
+        }
         public static void Load(XmlNodeList settingsList)
         {
             Raw = settingsList.ToString();
@@ -83,9 +87,9 @@ namespace UPrompt.Class
             ParseSettingsFromXml(Name, Value, Id);
             NewFadeColor();
         }
-        public static void Load(SettingList settings)
+        public static void Load(USettingList settings)
         {
-            foreach (Setting setting in settings)
+            foreach (USetting setting in settings)
             {
                 ParseSettingsFromXml(setting.Name, setting.Value, setting.Id);
             }
@@ -94,14 +98,16 @@ namespace UPrompt.Class
         public static void LoadXml(string path,bool loadsettings = true)
         {
             UCommon.Xml_Path = path;
-            try{ UCommon.xmlDoc.Load(path);}
-            catch (Exception ex) { UCommon.Error($"{ex.Message}\n\n{UCommon.xmlDoc.InnerXml}", "Fatal error on XML Parsing"); }
+            try{ UCommon.XmlDocument.Load(path);}
+            catch (Exception ex) { UCommon.Error($"{ex.Message}\n\n{UCommon.XmlDocument.InnerXml}", "Fatal error on XML Parsing"); }
             if (loadsettings)
             {
-                Load(UCommon.xmlDoc.SelectNodes("//Application/Setting"));
+                Load(UCommon.XmlDocument.SelectNodes("//Application/Setting"));
+                string css = UParser.ParseSettingsText(File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.css"));
+                File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.css", css);
             }
-            UParser.GenerateView(UCommon.xmlDoc.SelectSingleNode("/Application/View"));
-            UCommon.Windows.htmlhandler.Navigate($"file:///{UCommon.Application_Path}Resources/Code/View.html");
+            UParser.ReloadView();
+            UCommon.Windows.htmlhandler.Navigate($"file:///{UCommon.Application_Path}Resources/Code/UView.html");
         }
         private static void NewFadeColor()
         {
@@ -115,8 +121,30 @@ namespace UPrompt.Class
             value = UParser.ParseSystemText(value);
             switch (name)
             {
-                case "Style":
-                case "css":
+                case "Production":
+                    try
+                    {
+                        Production = bool.Parse(value);
+                    }
+                    catch { UCommon.Warning($"The setting {name} as invalid value \"{value}\" it must be a boolean", WarningTitle); }
+                    break;
+                case "OnLoad":
+                    try
+                    {
+                        UHandler.RunAction(value.Split(',')[0], string.Join(",",value.Split(',').Skip(1).ToArray()));
+                    }
+                    catch { UCommon.Warning($"{name} value must be like Value=\"ActionName,ActionArgument\"", WarningTitle); }
+                    break;
+                case "SkipElementParsing":
+                    if (value != null)
+                    {
+                        ElementsParsingSkip.Add(value);
+                    }
+                    else
+                    {
+                        UCommon.Warning($"{name} provide an string that represent the id of element", WarningTitle);
+                    }
+                    break;
                 case "CSS":
                     if (File.Exists(value) && value.ToLower().Contains(".css"))
                     {
@@ -132,14 +160,12 @@ namespace UPrompt.Class
                     }
                     break;
                 case "Variable":
-                case "Var":
-                case "var":
 
                     if (value.Contains(","))
                     {
                         if (value.Split(',')[1].Contains($"[{value.Split(',')[0]}]"))
                         {
-                            if (UCommon.GetVariable(value.Split(',')[0]) == null) { UCommon.SetVariable(value.Split(',')[0], ""); break; }
+                            if (UCommon.GetVariable(value.Split(',')[0]) == null) { UCommon.SetVariable(value.Split(',')[0], $""); break; }
                         }
                         UCommon.SetVariable(value.Split(',')[0], UParser.ParseSystemText(value.Split(',')[1]));
                     }
@@ -149,11 +175,8 @@ namespace UPrompt.Class
                     }
   
                     break;
-               
+ 
                 case "Extention":
-                case "C#":
-                case "CSharp":
-                case "DLL":
                     string path = "";
                     string namespc = "";
                     try
@@ -177,7 +200,6 @@ namespace UPrompt.Class
                     else { UCommon.Warning($"The file could not be found {path}"); }
                     break;
                 case "Powershell":
-                case "PS":
                     if (File.Exists(value))
                     {
                         if (id == null)
@@ -202,8 +224,7 @@ namespace UPrompt.Class
                     }
                     PowershellFallbackId++;
                     break;
-
-                case "Font-Name":
+                
                 case "Font":
                     Font_Name = value;
                     break;
@@ -225,24 +246,7 @@ namespace UPrompt.Class
                         UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a size like ({value}px or {value}%)", WarningTitle);
                     }
                     break;
-                case "Text-Color":
-                    try
-                    {
-                        string color = value;
-                        if (color.Contains("#") && color.Length > 3 && color.Length < 8)
-                        {
-                            Text_Color = color;
-                        }
-                        else
-                        {
-                            UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
-                        }
-                    }
-                    catch
-                    {
-                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
-                    }
-                    break;
+                
                 case "Application-Color":
                     try
                     {
@@ -257,6 +261,24 @@ namespace UPrompt.Class
                             UCommon.Windows.TitleBar.BackColor = RealColor;
                             UCommon.Windows.UpdateTitleBarColor();
                             FirstLoadCompleted = true;
+                        }
+                        else
+                        {
+                            UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                        }
+                    }
+                    catch
+                    {
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
+                    }
+                    break;
+                case "Text-Color":
+                    try
+                    {
+                        string color = value;
+                        if (color.Contains("#") && color.Length > 3 && color.Length < 8)
+                        {
+                            Text_Color = color;
                         }
                         else
                         {
@@ -304,7 +326,7 @@ namespace UPrompt.Class
                         UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                     }
                     break;
-
+                
                 case "Width":
                     try
                     {
@@ -376,7 +398,6 @@ namespace UPrompt.Class
                     }
                     break;
                 case "WindowsOpenMode":
-                case "OpenMode":
                     string WindowsMode = value;
                     switch (value)
                     {
@@ -397,55 +418,7 @@ namespace UPrompt.Class
                             break;
                     }
                     break;
-
-                case "AllowMinimize":
-                case "Minimize":
-                case "Min":
-                    try
-                    {
-                        AllowMinimize = bool.Parse(value);
-                        UCommon.Windows.MinimizeBox = AllowMinimize;
-                        UCommon.Windows.UpdateTitleBarIconAndFunction();
-                    }
-                    catch
-                    {
-                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a boolean", WarningTitle);
-                    }
-                    break;
-
-                case "AllowMaximize":
-                case "Maximize":
-                case "Max":
-                    try
-                    {
-                        AllowMaximize = bool.Parse(value);
-                        UCommon.Windows.MaximizeBox = AllowMaximize;
-                        UCommon.Windows.UpdateTitleBarIconAndFunction();
-                    }
-                    catch
-                    {
-                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a boolean", WarningTitle);
-                    }
-                    break;
-
-                case "AllowClose":
-                case "Close":
-                    bool Frame = bool.Parse(value);
-                    UCommon.Windows.ControlBox = Frame;
-                    UCommon.Windows.UpdateTitleBarIconAndFunction();
-                    break;
-
-                case "Production":
-                case "Release":
-                case "Prod":
-                    try
-                    {
-                        Production = bool.Parse(value);
-                    }
-                    catch { UCommon.Warning($"The setting {name} as invalid value \"{value}\" it must be a boolean", WarningTitle); }
-                    break;
                 case "Application-Icon":
-                case "Icon":
                     if (File.Exists(value))
                     {
                         try
@@ -460,9 +433,39 @@ namespace UPrompt.Class
                         UCommon.Warning($"Could not find this file: \"{value}\"!!!");
                     }
                     break;
-
                 case "Application-Title":
                     UCommon.Windows.Text = value;
+                    break;
+
+                case "ShowMinimize":
+                    try
+                    {
+                        ShowMinimize = bool.Parse(value);
+                        UCommon.Windows.MinimizeBox = ShowMinimize;
+                        UCommon.Windows.UpdateTitleBarIconAndFunction();
+                    }
+                    catch
+                    {
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a boolean", WarningTitle);
+                    }
+                    break;
+                case "ShowMaximize":
+
+                    try
+                    {
+                        ShowMaximize = bool.Parse(value);
+                        UCommon.Windows.MaximizeBox = ShowMaximize;
+                        UCommon.Windows.UpdateTitleBarIconAndFunction();
+                    }
+                    catch
+                    {
+                        UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a boolean", WarningTitle);
+                    }
+                    break;
+                case "ShowClose":
+                    bool Frame = bool.Parse(value);
+                    UCommon.Windows.ControlBox = Frame;
+                    UCommon.Windows.UpdateTitleBarIconAndFunction();
                     break;
                 default:
                     UCommon.Warning($"This setting \"{name}\" is unknow please provide valid settings", WarningTitle);

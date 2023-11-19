@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Drawing;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Net;
+using System.Windows.Forms;
 
-namespace UPrompt.Class
+namespace UPrompt.Internal
 {
     internal class UImage
     {
@@ -29,7 +26,6 @@ namespace UPrompt.Class
         {
             if (IsUrl(path))
             {
-                // Download image from URL
                 using (WebClient client = new WebClient())
                 {
                     client.DownloadFile(path, outputLocation);
@@ -37,7 +33,6 @@ namespace UPrompt.Class
             }
             else
             {
-                // Copy local file to output location
                 File.Copy(path, outputLocation, true);
             }
         }
@@ -79,6 +74,36 @@ namespace UPrompt.Class
                 image.Dispose();
                 File.Delete(outputFilePath);
                 originalBitmap.Save(outputFilePath);
+            }
+        }
+        internal static void ReverseImageColors(PictureBox[] pictureBoxs)
+        {
+            foreach (PictureBox pictureBox in pictureBoxs)
+            {
+                Image image = pictureBox.Image;
+                if (image != null)
+                {
+                    Bitmap originalBitmap = new Bitmap(image.Width, image.Height);
+                    using (Graphics graphics = Graphics.FromImage(originalBitmap))
+                    {
+                        using (ImageAttributes attributes = new ImageAttributes())
+                        {
+                            ColorMatrix colorMatrix = new ColorMatrix(new float[][]
+                            {
+                                new float[] {-1, 0, 0, 0, 0},
+                                new float[] {0, -1, 0, 0, 0},
+                                new float[] {0, 0, -1, 0, 0},
+                                new float[] {0, 0, 0, 1, 0},
+                                new float[] {1, 1, 1, 0, 1}
+                            });
+
+                            attributes.SetColorMatrix(colorMatrix);
+                            graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height),
+                                0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+                        }
+                    }
+                    pictureBox.Image = originalBitmap;
+                }
             }
         }
 
