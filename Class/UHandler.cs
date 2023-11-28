@@ -4,10 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace UPrompt.Class
 {
@@ -155,48 +158,98 @@ namespace UPrompt.Class
         public static string LastActionOutput { get; private set; } = "";
         public static Collection<PowershellHandler> PowershellHandlers { get; private set; } = new Collection<PowershellHandler>();
         public static Collection<ExtentionHandler> ExtentionHandlers { get; private set; } = new Collection<ExtentionHandler>();
-
-        public static void RunAction(string ActionName, string ActionValue)
+        private static string Decrypt(string encryptedText, string encryptionKey)
         {
-            if (ActionName.Contains("InputHandler_") || ActionName.Contains("INPUT_") || ActionName.Contains("Linker_") || ActionName.Contains("OnLoad_"))
+            byte[] cipherTextBytes = Convert.FromBase64String(encryptedText);
+
+            byte[] keyBytes = new Rfc2898DeriveBytes(encryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 }, 1000).GetBytes(32);
+
+            using (Aes aes = Aes.Create())
             {
-                if (ActionName.Contains("InputHandler_"))
+                aes.Key = keyBytes;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+
+                int ivLength = BitConverter.ToInt32(cipherTextBytes, 0);
+                byte[] iv = new byte[ivLength];
+                Array.Copy(cipherTextBytes, sizeof(int), iv, 0, ivLength);
+
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    string Runner_Input_Id = ActionName.Split(new string[] { "InputHandler_" }, StringSplitOptions.None)[1].Split(new string[] { "::Action::" }, StringSplitOptions.None)[0];
-                    string Runner_Action = ActionName.Split(new string[] { "::Action::" }, StringSplitOptions.None)[1];
-                    if (UCommon.PreviousVariable.ContainsKey(Runner_Input_Id))
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, aes.CreateDecryptor(aes.Key, iv), CryptoStreamMode.Write))
                     {
-                        if (UCommon.Variable[Runner_Input_Id] != UCommon.PreviousVariable[Runner_Input_Id])
+                        cryptoStream.Write(cipherTextBytes, sizeof(int) + ivLength, cipherTextBytes.Length - sizeof(int) - ivLength);
+                    }
+
+                    byte[] decryptedBytes = memoryStream.ToArray();
+
+                    // Remove padding from decrypted data
+                    int paddingSize = decryptedBytes[decryptedBytes.Length - 1];
+                    byte[] unpaddedBytes = new byte[decryptedBytes.Length - paddingSize];
+                    Array.Copy(decryptedBytes, unpaddedBytes, unpaddedBytes.Length);
+
+                    return Encoding.UTF8.GetString(unpaddedBytes);
+                }
+            }
+        }
+
+        public static void HandlePost(string json)
+        {
+            json = json.Substring(0, json.Length - 1).Substring(1).Replace(@"\", null);
+            JObject jsonObject = JsonConvert.DeserializeObject<JObject>(json);
+
+            // Accessing properties
+            foreach (var property in jsonObject.Properties())
+            {
+                string Name = property.Name;
+                JToken Value = property.Value;
+                try
+                {
+                    string Itemjson = Decrypt(Value.ToString(), "UPromptKey2023");
+                    if (Itemjson != null && Itemjson.Length > 5 && Itemjson.Contains("{") && Itemjson.Contains("}") && Itemjson.Contains(",") && Itemjson.Contains(":"))
+                    {
+                        int lastIndex = Itemjson.LastIndexOf('}');
+                        string removestring = Itemjson.Substring(lastIndex + 1);
+                        string parsedjson = Itemjson.Replace(removestring, null);
+                        JObject EndItemJson = JObject.Parse(parsedjson);
+                        string type = (string)EndItemJson["type"];
+                        string name = (string)EndItemJson["name"];
+                        string id = (string)EndItemJson["id"];
+                        string value = (string)EndItemJson["value"];
+                        switch (type)
                         {
-                            RunAction(Runner_Action, ActionValue);
+                            default:
+                            case "ui":
+                                RunAction(name, value, id);
+                                break;
+                            case "Linker":
+                                string LinkerSource = value.Split(new string[] { "," }, StringSplitOptions.None)[0];
+                                string LinkerDestination = value.Split(new string[] { "," }, StringSplitOptions.None)[1];
+                                if (UCommon.GetVariable(LinkerSource) != null)
+                                { UCommon.SetVariable(LinkerDestination, UCommon.GetVariable(LinkerSource)); }
+                                break;
+                            case "InputHandler":
+                                if (UCommon.PreviousVariable.ContainsKey(id))
+                                {
+                                    if (UCommon.Variable[id] != UCommon.PreviousVariable[id])
+                                    {
+                                        RunAction(name, value, id);
+                                    }
+                                }
+                                break;
+                            case "ViewLoad":
+                                RunAction(name, value, id);
+                                break;
+
                         }
                     }
                 }
-                if (ActionName.Contains("OnLoad_"))
-                {
-                    string Runner_Action = ActionName.Split(new string[] { "OnLoad_" }, StringSplitOptions.None)[1];
-                    RunAction(Runner_Action, ActionValue);
-                }
-                if (ActionName.Contains("INPUT_"))
-                {
-                    string ActionInputId = ActionName.Split(new string[] { "INPUT_" }, StringSplitOptions.None)[1];
-                    UCommon.SetVariable(ActionInputId, ActionValue);
-                }
-                if (ActionName.Contains("Linker_"))
-                {
-                    string LinkerSource = ActionName.Split(new string[] { "Linker_" }, StringSplitOptions.None)[1];
-                    string LinkerDestination = ActionValue;
-                    if (UCommon.GetVariable(LinkerSource) != null) { UCommon.SetVariable(LinkerDestination, UCommon.GetVariable(LinkerSource)); }
-                }
+                catch { }
             }
-            else
-            {
-                string ActionId = ActionName.Split(new string[] { "::ID::" }, StringSplitOptions.None)[0];
-                if (ActionId.Contains("::Action::"))
-                { ActionId = ActionId.Split(new string[] { "::Action::" }, StringSplitOptions.None)[1]; }
-                else
-                { ActionName = ActionName.Replace($"{ActionId}::ID::", null); }
-
+        }
+  
+        public static void RunAction(string ActionName, string ActionValue, string ActionId)
+        {
                 SwitchAction(ActionName, ActionValue);
 
                 if (LastActionOutput.Length > 0)
@@ -204,8 +257,6 @@ namespace UPrompt.Class
                     UCommon.SetVariable(ActionId, LastActionOutput);
                 }
                 UParser.GenerateView(UCommon.XmlDocument.SelectSingleNode("/Application/View"));
-            }
-
         }
         internal static void SwitchAction(string ActionName, string ActionValue)
         {

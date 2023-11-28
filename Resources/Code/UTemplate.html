@@ -34,35 +34,108 @@
     <link rel="stylesheet" href="UTemplate.css">
 </head>
 
-    <body>
-        <form Id="UForm" action="UView.html?LOCAL:" method="get" class="root">
-            === XML CODE WILL GENERATE THIS VIEW ===
-        </form>
+<body>
+    <form Id="UForm" action="UView.html" method="POST" class="root">
+        === XML CODE WILL GENERATE THIS VIEW ===
+    </form>
 
-        <!-- This script is use from dropdown element !-->
-        <script>
-            const dropdowns = document.querySelectorAll(".dropdown");
+    <!-- This script is use from dropdown element !-->
+    <script>
+        const dropdowns = document.querySelectorAll(".dropdown");
 
-            for (let i = 0; i < dropdowns.length; i++) {
-                const dropdown = dropdowns[i];
-                const input = dropdown.querySelector("input[type='text']");
-                const options = dropdown.querySelectorAll(".dropdown-content a");
+        dropdowns.forEach(function (dropdown) {
+            const input = dropdown.querySelector("input[type='text']");
+            const options = dropdown.querySelectorAll(".dropdown-content a");
 
-                input.addEventListener("click", function () {
-                    dropdown.classList.toggle("open");
-                });
+            input.addEventListener("click", function () {
+                dropdown.classList.toggle("open");
+            });
 
-                for (let j = 0; j < options.length; j++) {
-                    const option = options[j];
-                    option.addEventListener("click", function (event) {
-                        const selectedOption = event.target.textContent;
-                        input.value = selectedOption;
-                        dropdown.classList.remove("open");
-                        document.getElementById("UForm").submit(); // Submit the form
-                        event.preventDefault();
+            options.forEach(function (option) {
+                option.addEventListener("click", function (event) {
+                    const selectedOption = event.target.textContent;
+                    input.value = selectedOption;
+                    dropdown.classList.remove("open");
+
+                    // Add the selected option to the form data
+                    var formData = new FormData(document.getElementById("UForm"));
+                    formData.append(input.name, selectedOption);
+
+                    // Convert form data to JSON and send the post request
+                    var data = {};
+                    formData.forEach(function (value, key) {
+                        data[key] = value;
                     });
-                }
+                    window.chrome.webview.postMessage(JSON.stringify(data));
+
+                    event.preventDefault();
+                });
+            });
+        });
+
+    </script>
+    <script>
+        function saveCheckboxStatus(checkbox) {
+            if (typeof localStorage === 'undefined') {
+                console.log('localStorage is not available');
+                return;
             }
-        </script>
-    </body>
+
+            localStorage.setItem(checkbox.id, checkbox.checked);
+        }
+
+        window.addEventListener('load', function () {
+            if (typeof localStorage === 'undefined') {
+                console.log('localStorage is not available');
+                return;
+            }
+
+            var checkboxes = document.querySelectorAll('.Checkbox');
+            checkboxes.forEach(function (checkbox) {
+                var checkedStatus = localStorage.getItem(checkbox.id);
+                checkbox.checked = checkedStatus === 'true';
+            });
+        });
+    </script>
+    <script>
+        // Declare a variable to store the modified state
+    bool isModified = false;
+
+        // Attach event handlers to each input field
+        foreach(var input in document.GetElementsByTagName("input"))
+        {
+            input.OnInput += (s, e) => {
+                isModified = true;
+            };
+        }
+
+        // Attach event handler to the form submit button
+        document.GetElementById("UForm").OnSubmit += (s, e) => {
+            e.PreventDefault();
+
+            // Only send post request if any input was modified
+            if (isModified) {
+                var formData = new FormData(document.GetElementById("UForm"));
+
+                // Get the clicked button
+                var clickedButton = document.QuerySelector("button[type=submit]:focus");
+
+                // Add the button value to the form data
+                if (clickedButton != null) {
+                    formData.Append(clickedButton.Name, clickedButton.Value);
+                }
+
+                var data = new Dictionary < string, string> ();
+                foreach(var pair in formData)
+                {
+                    data[pair.Key] = pair.Value;
+                }
+
+                window.chrome.webview.postMessage(JsonConvert.SerializeObject(data));
+            }
+        };
+
+    </script>
+
+</body>
 </html>

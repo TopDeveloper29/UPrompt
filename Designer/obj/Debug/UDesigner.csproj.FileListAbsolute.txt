@@ -1,0 +1,9 @@
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\UDesigner.dll
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\UDesigner.pdb
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.AssemblyReference.cache
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.CoreCompileInputs.cache
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.CopyComplete
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.dll
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.pdb

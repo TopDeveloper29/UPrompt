@@ -107,7 +107,7 @@ namespace UPrompt.Class
                 File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.css", css);
             }
             UParser.ReloadView();
-            UCommon.Windows.htmlhandler.Navigate($"file:///{UCommon.Application_Path}Resources/Code/UView.html");
+            UCommon.Windows.htmlhandler.Source = new Uri($"file:///{UCommon.Application_Path}Resources/Code/UView.html");
         }
         private static void NewFadeColor()
         {
@@ -131,7 +131,7 @@ namespace UPrompt.Class
                 case "OnLoad":
                     try
                     {
-                        UHandler.RunAction(value.Split(',')[0], string.Join(",",value.Split(',').Skip(1).ToArray()));
+                        UHandler.RunAction(value.Split(',')[0], string.Join(",",value.Split(',').Skip(1).ToArray()),$"OnLoad_{value.Split(',')[0]}");
                     }
                     catch { UCommon.Warning($"{name} value must be like Value=\"ActionName,ActionArgument\"", WarningTitle); }
                     break;

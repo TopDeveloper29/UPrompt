@@ -168,6 +168,7 @@ namespace UPrompt.UDesigner
         }
         public static void SelectMainNode(string NodeName)
         {
+            MessageBox.Show("Sooooo");
             try
             {
                 string json = File.ReadAllText($@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.json");

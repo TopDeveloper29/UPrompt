@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Microsoft.Web.WebView2.Core;
+using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using UPrompt.Class;
 using UPrompt.Internal;
@@ -125,7 +124,6 @@ namespace UPrompt
             UCommon.Windows = this;
             InitializeComponent();
             this.DoubleBuffered = true;
-            htmlhandler.ScrollBarsEnabled = false;
         }
 
         private void Prompt_Load(object sender, EventArgs e)
@@ -140,49 +138,7 @@ namespace UPrompt
                 USettings.LoadXml(UCommon.Xml_Path);
             }
         }
-        private void htmlhandler_Navigating(object sender, WebBrowserNavigatingEventArgs e)
-        {
-            if (e.Url.ToString().ToLower().Split('?')[0].Contains("http"))
-            {
-                UCommon.Warning("UPrompt do not support browse any internet url for security reason please stay local on machine !!!");
-                htmlhandler.Navigate($@"file:///{UCommon.Application_Path}UView.html");
-            }
-            if (e.Url.ToString().Contains("="))
-            {
-                if (e.Url.ToString().Contains("&"))
-                {
-                    string action_code = System.Net.WebUtility.UrlDecode(e.Url.ToString()).Split('?')[1];
-                    string[] actions = action_code.Split('&');
-                    foreach (string action in actions)
-                    {
-                        string action_name = action.Split('=')[0];
-                        string[] splitString = action.Split('=');
-                        string action_value = string.Join("=", splitString.Skip(1).ToArray());
 
-                        if (action_name.Contains("INPUT_"))
-                        {
-                            UHandler.RunAction(action_name, action_value);
-                        }
-                    }
-                    foreach (string action in actions)
-                    {
-                        string action_name = action.Split('=')[0];
-                        string action_value = action.Split('=')[1];
-                        if (!action_name.Contains("INPUT_"))
-                        {
-                            UHandler.RunAction(action_name, action_value);
-                        }
-                    }
-                }
-                else
-                {
-                    string action_code = System.Net.WebUtility.UrlDecode(e.Url.ToString()).Split('?')[1];
-                    string action_name = action_code.Split('=')[0];
-                    string action_value = action_code.Split('=')[1];
-                    UHandler.RunAction(action_name, action_value);
-                }
-            }
-        }
         internal void UpdateTitleBarColor()
         {
             Color currentColor = TitleBar.BackColor;
@@ -254,6 +210,20 @@ namespace UPrompt
                     minpan.Visible = false;
                 }
             }
+        }
+
+        private void htmlhandler_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            if (htmlhandler.CoreWebView2.Source.ToString().ToLower().Split('?')[0].Contains("http"))
+            {
+                UCommon.Warning("UPrompt do not support browse any internet url for security reason please stay local on machine !!!");
+                htmlhandler.Source = new Uri($@"file:///{UCommon.Application_Path}UView.html");
+            }
+        }
+
+        private void htmlhandler_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
+        {
+            UHandler.HandlePost(e.WebMessageAsJson);
         }
     }
 }

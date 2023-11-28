@@ -12,9 +12,11 @@ namespace UPrompt.Class
         internal string Action {  get; set; }
         internal string Arguments { get; set; }
         internal string LastValue { get; set; }
-        internal ActionStorage(string _Action,string _Arguments,string _LastValue)
+        internal string Id { get; set; }
+        internal ActionStorage(string _Action,string _Arguments,string _LastValue,string _Id)
         {
             Action = _Action;
+            Id = _Id;
             Arguments = _Arguments;
             LastValue = _LastValue;
         }
@@ -138,7 +140,7 @@ namespace UPrompt.Class
                         ActionStorage AS = TrackedVariable[key];
                         if (Value.ToLower() != AS.LastValue.ToLower())
                         {
-                            UHandler.RunAction(AS.Action, AS.Arguments);
+                            UHandler.RunAction(AS.Action, AS.Arguments,AS.Id);
                             AS.LastValue = Value;
                         }
                     }

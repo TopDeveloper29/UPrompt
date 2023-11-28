@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using UPrompt.Internal;
@@ -22,6 +24,20 @@ namespace UPrompt.Class
             ClearHtml();
             UCommon.XmlDocument.Load(UCommon.Xml_Path);
             GenerateView(UCommon.XmlDocument.SelectSingleNode("/Application/View"));
+        }
+        public static string NewInputValue(string type, string name, string id, string value)
+        {
+            if (type != null && name != null && id != null && value != null)
+            {
+                string json = $"{{\"type\": \"{type}\", \"name\": \"{name}\", \"id\": \"{id}\", \"value\": \"{value}\"}}";
+                string encryptedJson = Encrypt(json, "UPromptKey2023");
+                return encryptedJson;
+            }
+            else
+            {
+                UCommon.Error("You must provide 4 value for the function NewInputValue(type,name,id,value);", "Internal Error");
+                return null;
+            }
         }
         internal static void GenerateView(XmlNode viewNode)
         {
@@ -89,11 +105,85 @@ namespace UPrompt.Class
         }
         internal static void AddJsInputHandler(string ID)
         {
+            return;
             string scriptContent = $"const Input_{ID} = document.getElementById(\"{ID}\");\n" +
                        $"Input_{ID}.addEventListener(\"change\" , function() {{\n" +
                        $"const myForm = document.getElementById(\"UForm\");\r\nmyForm.submit();\r\n" +
                        "});";
-            HtmlFromXml += $"<script>{scriptContent}</script>";
+            string MyValueOfJsCode = @"
+            // Get all input fields
+            var inputFields = document.querySelectorAll('input');
+
+            // Set a flag to indicate if any input was modified
+            var isModified = false;
+
+            // Add event listener to each input field
+            inputFields.forEach(function(input) {
+              input.addEventListener('input', function() {
+                isModified = true;
+              });
+            });
+
+            // Add event listener to the form submit button
+            document.getElementById('UForm').addEventListener('submit', function (event) {
+              event.preventDefault();
+
+              // Only send post request if any input was modified
+              if (isModified) {
+                var formData = new FormData(event.target);
+
+                // Get the clicked button
+                var clickedButton = document.querySelector('button[type=""submit""]:focus');
+
+                // Add the button value to the form data
+                if (clickedButton) {
+                  formData.append(clickedButton.name, clickedButton.value);
+                }
+
+                var data = {};
+                formData.forEach(function (value, key) {
+                  data[key] = value;
+                });
+
+                window.chrome.webview.postMessage(JSON.stringify(data));
+              }
+            });
+            ";
+            HtmlFromXml += $"<script>{MyValueOfJsCode}</script>";
+        }
+        private static string Encrypt(string plainText, string encryptionKey)
+        {
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+
+            // Pad the input data to a multiple of the block size
+            int blockSize = 16;
+            int paddingSize = blockSize - (plainTextBytes.Length % blockSize);
+            byte[] paddedBytes = new byte[plainTextBytes.Length + paddingSize];
+            Array.Copy(plainTextBytes, paddedBytes, plainTextBytes.Length);
+
+            byte[] keyBytes = new Rfc2898DeriveBytes(encryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 }, 1000).GetBytes(32);
+
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = keyBytes;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+
+                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    memoryStream.Write(BitConverter.GetBytes(aes.IV.Length), 0, sizeof(int));
+                    memoryStream.Write(aes.IV, 0, aes.IV.Length);
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                    {
+                        cryptoStream.Write(paddedBytes, 0, paddedBytes.Length);
+                        cryptoStream.FlushFinalBlock();
+                        byte[] cipherTextBytes = memoryStream.ToArray();
+                        return Convert.ToBase64String(cipherTextBytes);
+                    }
+                }
+            }
         }
 
         public static string GenerateHtmlFromXML(string XML)
@@ -107,9 +197,9 @@ namespace UPrompt.Class
             string Type = childNode.Attributes["Type"]?.Value;
             string InnerValue = ParseSystemText(childNode.InnerText);
 
-            string Action = childNode.Attributes["Action"]?.Value;
+            string Action = childNode.Attributes["Action"]?.Value ?? "OkDialog";
             string DropList = childNode.Attributes["DropList"]?.Value;
-            string Argument = childNode.Attributes["Argument"]?.Value;
+            string Argument = childNode.Attributes["Argument"]?.Value ?? "You must enter argument in Argument properties";
 
             string ExtraStyle = childNode.Attributes["Style"]?.Value;
             string Class = childNode.Attributes["Class"]?.Value;
@@ -152,7 +242,6 @@ namespace UPrompt.Class
 
             if (!USettings.ElementsParsingSkip.Contains(Id))
             {
-
                 // Check what kind of node is it 
                 switch (childNode.Name)
                 {
@@ -171,6 +260,21 @@ namespace UPrompt.Class
                                 HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
                                 break;
                             case "CheckBox":
+                                string Checked = "";
+                                string cs = childNode.Attributes["Checked"]?.Value;
+                                bool ics = false;
+                                if (cs != null)
+                                {
+                                    ics = bool.Parse(cs);
+                                }
+                                if (ics) { Checked = "checked"; }
+
+                                HtmlFromXml += "\n" +
+                                    $"<label style=\"{ExtraStyle}\" class=\"label-checkbox {Class}\">\r\n" +
+                                    $"  <input class=\"Checkbox\" type=\"checkbox\" id=\"{Id}\" name=\"INPUT_{Id}\" value=\"{InnerValue}\" {Checked} onclick=\"saveCheckboxStatus(this)\"/>\r\n" +
+                                    "  <span class=\"checkmark\"></span>\r\n" +
+                                    $"  {InnerValue}\r\n" +
+                                    "</label>";
                                 break;
                             case "DropDown":
                                 string url = "https://static.thenounproject.com/png/1590826-200.png";
@@ -243,11 +347,11 @@ namespace UPrompt.Class
                         switch (Type)
                         {
                             case "Linker":
-                                string source = childNode.Attributes["Source"]?.Value;
-                                string target = childNode.Attributes["Target"]?.Value;
+                                string source = childNode.Attributes["Source"]?.Value ?? "default";
+                                string target = childNode.Attributes["Target"]?.Value ?? "default";
                                 if (source != null && target != null)
                                 {
-                                    HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"Linker_{source}\" value=\"{target}\"/>\n";
+                                    HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("Linker", Action, Id, $"{source},{target}")}\"/>\n";
                                 }
                                 else
                                 {
@@ -256,20 +360,20 @@ namespace UPrompt.Class
                                 break;
                             default:
                             case "Button":
-                                HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"{Id}::ID::{Action}\" value=\"{Argument}\">{InnerValue}</button>\n";
+                                HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui",Action,Id,Argument)}\">{InnerValue}</button>\n";
                                 break;
                             case "InputHandler":
-                                HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"InputHandler_{InnerValue}::Action::{Id}::ID::{Action}\" value=\"{Argument}\"/>\n";
+                                HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("InputHandler", Action, Id, Argument)}\"/>\n";
                                 break;
                             case "ViewLoad":
-                                HtmlFromXml += $"<input hidden=\"hidden\" name=\"OnLoad_{Action}\" value=\"{Argument}\"/>\n";
+                                HtmlFromXml += $"<input hidden=\"hidden\" name=\"Action_{Id}\" value=\"{NewInputValue("ViewLoad", Action, Id, Argument)}\"/>\n";
                                 break;
                             case "VariableHandler":
                                 try
                                 {
                                     if (!UCommon.TrackedVariable.TryGetValue(InnerValue, out ActionStorage acs))
                                     {
-                                        UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue)));
+                                        UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue),Id));
                                     }
                                 }
                                 catch (Exception ex) { MessageBox.Show(ex.Message); }

@@ -1,14 +1,14 @@
 <Application>
 	<Setting Name="Width" Value="1200"/>
-	<Setting Name="Height" Value="1150"/>
+	<Setting Name="Height" Value="950"/>
 	<Setting Name="Text-Color" Value="#fff"/>
 	<Setting Name="Application-Color" Value="#22252e"/>
 	<Setting Name="Accent-Color" Value="#272c33"/>
 	<Setting Name="Accent-Text-Color" Value="#fff"/>
-	<Setting Name="Production" Value="false"/>
+	<Setting Name="Production" Value="true"/>
 	<Setting Name="Application-Title" Value="Uprompt Designer"/>
 	<Setting Name="Item-Margin" Value="0%"/>
-	<Setting Name="WindowsResizeMode" Value="Horizontal"/>
+	<Setting Name="WindowsResizeMode" Value="All"/>
 	<Setting Name="Variable" Value="SavedPath,[SavedPath]"/>
 	<Setting Name="Variable" Value="NewPath,[NewPath]"/>
 	<Setting Name="Variable" Value="LoadPath,[LoadPath]"/>
@@ -49,7 +49,7 @@
 			
 			<br/>
 			<ViewItem Type="Row">
-				<ViewInput Type="TextBox" Id="GeneratedCode">[GeneratedCode]</ViewInput>
+				<ViewInput Type="TextBox" Id="GeneratedCode" Action="OkDialog" Argument="TEST">[GeneratedCode]</ViewInput>
 				<ViewAction Type="Button" Action="SetClipboard" Argument="[GeneratedCode]" Image="https://cdn-icons-png.flaticon.com/512/1827/1827938.png,40,true"></ViewAction>
 			</ViewItem>
 		</ViewItem>
@@ -65,6 +65,12 @@
 			<div Style="Width:90%;">
 				[PreviewHtml]
 			</div>
+		</ViewItem>
+		<br/>
+		<br/>
+		<ViewItem Type="Row">
+			<ViewInput Type="CheckBox" Id="Test1" Checked="False">Test1</ViewInput>
+			<ViewInput Type="CheckBox" Id="Test2">Test2</ViewInput>
 		</ViewItem>
 	</View>
 </Application>
