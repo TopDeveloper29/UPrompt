@@ -98,42 +98,17 @@
         });
     </script>
     <script>
-        // Declare a variable to store the modified state
-    bool isModified = false;
-
-        // Attach event handlers to each input field
-        foreach(var input in document.GetElementsByTagName("input"))
-        {
-            input.OnInput += (s, e) => {
-                isModified = true;
-            };
-        }
-
-        // Attach event handler to the form submit button
-        document.GetElementById("UForm").OnSubmit += (s, e) => {
-            e.PreventDefault();
-
-            // Only send post request if any input was modified
-            if (isModified) {
-                var formData = new FormData(document.GetElementById("UForm"));
-
-                // Get the clicked button
-                var clickedButton = document.QuerySelector("button[type=submit]:focus");
-
-                // Add the button value to the form data
-                if (clickedButton != null) {
-                    formData.Append(clickedButton.Name, clickedButton.Value);
-                }
-
-                var data = new Dictionary < string, string> ();
-                foreach(var pair in formData)
-                {
-                    data[pair.Key] = pair.Value;
-                }
-
-                window.chrome.webview.postMessage(JsonConvert.SerializeObject(data));
-            }
-        };
+       document.getElementById('UForm').addEventListener('submit', function (event) {
+           event.preventDefault(); var formData = new FormData(event.target); 
+           // Get the clicked button
+           var clickedButton = document.querySelector('button[type="submit"]:focus');
+           // Add the button value to the form data
+           if (clickedButton) { 
+               formData.append(clickedButton.name, clickedButton.value); 
+               } 
+               var data = {};
+               formData.forEach(function (value, key) { data[key] = value; });
+               window.chrome.webview.postMessage(JSON.stringify(data)); });
 
     </script>
 
