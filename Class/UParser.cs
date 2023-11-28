@@ -72,6 +72,8 @@ namespace UPrompt.Class
                     .Replace("{USER}", Environment.UserName)
                     .Replace("{DEVICE}", Environment.MachineName)
                     .Replace("{n}", "\n")
+                    .Replace("{e}","=")
+                    .Replace("{q}", "'")
                     .Replace("{AppPath}", UCommon.Application_Path)
                     .Replace("{AppPathWindows}", UCommon.Application_Path_Windows)
                     ;
@@ -219,7 +221,14 @@ namespace UPrompt.Class
                             case "LabelBox":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
                                 break;
-                            default:
+                            case "Box":
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Box {Class}\">\n";
+                                foreach (XmlNode rowChildNode in childNode.ChildNodes)
+                                {
+                                    GenerateHtmlFromXML(rowChildNode.OuterXml);
+                                }
+                                HtmlFromXml += "</div>\n";
+                                break;
                             case "Row":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row {Class}\">\n";
                                 foreach (XmlNode rowChildNode in childNode.ChildNodes)

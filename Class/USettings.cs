@@ -353,6 +353,7 @@ namespace UPrompt.Class
                     switch (value)
                     {
                         case "All":
+                            UCommon.Windows.Top.Enabled = true;
                             UCommon.Windows.Left.Enabled = true;
                             UCommon.Windows.Right.Enabled = true;
                             UCommon.Windows.Bottom.Enabled = true;
@@ -363,6 +364,7 @@ namespace UPrompt.Class
                         case "Horizontal":
                             UCommon.Windows.Left.Enabled = true;
                             UCommon.Windows.Right.Enabled = true;
+                            UCommon.Windows.Top.Enabled = false;
                             UCommon.Windows.Bottom.Enabled = false;
                             UCommon.Windows.cornerleft.Enabled = false;
                             UCommon.Windows.cornerright.Enabled = false;
@@ -372,6 +374,7 @@ namespace UPrompt.Class
                             UCommon.Windows.Left.Enabled = false;
                             UCommon.Windows.Right.Enabled = false;
                             UCommon.Windows.Bottom.Enabled = true;
+                            UCommon.Windows.Top.Enabled = true;
                             UCommon.Windows.cornerleft.Enabled = false;
                             UCommon.Windows.cornerright.Enabled = false;
                             WindowsResizeMode = value;
@@ -380,11 +383,13 @@ namespace UPrompt.Class
                             UCommon.Windows.Left.Enabled = false;
                             UCommon.Windows.Right.Enabled = false;
                             UCommon.Windows.Bottom.Enabled = false;
+                            UCommon.Windows.Top.Enabled = false;
                             UCommon.Windows.cornerleft.Enabled = true;
                             UCommon.Windows.cornerright.Enabled = true;
                             WindowsResizeMode = value;
                             break;
                         case "None":
+                            UCommon.Windows.Top.Enabled = false;
                             UCommon.Windows.Left.Enabled = false;
                             UCommon.Windows.Right.Enabled = false;
                             UCommon.Windows.Bottom.Enabled = false;

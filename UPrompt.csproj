@@ -100,7 +100,7 @@
     <Content Include="Resources\Code\UDesigner.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MainPage.xml">
+    <Content Include="Resources\Code\UDesigner.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Code\UTemplate.css">

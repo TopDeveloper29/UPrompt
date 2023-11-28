@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -129,8 +130,15 @@ namespace UPrompt
 
         private void Prompt_Load(object sender, EventArgs e)
         {
-            USettings.LoadXml(UCommon.Xml_Path);
-
+            if (File.Exists(UCommon.Xml_Path))
+            {
+                USettings.LoadXml(UCommon.Xml_Path);
+            }
+            else if(File.Exists($@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml"))
+            {
+                UCommon.Xml_Path = $@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml";
+                USettings.LoadXml(UCommon.Xml_Path);
+            }
         }
         private void htmlhandler_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
@@ -149,7 +157,7 @@ namespace UPrompt
                     {
                         string action_name = action.Split('=')[0];
                         string[] splitString = action.Split('=');
-                        string action_value = string.Join(",", splitString.Skip(1).ToArray());
+                        string action_value = string.Join("=", splitString.Skip(1).ToArray());
 
                         if (action_name.Contains("INPUT_"))
                         {

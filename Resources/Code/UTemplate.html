@@ -35,13 +35,14 @@
 </head>
 
     <body>
-        <form id="UForm" action="UView.html?LOCAL:" method="get" class="root">
+        <form Id="UForm" action="UView.html?LOCAL:" method="get" class="root">
             === XML CODE WILL GENERATE THIS VIEW ===
         </form>
 
         <!-- This script is use from dropdown element !-->
         <script>
             const dropdowns = document.querySelectorAll(".dropdown");
+
             for (let i = 0; i < dropdowns.length; i++) {
                 const dropdown = dropdowns[i];
                 const input = dropdown.querySelector("input[type='text']");
@@ -57,14 +58,10 @@
                         const selectedOption = event.target.textContent;
                         input.value = selectedOption;
                         dropdown.classList.remove("open");
+                        document.getElementById("UForm").submit(); // Submit the form
                         event.preventDefault();
                     });
                 }
-                document.addEventListener("click", function (event) {
-                    if (!dropdown.contains(event.target)) {
-                        dropdown.classList.remove("open");
-                    }
-                });
             }
         </script>
     </body>

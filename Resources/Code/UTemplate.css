@@ -51,6 +51,14 @@
     width: 90%;
     padding: 1rem;
 }
+.Box {
+    margin-top: #ITEM_MARGIN#;
+    margin-bottom: #ITEM_MARGIN#;
+    margin-top: #ITEM_MARGIN#;
+    border: 2px solid #MAIN_COLOR#;
+    border-radius: 0.5rem;
+    width: 100%;
+}
 
 .Row {
     margin-top: #ITEM_MARGIN#;

@@ -331,7 +331,7 @@
         internal System.Windows.Forms.Panel cornerleft;
         internal System.Windows.Forms.Panel cornerright;
         public System.Windows.Forms.WebBrowser htmlhandler;
-        private System.Windows.Forms.Panel Top;
+        internal System.Windows.Forms.Panel Top;
     }
 }
 
