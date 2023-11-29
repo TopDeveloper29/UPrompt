@@ -131,7 +131,8 @@ namespace UPrompt.Class
                 case "OnLoad":
                     try
                     {
-                        UHandler.RunAction(value.Split(',')[0], string.Join(",",value.Split(',').Skip(1).ToArray()),$"OnLoad_{value.Split(',')[0]}");
+                        string arg = string.Join(",", value.Split(',').Skip(1).ToArray());
+                        UHandler.RunAction(value.Split(',')[0], arg, $"OnLoad_{value.Split(',')[0]}");
                     }
                     catch { UCommon.Warning($"{name} value must be like Value=\"ActionName,ActionArgument\"", WarningTitle); }
                     break;

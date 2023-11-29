@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -23,8 +24,34 @@ namespace UPrompt.Class
     }
     public static class UCommon
     {
-        public static Dictionary<string, string> Variable = new Dictionary<string, string>();
-        internal static Dictionary<string, string> PreviousVariable = new Dictionary<string, string>();
+        public class VariableDictionary : Dictionary<string, string>
+        {
+            internal new string this[string key]
+            {
+                get { return base[key]; }
+                set
+                {
+                    base[key] = value;
+                    TrackChangeInVariable();
+                }
+            }
+        }
+        private static void TrackChangeInVariable()
+        {
+            try
+            {
+                foreach (string key in TrackedVariable.Keys)
+                {
+                    if (TrackedVariable[key].LastValue != Variable[key])
+                    {
+                        TrackedVariable[key].LastValue = Variable[key];
+                        UHandler.RunAction(TrackedVariable[key].Action, TrackedVariable[key].Arguments, TrackedVariable[key].Id);
+                    }
+                }
+            } catch { }
+        }
+        internal static VariableDictionary Variable { get; private set; } = new VariableDictionary();
+
         internal static Dictionary<string,ActionStorage> TrackedVariable = new Dictionary<string, ActionStorage>();
         public static XmlDocument XmlDocument { get; set; } = new XmlDocument();
         public static string LastWarning { get; internal set; } = "";
@@ -112,39 +139,15 @@ namespace UPrompt.Class
             if (!Variable.ContainsKey(Id))
             {
                 Variable.Add(Id, Value);
-                PreviousVariable.Add(Id, "|VOID|");
             }
             else
             {
-                if (PreviousVariable.ContainsKey(Id))
-                {
-                    PreviousVariable[Id] = Variable[Id];
-                }
-                else
-                {
-                    PreviousVariable.Add(Id, Variable[Id]);
-                }
                 Variable[Id] = Value;
             }
             File.WriteAllText($@"{Application_Path}\Resources\Code\Variables.ps1","");
             foreach (string Key in Variable.Keys)
             {
                 File.AppendAllText($@"{Application_Path}\Resources\Code\Variables.ps1",$"[string]$Global:{Key} = \"{Variable[Key]}\";\n");
-            }
-            if (Variable != PreviousVariable)
-            {
-                foreach (string key in TrackedVariable.Keys)
-                {
-                    if (key.ToLower().Contains(Id.ToLower()))
-                    {
-                        ActionStorage AS = TrackedVariable[key];
-                        if (Value.ToLower() != AS.LastValue.ToLower())
-                        {
-                            UHandler.RunAction(AS.Action, AS.Arguments,AS.Id);
-                            AS.LastValue = Value;
-                        }
-                    }
-                }
             }
         }
         public static string GetVariable(string Id)

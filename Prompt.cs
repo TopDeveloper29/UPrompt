@@ -224,6 +224,7 @@ namespace UPrompt
         private void htmlhandler_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
             UHandler.HandlePost(e.WebMessageAsJson);
+            UParser.ReloadView();
         }
     }
 }

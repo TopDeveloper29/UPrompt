@@ -32,7 +32,8 @@
     padding-right: unset !important;
 }
 .exit_image {
-    background-position: 12px 13px !important;
-    padding-left: 50px;
+    width: 100px;
+    background-position: 12px 14px !important;
+    padding-left: 30px;
     padding-right: unset !important;
 }

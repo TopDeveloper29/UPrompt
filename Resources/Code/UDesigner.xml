@@ -5,9 +5,10 @@
 	<Setting Name="Application-Color" Value="#22252e"/>
 	<Setting Name="Accent-Color" Value="#272c33"/>
 	<Setting Name="Accent-Text-Color" Value="#fff"/>
-	<Setting Name="Production" Value="true"/>
+	<Setting Name="Production" Value="false"/>
 	<Setting Name="Application-Title" Value="Uprompt Designer"/>
 	<Setting Name="Item-Margin" Value="0%"/>
+	<Setting Name='WindowsOpenMode' Value='Maximized'/>
 	<Setting Name="WindowsResizeMode" Value="All"/>
 	<Setting Name="Variable" Value="SavedPath,[SavedPath]"/>
 	<Setting Name="Variable" Value="NewPath,[NewPath]"/>
@@ -20,13 +21,15 @@
 	<Setting Name="CSS" Value="{AppPath}Resources/Code/UDesigner.css"/>
 	<Setting Id="210129" Name="Extention" Value="C:\Users\{USER}\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\UDesigner.dll,UPrompt.UDesigner.Designer"/>
 	<Setting Name="OnLoad" Value="RunMethod,210129,SetPreferedEditor(C:\Users\{USER}\AppData\Local\Programs\Microsoft VS Code\code.exe)"/>
-	<Setting Name="OnLoad" Value="RunMethod,210129,SelectMainNode(Xml)"/>
+	<Setting Name="OnLoad" Value="SetVariable,GlobalType,Xml"/>
 	<View>
 		<ViewItem Type="Row" Class="top-div">
+			<ViewItem Type="Spacer"/>
 			<ViewAction Type="Button" Action="ReloadView" Argument="true" Image="https://m.media-amazon.com/images/I/41R2Kt9o2XL.png,60,false"></ViewAction>
 			<ViewAction Id="NewPath" Type="Button" Action="Browse" Argument="File,Save,Xml Files|*.xml" Class="new_image" Image="https://cdn-icons-png.flaticon.com/512/5825/5825337.png,22,true">New XML</ViewAction>
 			<ViewAction Id="LoadPath" Type="Button" Action="Browse" Argument="File,Load,Xml Files|*.xml" Class="load_image" Image="https://static.thenounproject.com/png/196595-200.png,28,true">Load XML</ViewAction>
 			<ViewAction Type="Button" Action="Exit" Class="exit_image" Image="https://static-00.iconduck.com/assets.00/exit-icon-1821x2048-50xh00pv.png,22,true">Exit</ViewAction>
+			<ViewItem Type="Spacer"/>
 		</ViewItem>
 		<ViewAction Type="VariableHandler" Action="RunMethod" Argument="210129,CallEditor(true)">NewPath</ViewAction>
 		<ViewAction Type="VariableHandler" Action="RunMethod" Argument="210129,CallEditor(false)">LoadPath</ViewAction>
@@ -44,19 +47,18 @@
 			</ViewItem>
 			<ViewItem Type="Row">
 				<div>[DesignerExtraHtml]</div>
-				<ViewItem Type="Label">[DesignerExtraText]</ViewItem>
 			</ViewItem>
 			
 			<br/>
 			<ViewItem Type="Row">
-				<ViewInput Type="TextBox" Id="GeneratedCode">[GeneratedCode]</ViewInput>
+				<ViewInput Type="TextBox">[GeneratedCode]</ViewInput>
 				<ViewAction Type="Button" Action="SetClipboard" Argument="[GeneratedCode]" Image="https://cdn-icons-png.flaticon.com/512/1827/1827938.png,40,true"></ViewAction>
 			</ViewItem>
 		</ViewItem>
 		<br/>
 		<ViewItem Type="Row">
 			<ViewItem Type="Title">Preview:</ViewItem>
-			<ViewSpacer></ViewSpacer>
+			<ViewSpacer/>
 			<ViewAction Type="Button" Action="RunMethod" Argument="210129,OpenNewUprompt">Open new UPrompt</ViewAction>
 		</ViewItem>
 		<br/>
@@ -65,12 +67,6 @@
 			<div Style="Width:90%;">
 				[PreviewHtml]
 			</div>
-		</ViewItem>
-		<br/>
-		<br/>
-		<ViewItem Type="Row">
-			<ViewInput Type="CheckBox" Id="Test1" Checked="False">Test1</ViewInput>
-			<ViewInput Type="CheckBox" Id="Test2">Test2</ViewInput>
 		</ViewItem>
 	</View>
 </Application>
