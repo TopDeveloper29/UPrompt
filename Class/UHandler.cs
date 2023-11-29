@@ -193,7 +193,7 @@ namespace UPrompt.Class
             }
         }
 
-        public static void HandlePost(string json)
+        internal static void HandlePost(string json)
         {
             json = json.Substring(0, json.Length - 1).Substring(1).Replace(@"\", null);
             JObject jsonObject = JsonConvert.DeserializeObject<JObject>(json);
@@ -205,42 +205,36 @@ namespace UPrompt.Class
                 JToken Value = property.Value;
                 try
                 {
-                    string Itemjson = Decrypt(Value.ToString(), "UPromptKey2023");
-                    if (Itemjson != null && Itemjson.Length > 5 && Itemjson.Contains("{") && Itemjson.Contains("}") && Itemjson.Contains(",") && Itemjson.Contains(":"))
+                    if (!Name.Contains("INPUT_"))
                     {
-                        int lastIndex = Itemjson.LastIndexOf('}');
-                        string removestring = Itemjson.Substring(lastIndex + 1);
-                        string parsedjson = Itemjson.Replace(removestring, null);
-                        JObject EndItemJson = JObject.Parse(parsedjson);
-                        string type = (string)EndItemJson["type"];
-                        string name = (string)EndItemJson["name"];
-                        string id = (string)EndItemJson["id"];
-                        string value = (string)EndItemJson["value"];
-                        switch (type)
+                        string Itemjson = Decrypt(Value.ToString(), "UPromptKey2023");
+                        if (Itemjson != null && Itemjson.Length > 5 && Itemjson.Contains("{") && Itemjson.Contains("}") && Itemjson.Contains(",") && Itemjson.Contains(":"))
                         {
-                            default:
-                            case "ui":
-                                RunAction(name, value, id);
-                                break;
-                            case "Linker":
-                                string LinkerSource = value.Split(new string[] { "," }, StringSplitOptions.None)[0];
-                                string LinkerDestination = value.Split(new string[] { "," }, StringSplitOptions.None)[1];
-                                if (UCommon.GetVariable(LinkerSource) != null)
-                                { UCommon.SetVariable(LinkerDestination, UCommon.GetVariable(LinkerSource)); }
-                                break;
-                            case "InputHandler":
-                                if (UCommon.PreviousVariable.ContainsKey(id))
-                                {
-                                    if (UCommon.Variable[id] != UCommon.PreviousVariable[id])
-                                    {
-                                        RunAction(name, value, id);
-                                    }
-                                }
-                                break;
-                            case "ViewLoad":
-                                RunAction(name, value, id);
-                                break;
+                            int lastIndex = Itemjson.LastIndexOf('}');
+                            string removestring = Itemjson.Substring(lastIndex + 1);
+                            string parsedjson = Itemjson.Replace(removestring, null);
+                            JObject EndItemJson = JObject.Parse(parsedjson);
+                            string type = (string)EndItemJson["type"];
+                            string name = (string)EndItemJson["name"];
+                            string id = (string)EndItemJson["id"];
+                            string value = (string)EndItemJson["value"];
+                            switch (type)
+                            {
+                                default:
+                                case "ui":
+                                    RunAction(name, value, id);
+                                    break;
+                                case "Linker":
+                                    string LinkerSource = value.Split(new string[] { "," }, StringSplitOptions.None)[0];
+                                    string LinkerDestination = value.Split(new string[] { "," }, StringSplitOptions.None)[1];
+                                    if (UCommon.GetVariable(LinkerSource) != null)
+                                    { UCommon.SetVariable(LinkerDestination, UCommon.GetVariable(LinkerSource)); }
+                                    break;
+                                case "ViewLoad":
+                                    RunAction(name, value, id);
+                                    break;
 
+                            }
                         }
                     }
                 }
@@ -250,6 +244,8 @@ namespace UPrompt.Class
   
         public static void RunAction(string ActionName, string ActionValue, string ActionId)
         {
+            if (!ActionName.Contains("null"))
+            {
                 SwitchAction(ActionName, ActionValue);
 
                 if (LastActionOutput.Length > 0)
@@ -257,6 +253,7 @@ namespace UPrompt.Class
                     UCommon.SetVariable(ActionId, LastActionOutput);
                 }
                 UParser.GenerateView(UCommon.XmlDocument.SelectSingleNode("/Application/View"));
+            }
         }
         internal static void SwitchAction(string ActionName, string ActionValue)
         {

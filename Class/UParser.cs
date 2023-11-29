@@ -105,51 +105,12 @@ namespace UPrompt.Class
         }
         internal static void AddJsInputHandler(string ID)
         {
-            return;
             string scriptContent = $"const Input_{ID} = document.getElementById(\"{ID}\");\n" +
                        $"Input_{ID}.addEventListener(\"change\" , function() {{\n" +
-                       $"const myForm = document.getElementById(\"UForm\");\r\nmyForm.submit();\r\n" +
+                       $"const myForm = document.getElementById(\"UForm\");\r\n" +
+                       $"var submitEvent = new Event('submit');myForm.dispatchEvent(submitEvent);\r\n" +
                        "});";
-            string MyValueOfJsCode = @"
-            // Get all input fields
-            var inputFields = document.querySelectorAll('input');
-
-            // Set a flag to indicate if any input was modified
-            var isModified = false;
-
-            // Add event listener to each input field
-            inputFields.forEach(function(input) {
-              input.addEventListener('input', function() {
-                isModified = true;
-              });
-            });
-
-            // Add event listener to the form submit button
-            document.getElementById('UForm').addEventListener('submit', function (event) {
-              event.preventDefault();
-
-              // Only send post request if any input was modified
-              if (isModified) {
-                var formData = new FormData(event.target);
-
-                // Get the clicked button
-                var clickedButton = document.querySelector('button[type=""submit""]:focus');
-
-                // Add the button value to the form data
-                if (clickedButton) {
-                  formData.append(clickedButton.name, clickedButton.value);
-                }
-
-                var data = {};
-                formData.forEach(function (value, key) {
-                  data[key] = value;
-                });
-
-                window.chrome.webview.postMessage(JSON.stringify(data));
-              }
-            });
-            ";
-            HtmlFromXml += $"<script>{MyValueOfJsCode}</script>";
+            HtmlFromXml += $"<script>{scriptContent}</script>";
         }
         private static string Encrypt(string plainText, string encryptionKey)
         {
@@ -197,9 +158,9 @@ namespace UPrompt.Class
             string Type = childNode.Attributes["Type"]?.Value;
             string InnerValue = ParseSystemText(childNode.InnerText);
 
-            string Action = childNode.Attributes["Action"]?.Value ?? "OkDialog";
+            string Action = childNode.Attributes["Action"]?.Value ?? "null";
             string DropList = childNode.Attributes["DropList"]?.Value;
-            string Argument = childNode.Attributes["Argument"]?.Value ?? "You must enter argument in Argument properties";
+            string Argument = childNode.Attributes["Argument"]?.Value ?? "";
 
             string ExtraStyle = childNode.Attributes["Style"]?.Value;
             string Class = childNode.Attributes["Class"]?.Value;
@@ -363,7 +324,16 @@ namespace UPrompt.Class
                                 HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui",Action,Id,Argument)}\">{InnerValue}</button>\n";
                                 break;
                             case "InputHandler":
-                                HtmlFromXml += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("InputHandler", Action, Id, Argument)}\"/>\n";
+                                try
+                                {
+                                    if (UCommon.GetVariable(InnerValue) == null) { UCommon.SetVariable(InnerValue, ""); }
+                                    if (!UCommon.TrackedVariable.TryGetValue(InnerValue, out ActionStorage acs))
+                                    {
+                                        Console.WriteLine(InnerValue);
+                                        UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue), InnerValue));
+                                    }
+                                }
+                                catch (Exception ex) { UCommon.Error(ex.Message); }
                                 break;
                             case "ViewLoad":
                                 HtmlFromXml += $"<input hidden=\"hidden\" name=\"Action_{Id}\" value=\"{NewInputValue("ViewLoad", Action, Id, Argument)}\"/>\n";

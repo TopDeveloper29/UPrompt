@@ -56,17 +56,10 @@
                     const selectedOption = event.target.textContent;
                     input.value = selectedOption;
                     dropdown.classList.remove("open");
+                    const myForm = document.getElementById("UForm");
+                    var submitEvent = new Event('submit');
+                    myForm.dispatchEvent(submitEvent);
 
-                    // Add the selected option to the form data
-                    var formData = new FormData(document.getElementById("UForm"));
-                    formData.append(input.name, selectedOption);
-
-                    // Convert form data to JSON and send the post request
-                    var data = {};
-                    formData.forEach(function (value, key) {
-                        data[key] = value;
-                    });
-                    window.chrome.webview.postMessage(JSON.stringify(data));
 
                     event.preventDefault();
                 });

@@ -49,7 +49,7 @@
 			
 			<br/>
 			<ViewItem Type="Row">
-				<ViewInput Type="TextBox" Id="GeneratedCode" Action="OkDialog" Argument="TEST">[GeneratedCode]</ViewInput>
+				<ViewInput Type="TextBox" Id="GeneratedCode">[GeneratedCode]</ViewInput>
 				<ViewAction Type="Button" Action="SetClipboard" Argument="[GeneratedCode]" Image="https://cdn-icons-png.flaticon.com/512/1827/1827938.png,40,true"></ViewAction>
 			</ViewItem>
 		</ViewItem>
