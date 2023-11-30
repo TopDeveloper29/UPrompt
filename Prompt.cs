@@ -3,6 +3,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using UPrompt.Class;
 using UPrompt.Internal;
@@ -128,15 +129,19 @@ namespace UPrompt
 
         private void Prompt_Load(object sender, EventArgs e)
         {
-            if (File.Exists(UCommon.Xml_Path))
+            Thread thread = new Thread(() =>
             {
-                USettings.LoadXml(UCommon.Xml_Path);
-            }
-            else if(File.Exists($@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml"))
-            {
-                UCommon.Xml_Path = $@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml";
-                USettings.LoadXml(UCommon.Xml_Path);
-            }
+                if (File.Exists(UCommon.Xml_Path))
+                {
+                    USettings.LoadXml(UCommon.Xml_Path);
+                }
+                else if (File.Exists($@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml"))
+                {
+                    UCommon.Xml_Path = $@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml";
+                    USettings.LoadXml(UCommon.Xml_Path);
+                }
+            });
+            thread.Start();
         }
 
         internal void UpdateTitleBarColor()
@@ -223,8 +228,15 @@ namespace UPrompt
 
         private void htmlhandler_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
-            UHandler.HandlePost(e.WebMessageAsJson);
+            Thread thread = new Thread(() =>
+            {
+                UCommon.Windows.Invoke((Action)(() =>
+                {
+                    UHandler.HandlePost(e.WebMessageAsJson);
+                }));
             UParser.ReloadView();
+            });
+            thread.Start();
         }
     }
 }

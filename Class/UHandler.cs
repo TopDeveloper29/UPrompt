@@ -239,19 +239,19 @@ namespace UPrompt.Class
                             string name = (string)EndItemJson["name"];
                             string id = (string)EndItemJson["id"];
                             string value = (string)EndItemJson["value"];
-                            switch (type)
+                            switch (type.ToLower())
                             {
                                 default:
                                 case "ui":
                                     RunAction(name, value, id);
                                     break;
-                                case "Linker":
+                                case "linker":
                                     string LinkerSource = value.Split(new string[] { "," }, StringSplitOptions.None)[0];
                                     string LinkerDestination = value.Split(new string[] { "," }, StringSplitOptions.None)[1];
                                     if (UCommon.GetVariable(LinkerSource) != null)
                                     { UCommon.SetVariable(LinkerDestination, UCommon.GetVariable(LinkerSource)); }
                                     break;
-                                case "ViewLoad":
+                                case "viewload":
                                     RunAction(name, value, id);
                                     break;
 

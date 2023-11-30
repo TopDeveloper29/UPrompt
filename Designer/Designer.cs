@@ -116,7 +116,6 @@ namespace UPrompt.UDesigner
                 if (name != null && value != null)
                 {
                     UCommon.SetVariable("GeneratedCode", "<Setting Name='" + name + "' Value='" + value + "'/>");
-                    RefreshDesignerCode();
                 }
                 else
                 {
@@ -136,11 +135,10 @@ namespace UPrompt.UDesigner
 
                 if (name != null && value != null)
                 {
-                    RefreshDesignerCode();
                 }
                 else
                 {
-                    Dictionary<string, Dictionary<string, object>> data = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(ListOfJson[value].ToString());
+                    Dictionary<string, Dictionary<string, object>> data = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(ListOfJson.Keys.First().ToString());
                     UCommon.SetVariable("ViewValue", data.Keys.First());
                     SelectView();
                 }
@@ -151,11 +149,17 @@ namespace UPrompt.UDesigner
         {
             try
             {
-                if (xml.Length > 1)
+                if (xml.Length > 5)
                 {
                     UParser.ClearHtml();
-                    if (ExtraXml.Length > 1)
-                    { UCommon.SetVariable("DesignerExtraHtml", UParser.GenerateHtmlFromXML(ExtraXml)); UParser.ClearHtml(); }
+                    if (ExtraXml.Length > 10)
+                    {
+                        if (ExtraXml.Contains("</ViewItem>"))
+                        {
+                            UCommon.SetVariable("DesignerExtraHtml", UParser.GenerateHtmlFromXML(ExtraXml));
+                            UParser.ClearHtml();
+                        }
+                    }
                     string html = UParser.GenerateHtmlFromXML(xml);
                     UCommon.SetVariable("DesignerHtml", html);
                     UParser.ReloadView();
@@ -170,12 +174,12 @@ namespace UPrompt.UDesigner
                 string json = File.ReadAllText($@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.json");
                 JObject jsonObject = JsonConvert.DeserializeObject<JObject>(json);
                 xml = "";
+                ExtraXml = "";
                 ListOfJson.Clear();
                 MainNodeName = NodeName.ToLower();
 
                 foreach (var property in jsonObject.Properties())
                 {
-
                     string pname = property.Name.ToLower();
                     if (pname.Contains(MainNodeName))
                     {
@@ -209,6 +213,9 @@ namespace UPrompt.UDesigner
         }
         public static void SelectSubNode()
         {
+            xml = "";
+            ExtraXml = "";
+              
             try
             {
                 string Node = UCommon.GetVariable("SubType");
@@ -216,9 +223,10 @@ namespace UPrompt.UDesigner
                 {
                     try
                     {
-                        xml = "<ViewItem Type=\"Row\">";
-                        ExtraXml = "";
-                        string codexml = "";
+                        if (ListOfJson.Keys.Contains(Node))
+                        {
+                            OpenXmlGroup();
+                        }
                         foreach (string key in ListOfJson.Keys)
                         {
                             if (key.ToLower() == (Node.ToLower()))
@@ -228,10 +236,8 @@ namespace UPrompt.UDesigner
                                 switch (MainNodeName)
                                 {
                                     case "xml":
-                                        codexml = ListOfJson[key].ToString();
-                                        UCommon.SetVariable("GeneratedCode", codexml);
-                                        xml += "</ViewItem>";
-                                        RefreshDesignerCode();
+                                        UCommon.SetVariable("GeneratedCode", ListOfJson[key].ToString());
+                                        CloseXmlGroup();
                                         break;
                                     case "settings":
                                         Settings Settings = JsonConvert.DeserializeObject<Settings>(ListOfJson[Node].ToString());
@@ -251,10 +257,11 @@ namespace UPrompt.UDesigner
                                             UCommon.SetVariable("SettingValue", Settings.Values[0]);
                                         }
                                         xml += $"<ViewItem Type=\"Label\">Description: {Settings.Description}</ViewItem>";
-                                        xml += "</ViewItem>";
-                                        ExtraXml += "<ViewItem Type=\"Row\"><ViewItem Type=\"Label\">Examples Value:</ViewItem>";
+                                        
+                                        ExtraXml += "<ViewItem Type=\"Label\">Examples Value:</ViewItem>";
                                         ExtraXml += GenrerateDropBox(Settings.Values, "SettingValue", "210129,SelectSetting");
-                                        ExtraXml += "</ViewItem>";
+                                        
+                                        CloseXmlGroup();
                                         SelectSetting();
                                         break;
                                     case "view":
@@ -275,24 +282,42 @@ namespace UPrompt.UDesigner
                                             UCommon.SetVariable("ViewValue", data.Keys.First());
                                         }
                                         xml += GenrerateDropBox(data.Keys.ToArray(), "ViewValue", "210129,SelectView");
-                                        xml += "</ViewItem>";
-                                        Console.WriteLine(xml);
+
+                                        CloseXmlGroup();
                                         SelectView();
+                                        break;
+                                    default:
+                                        CloseXmlGroup();
                                         break;
                                 }
                             }
                         }
-
                     }
                     catch (Exception ex) { UCommon.Error(ex.Message); }
                 }
                 else
                 {
+                    xml = "";
+                    ExtraXml = "";
+                    OpenXmlGroup();
+                    CloseXmlGroup();
+                    UParser.ClearHtml();
                     UCommon.SetVariable("SubType", ListOfJson.Keys.First());
                     SelectSubNode();
                 }
             }
             catch (Exception ex) { UCommon.Error(ex.Message); }
+            RefreshDesignerCode();
+        }
+        private static void OpenXmlGroup()
+        {
+            xml = "<ViewItem Type=\"Row\">";
+            ExtraXml = "<ViewItem Type=\"Row\">";
+        }
+        private static void CloseXmlGroup()
+        {
+            xml += "</ViewItem>";
+            ExtraXml += "</ViewItem>";
         }
         private static string GenrerateDropBox(string[] items, string id, string method)
         {

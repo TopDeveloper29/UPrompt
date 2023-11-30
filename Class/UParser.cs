@@ -26,10 +26,13 @@ namespace UPrompt.Class
             ClearHtml();
             UCommon.XmlDocument.Load(UCommon.Xml_Path);
             GenerateView(UCommon.XmlDocument.SelectSingleNode("/Application/View"));
-            if (UCommon.Windows.htmlhandler.Source != null)
+            UCommon.Windows.Invoke((Action)(() =>
             {
-                UCommon.Windows.htmlhandler.Reload();
-            }
+                if (UCommon.Windows.htmlhandler.Source != null)
+                {
+                    UCommon.Windows.htmlhandler.Reload();
+                }
+            }));
         }
         public static string NewInputValue(string type, string name, string id, string value)
         {
