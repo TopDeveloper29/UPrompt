@@ -14,7 +14,7 @@ To get started with Uprompt, follow these steps:
 
 ## Table of Contents
 - [UPrompt Basic](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Basic.md)
-- [Setting](https://github.com/TopDeveloper29/UPrompt/blob/98197e61771bd9cf68bac14bb814f944fff03d5b/Documentation/Basic.md#setting)
+- [Setting](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Setting.md)
 - [View](https://github.com/TopDeveloper29/UPrompt/blob/98197e61771bd9cf68bac14bb814f944fff03d5b/Documentation/Basic.md#view)
   - [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/98197e61771bd9cf68bac14bb814f944fff03d5b/Documentation/Basic.md#viewitem)
     - [Spacer](https://github.com/TopDeveloper29/UPrompt/blob/98197e61771bd9cf68bac14bb814f944fff03d5b/Documentation/Basic.md#spacer)
