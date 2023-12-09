@@ -13,7 +13,7 @@ To get started with Uprompt, follow these steps:
 3. Launch UPrompt.exe and start creating your UI.
 
 ## Table of Contents
-- [UPrompt Basic](https://github.com/TopDeveloper29/UPrompt/blob/98197e61771bd9cf68bac14bb814f944fff03d5b/Documentation/Basic.md#uprompt-basic)
+- [UPrompt Basic](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Basic.md)
 - [Setting](https://github.com/TopDeveloper29/UPrompt/blob/98197e61771bd9cf68bac14bb814f944fff03d5b/Documentation/Basic.md#setting)
 - [View](https://github.com/TopDeveloper29/UPrompt/blob/98197e61771bd9cf68bac14bb814f944fff03d5b/Documentation/Basic.md#view)
   - [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/98197e61771bd9cf68bac14bb814f944fff03d5b/Documentation/Basic.md#viewitem)
