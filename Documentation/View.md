@@ -48,7 +48,7 @@ Description: *This is a text element but with a border* .
 ```xml
 <ViewItem Type="Spacer"></ViewItem>
 ```
-###Box
+### Box
 Description: *This is for add space between 2 element in a `Row`* .
 
 **Aditional Properties:**
