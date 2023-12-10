@@ -1,118 +1,228 @@
 # [Back](https://github.com/TopDeveloper29/UPrompt/blob/Post/README.md) | View
-In this section, you will learn what are the diferent kind and type of built-it element you can use to create a user interphace in `View` node.
+In this section, you will learn about the different kinds and types of built-in elements you can use to create a user interface in the `View` node.
 
 ## ViewItem
-### Spacer
+These elements are used for displaying content and organizing the layout.
 
-Description: *This is for add space between 2 element in a `Row`* .
+### Spacer
+**Description:** Adds space between two elements in a `Row`.
 ```xml
 <ViewItem Type="Spacer"/>
 ```
+
 ### Title
-**Description:** *This is a text element but of the size of title* .
+**Description:** Displays text as a title.
 
-**Aditional Properties:**
+**Additional Properties:**
 
 | Name | Description |
-| ------------ | ------------ |
-| Id  | This define Id in **HTML** element |
-| Style  | You can add extra **CSS** style in the element  |
-| Class  | Define the **CSS** class of the element  |
+| ---- | ----------- |
+| Id   | Defines the Id in the HTML element. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
 
 ```xml
-<ViewItem Type="Title">The title text that will be display in ui</ViewItem>
+<ViewItem Type="Title">The title text that will be displayed in the UI</ViewItem>
 ```
+
 ### Label
-Description: *This is a text element* .
+**Description:** Displays text.
 
-**Aditional Properties:**
+**Additional Properties:**
 
 | Name | Description |
-| ------------ | ------------ |
-| Id  | This define Id in **HTML** element |
-| Style  | You can add extra **CSS** style in the element  |
-| Class  | Define the **CSS** class of the element  |
+| ---- | ----------- |
+| Id   | Defines the Id in the HTML element. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
+
 ```xml
-<ViewItem Type="Label">The text that will be display in ui</ViewItem>
+<ViewItem Type="Label">The text that will be displayed in the UI</ViewItem>
 ```
+
 ### LabelBox
-Description: *This is a text element but with a border* .
+**Description:** Displays text with a border.
 
-**Aditional Properties:**
+**Additional Properties:**
 
 | Name | Description |
-| ------------ | ------------ |
-| Id  | This define Id in **HTML** element |
-| Style  | You can add extra **CSS** style in the element  |
-| Class  | Define the **CSS** class of the element  |
+| ---- | ----------- |
+| Id   | Defines the Id in the HTML element. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
+
 ```xml
-<ViewItem Type="Spacer"></ViewItem>
+<ViewItem Type="LabelBox">The text that will be displayed in the UI</ViewItem>
 ```
+
 ### Box
-Description: *This is for add space between 2 element in a `Row`* .
+**Description:** Holds multiple elements in the same line in the user interface but with a visible border line.
 
-**Aditional Properties:**
-
-| Name | Description |
-| ------------ | ------------ |
-| Id  | This define Id in **HTML** element |
-| Style  | You can add extra **CSS** style in the element  |
-| Class  | Define the **CSS** class of the element  |
 ```xml
-<ViewItem Type="Spacer"></ViewItem>
+<ViewItem Type="Box">
+	<ViewItem Type="Title">My Title</ViewItem>
+    	<ViewItem Type="Label">My Text</ViewItem>
+</VieItem>
 ```
+
 ### Row
-Description: *This is alow to hold multiple element in same line in user interphace* .
+**Description:** Holds multiple elements in the same line in the user interface.
+
 ```xml
 <ViewItem Type="Row">
-	<ViewItem Type="Title">My Title</ViewItem>
-	<ViewItem Type="Label">My Text</ViewItem>
+    <ViewItem Type="Title">My Title</ViewItem>
+    <ViewItem Type="Label">My Text</ViewItem>
 </ViewItem>
 ```
 ## ViewInput
+This kind of element includes all the elements that allow the user to enter or select a value. It comes with a `<ViewAction Type="InputHandler"/>` when you add the `Action` and `Argument` properties to track input changes and run an action.
+
 ### TextBox
-Description: 
+**Description:** A simple textbox that allows users to enter text.
+
+**Additional Properties:**
+
+| Name | Description |
+| ---- | ----------- |
+| Id   | Defines the Id in the HTML element and sets the variable name of the action result. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
+| Action | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md) section). |
+| Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
+
 ```xml
-<ViewItem Type="TextBox"/>
+<ViewInput Type="TextBox">Default value in TextBox</ViewInput>
 ```
+
 ### LinesBox
-Description:
+**Description:** A textbox that allows users to enter text on multiple lines.
+
+**Additional Properties:**
+
+| Name | Description |
+| ---- | ----------- |
+| Id   | Defines the Id in the HTML element and sets the variable name of the action result. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
+| Action | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md) section). |
+| Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
+
 ```xml
-<ViewItem Type="LinesBox"/>
+<ViewInput Type="LinesBox">Default value in LinesBox</ViewInput>
 ```
+
 ### CheckBox
-Description:
+**Description:** A simple checkbox that allows users to check or uncheck a box, returning a boolean value.
+
+**Additional Properties:**
+
+| Name | Description |
+| ---- | ----------- |
+| Checked | A boolean value that defines if the checkbox is checked by default or not. |
+| Id   | Defines the Id in the HTML element and sets the variable name of the action result. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
+| Action | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md) section). |
+| Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
+
 ```xml
-<ViewItem Type="CheckBox"/>
+<ViewInput Type="CheckBox">The text next to the checkbox</ViewInput>
 ```
+
 ### DropDown
-Description:
+**Description:** Allows users to select a value from a dropdown list.
+
+**Additional Properties:**
+
+| Name | Description |
+| ---- | ----------- |
+| Id   | Defines the Id in the HTML element and sets the variable name of the action result. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
+| Action | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md) section). |
+| Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
+
 ```xml
-<ViewItem Type="DropDown"/>
+<ViewInput Type="DropDown"/>
 ```
 ## ViewAction
-### Linker
-Description:
-```xml
-<ViewItem Type="Linker"/>
-```
+These are elements designed to run actions, most of which are hidden and designed to track values and run actions based on them.
+
 ### Button
-Description:
+**Description:** A simple button that you can click on to run an action.
+
+**Additional Properties:**
+
+| Name | Description |
+| ---- | ----------- |
+| Id   | Defines the Id in the HTML element and sets the variable name of the action result. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
+| Image | Allows you to add an image to the button. The property must be in this format: String path to image (local path or link), Integer size of image, Boolean auto-theme the image color between dark and light theme (depends on application color). |
+| Action | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md) section). |
+| Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
+
 ```xml
-<ViewItem Type="Button"/>
+<ViewAction Type="Button" Action="RunExe" Argument="cmd.exe,/C echo test">Text that will be displayed in the button</ViewAction>
 ```
+
+### Linker
+**Description:** This element is used to copy the value of a variable to another variable each time the page loads.
+
+**Additional Properties:**
+
+| Name   | Description                                                                  |
+| ------ | ---------------------------------------------------------------------------- |
+| Source | Variable name that we want to copy to the target.                            |
+| Target | Variable name that we want to copy to (if the variable does not exist, it will create a new one). |
+
+```xml
+<ViewAction Type="Linker" Source="Variable1" Target="Variable2"/>
+```
+
 ### InputHandler
-Description:
+**Description:** This is used to track input changes. All `ViewInput` elements that you add `Action` and `Argument` to will automatically add this for the input. This is specifically used for HTML elements and not built-in elements.
+
+**Additional Properties:**
+
+| Name     | Description                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| Action   | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md) section). |
+| Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
+
 ```xml
-<ViewItem Type="InputHandler"/>
+<ViewAction Type="InputHandler" Action="RunExe" Argument="cmd.exe,/C echo test">Tracked Input Id</ViewAction>
 ```
+
 ### ViewLoad
-Description:
+**Description:** This is used to run an action every time the view loads/reloads.
+
+**Additional Properties:**
+
+| Name     | Description                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| Id       | Defines the Id in the HTML element and sets the variable name of the action result.               |
+| Action   | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md) section). |
+| Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
+
 ```xml
-<ViewItem Type="ViewLoad"/>
+<ViewAction Type="ViewLoad" Action="RunExe" Argument="cmd.exe,/C echo test"/>
 ```
+
 ### VariableHandler
-Description:
+**Description:** This will track variable changes and run an action if a change has been made.
+
+**Additional Properties:**
+
+| Name     | Description                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| Id       | Defines the Id in the HTML element and sets the variable name of the action result.               |
+| Action   | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md) section). |
+| Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
+
 ```xml
-<ViewItem Type="VariableHandler"/>
+<ViewAction Type="VariableHandler" Action="RunExe" Argument="cmd.exe,/C echo test">Tracked Input Id</ViewAction>
 ```
+
+## Html
+Creating a custom element requires a basic knowledge of HTML/CSS. To make it work with UPrompt, you will need more details about how built-in XML elements are converted to HTML elements and how UPrompt retrieves information from them. To start creating your own HTML element, refer to this page: [Learn how to create HTML elements for UPprompt](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Html.md)
