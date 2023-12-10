@@ -39,3 +39,4 @@ To get started with Uprompt, follow these steps:
 - [Create Extension]()
   - [C#]()
   - [Powershell]()
+- [Variables]()
