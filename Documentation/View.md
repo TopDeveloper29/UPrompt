@@ -9,18 +9,18 @@ In this section, you will learn about the different kinds and types of built-in 
 	- [LabelBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#labelbox)
 	- [Box](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#box)
 	- [Row](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#row)
-- [ViewInput](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewinput)
+- [ViewInput](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#top--viewinput)
 	- [TextBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#textbox)
 	- [LinesBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#linesbox)
 	- [CheckBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#checkbox)
 	- [DropDown](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#dropdown)
-- [ViewAction](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewaction)
+- [ViewAction](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#top--viewaction)
 	- [Linker](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#linker)
 	- [Button](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#button)
 	- [InputHandler](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#inputhandler)
 	- [ViewLoad](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewload)
 	- [VariableHandler](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#variablehandler)
-- [Html](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#html)
+- [Html](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#top--html)
 
 ## ViewItem
 These elements are used for displaying content and organizing the layout.
