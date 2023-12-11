@@ -227,7 +227,7 @@ the output will be **MY TEST**.
 |--------|------------------------------------------------------------------------------------------------------|-----------|
 | Type   | Select the type of browsing. Can be `File` or `Folder`.                                               |  Yes      |
 | Mode   | The valid values are `Save` and `Load`.                                  |  Only applies for Type `File`.  No    |
-| Filter | By default, it is `All Files \| *.*`. You can apply a custom filter to the browser, like for XML files: `XML Files \| *.xml`. |  Only applies for Type `File`. No     |
+| Filter | By default, it is `All Files \| *.*`.<br/> You can apply a custom filter to the file browser, like for XML files: `XML Files \| *.xml`. |  Only applies for Type `File`. No     |
 
 **Example**:
 
