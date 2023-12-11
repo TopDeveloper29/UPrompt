@@ -37,6 +37,7 @@ To get started with Uprompt, follow these steps:
     - [VariableHandler](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#variablehandler)
   - [Html](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#html)
 - [Action](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Action.md)
-- [Create Extension]()
-  - [C#]()
-  - [Powershell]()
+- [Create Extension](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Extention.md)
+  - [Powershell](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Extention.md)
+  - [C#](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Extention.md)
+  
