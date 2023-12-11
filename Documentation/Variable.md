@@ -1,7 +1,7 @@
 # [Back](https://github.com/TopDeveloper29/UPrompt/blob/Post/README.md) | Variables
 
 ## Setting Variables
-Setting variables in UPrompt are denoted by starting and ending with **#**. These variables represent values that are configured in the application's settings and are commonly used in CSS to configure the theme of the application. Here are some examples of setting variables:
+Setting variables in UPrompt are denoted by starting and ending with **#**. These variables represent values that are configured in the application's settings and are commonly used in CSS to configure the theme of the application. Here are
 
 | Name                  | Description                                                     |
 | --------------------- | --------------------------------------------------------------- |
