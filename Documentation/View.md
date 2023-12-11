@@ -95,7 +95,7 @@ These elements are used for displaying content and organizing the layout.
     <ViewItem Type="Label">My Text</ViewItem>
 </ViewItem>
 ```
-## ViewInput
+## [Top](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md) | ViewInput
 This kind of element includes all the elements that allow the user to enter or select a value. It comes with a `<ViewAction Type="InputHandler"/>` when you add the `Action` and `Argument` properties to track input changes and run an action. If you run action it will store the result in a variable startind with **Result_** folow by the Input **Id** so somthing like [Result_MyInputId]. It also create a variable name that is the **Id** so [MyInputId] that will hold the last value of the input.
 
 ### TextBox
@@ -166,7 +166,7 @@ This kind of element includes all the elements that allow the user to enter or s
 ```xml
 <ViewInput Type="DropDown"/>
 ```
-## ViewAction
+## [Top](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md) | ViewAction
 These are elements designed to run actions, most of which are hidden and designed to track values and run actions based on them. The action that will run will store the result in a variable startind with **Result_** folow by the Input **Id** so somthing like [Result_MyInputId].
 
 
@@ -246,5 +246,5 @@ These are elements designed to run actions, most of which are hidden and designe
 <ViewAction Type="VariableHandler" Action="RunExe" Argument="cmd.exe,/C echo test">Tracked Input Id</ViewAction>
 ```
 
-## Html
+## [Top](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md) | Html
 Creating a custom element requires a basic knowledge of HTML/CSS. To make it work with UPrompt, you will need more details about how built-in XML elements are converted to HTML elements and how UPrompt retrieves information from them. To start creating your own HTML element, refer to this page: [Learn how to create HTML elements for UPprompt](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Html.md)
