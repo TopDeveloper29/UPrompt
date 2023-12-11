@@ -49,8 +49,9 @@ If you are looking for information on how to create extensions in C# (DLL) or ho
 #### Related Page
 - [Setting](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Setting.md)
 - [View](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md)
-	- [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md)
-	- [ViewInput](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md)
-	- [ViewAction](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md)
+	- [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewitem)
+	- [ViewInput](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewinput)
+	- [ViewAction](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewaction)
+ 	- [Html](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#html)
 - [Extention](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Setting.md)
 
