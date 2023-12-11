@@ -121,6 +121,7 @@ namespace UPrompt.Class
             value = UParser.ParseSystemText(value);
             switch (name)
             {
+                // Misc
                 case "Production":
                     try
                     {
@@ -145,20 +146,6 @@ namespace UPrompt.Class
                         UCommon.Warning($"{name} provide an string that represent the id of element", WarningTitle);
                     }
                     break;
-                case "CSS":
-                    if (File.Exists(value) && value.ToLower().Contains(".css"))
-                    {
-                        NewFadeColor();
-                        string css = UParser.ParseSettingsText(File.ReadAllText(value));
-                        string copy = $@"{UCommon.Application_Path_Windows}Resources\Code\{UImage.GetImageNameFromLocalPath(value)}";
-                        File.WriteAllText(copy,css);
-                        UParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{copy}\">";
-                    }
-                    else
-                    {
-                        UCommon.Warning($"The setting for {name} file do not exist or is not a css file: \"{value}\"",WarningTitle);
-                    }
-                    break;
                 case "Variable":
 
                     if (value.Contains(","))
@@ -176,6 +163,7 @@ namespace UPrompt.Class
   
                     break;
  
+                // Extention declaration
                 case "Extention":
                     string path = "";
                     string namespc = "";
@@ -184,7 +172,7 @@ namespace UPrompt.Class
                         path = value.Split(',')[0];
                         namespc = value.Split(',')[1];
                     }
-                    catch { UCommon.Warning($"The settings {name} as invalid argument ({value}) or id ({id})\n The value must be Argument=\"PATH,NAMESPACE.CLASS\"\nThe id must be an integer", WarningTitle); }
+                    catch { UCommon.Warning($"The settings {name} as invalid value ({value}) or id ({id})\n The value must be Value=\"PATH,NAMESPACE.CLASS\"\nThe id must be an integer", WarningTitle); }
 
                     if (File.Exists(path))
                     {
@@ -225,9 +213,7 @@ namespace UPrompt.Class
                     PowershellFallbackId++;
                     break;
                 
-                case "Font":
-                    Font_Name = value;
-                    break;
+                // View customization
                 case "Item-Margin":
                     try
                     {
@@ -246,7 +232,25 @@ namespace UPrompt.Class
                         UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be a size like ({value}px or {value}%)", WarningTitle);
                     }
                     break;
-                
+                case "CSS":
+                    if (File.Exists(value) && value.ToLower().Contains(".css"))
+                    {
+                        NewFadeColor();
+                        string css = UParser.ParseSettingsText(File.ReadAllText(value));
+                        string copy = $@"{UCommon.Application_Path_Windows}Resources\Code\{UImage.GetImageNameFromLocalPath(value)}";
+                        File.WriteAllText(copy, css);
+                        UParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{copy}\">";
+                    }
+                    else
+                    {
+                        UCommon.Warning($"The setting for {name} file do not exist or is not a css file: \"{value}\"", WarningTitle);
+                    }
+                    break;
+
+                // theme
+                case "Font":
+                    Font_Name = value;
+                    break;
                 case "Application-Color":
                     try
                     {
@@ -327,6 +331,7 @@ namespace UPrompt.Class
                     }
                     break;
                 
+                // Application customization
                 case "Width":
                     try
                     {
@@ -350,9 +355,9 @@ namespace UPrompt.Class
                     }
                     break;
                 case "WindowsResizeMode":
-                    switch (value)
+                    switch (value.ToLower())
                     {
-                        case "All":
+                        case "all":
                             UCommon.Windows.Top.Enabled = true;
                             UCommon.Windows.Left.Enabled = true;
                             UCommon.Windows.Right.Enabled = true;
@@ -361,7 +366,7 @@ namespace UPrompt.Class
                             UCommon.Windows.cornerright.Enabled = true;
                             WindowsResizeMode = value;
                             break;
-                        case "Horizontal":
+                        case "horizontal":
                             UCommon.Windows.Left.Enabled = true;
                             UCommon.Windows.Right.Enabled = true;
                             UCommon.Windows.Top.Enabled = false;
@@ -370,7 +375,7 @@ namespace UPrompt.Class
                             UCommon.Windows.cornerright.Enabled = false;
                             WindowsResizeMode = value;
                             break;
-                        case "Vertical":
+                        case "vertical":
                             UCommon.Windows.Left.Enabled = false;
                             UCommon.Windows.Right.Enabled = false;
                             UCommon.Windows.Bottom.Enabled = true;
@@ -379,7 +384,7 @@ namespace UPrompt.Class
                             UCommon.Windows.cornerright.Enabled = false;
                             WindowsResizeMode = value;
                             break;
-                        case "Diagonal":
+                        case "diagonal":
                             UCommon.Windows.Left.Enabled = false;
                             UCommon.Windows.Right.Enabled = false;
                             UCommon.Windows.Bottom.Enabled = false;
@@ -388,7 +393,7 @@ namespace UPrompt.Class
                             UCommon.Windows.cornerright.Enabled = true;
                             WindowsResizeMode = value;
                             break;
-                        case "None":
+                        case "none":
                             UCommon.Windows.Top.Enabled = false;
                             UCommon.Windows.Left.Enabled = false;
                             UCommon.Windows.Right.Enabled = false;
@@ -404,17 +409,17 @@ namespace UPrompt.Class
                     break;
                 case "WindowsOpenMode":
                     string WindowsMode = value;
-                    switch (value)
+                    switch (value.ToLower())
                     {
-                        case "Normal":
+                        case "normal":
                             WindowsOpenMode = "Normal";
                             UCommon.Windows.WindowState = FormWindowState.Normal;
                             break;
-                        case "Minimized":
+                        case "minimized":
                             WindowsOpenMode = "Minimized";
                             UCommon.Windows.WindowState = FormWindowState.Minimized;
                             break;
-                        case "Maximized":
+                        case "maximized":
                             WindowsOpenMode = "Maximized";
                             UCommon.Windows.WindowState = FormWindowState.Maximized;
                             break;
@@ -441,7 +446,6 @@ namespace UPrompt.Class
                 case "Application-Title":
                     UCommon.Windows.Text = value;
                     break;
-
                 case "ShowMinimize":
                     try
                     {

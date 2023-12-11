@@ -204,23 +204,23 @@ namespace UPrompt.Class
             if (!USettings.ElementsParsingSkip.Contains(Id))
             {
                 // Check what kind of node is it 
-                switch (childNode.Name)
+                switch (childNode.Name.ToLower())
                 {
-                    case "ViewInput":
+                    case "viewinput":
                         //action that must be apply for all type of ViewInput
                         if (UCommon.Variable.ContainsKey(Id)) { InnerValue = ParseSystemText(UCommon.Variable[Id]); }
                         if (Action != null) { GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
 
-                        switch (Type)
+                        switch (Type.ToLower())
                         {
                             default:
-                            case "TextBox":
+                            case "textbox":
                                 HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
                                 break;
-                            case "LinesBox":
+                            case "linesbox":
                                 HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
                                 break;
-                            case "CheckBox":
+                            case "checkbox":
                                 string Checked = "";
                                 string cs = childNode.Attributes["Checked"]?.Value;
                                 bool ics = false;
@@ -237,7 +237,7 @@ namespace UPrompt.Class
                                     $"  {InnerValue}\r\n" +
                                     "</label>";
                                 break;
-                            case "DropDown":
+                            case "dropdown":
                                 string url = "https://static.thenounproject.com/png/1590826-200.png";
                                 string RealDropImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromUrl(url)}";
                                 UImage.DownloadImage(url, RealDropImagePath);
@@ -269,7 +269,7 @@ namespace UPrompt.Class
                         }
                         AddJsInputHandler(Id);
                         break;
-                    case "ViewItem":
+                    case "viewitem":
                         switch (Type)
                         {
                             case "Spacer":
@@ -278,11 +278,9 @@ namespace UPrompt.Class
                             case "Title":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title {Class}\">{InnerValue}</div>\n";
                                 break;
-
                             case "Label":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label {Class}\">{InnerValue}</div>\n";
                                 break;
-
                             case "LabelBox":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
                                 break;
@@ -304,7 +302,7 @@ namespace UPrompt.Class
                                 break;
                         }
                         break;
-                    case "ViewAction":
+                    case "viewaction":
                         switch (Type)
                         {
                             case "Linker":
