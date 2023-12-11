@@ -17,7 +17,7 @@
       },
       "Label": {
         "Description": "This element is a simple label that show text",
-        "InnerTextPurpose": "The text inside the `<ViewItem></ViewItem>` will be used to set the text of the label.",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to set the text of the label.",
         "SupportedProperties": [
           "Id",
           "Style",
@@ -26,7 +26,7 @@
       },
       "LabelBox": {
         "Description": "This element is a simple label but with a border that show text",
-        "InnerTextPurpose": "The text inside the `<ViewItem></ViewItem>` will be used to set the text of the label.",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to set the text of the label.",
         "SupportedProperties": [
           "Id",
           "Style",
@@ -35,7 +35,7 @@
       },
       "Title": {
         "Description": "This element is a simple label but of the size of a title that show text",
-        "InnerTextPurpose": "The text inside the `<ViewItem></ViewItem>` will be used to set the text of the label.",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to set the text of the label.",
         "SupportedProperties": [
           "Id",
           "Style",
@@ -62,7 +62,7 @@
     "ViewInput": {
       "TextBox": {
         "Description": "This element is a simple TextBox that allows the user to enter text in it.",
-        "InnerTextPurpose": "The text inside the `<ViewInput></ViewInput>` will be used to set the default value of the textbox.",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to set the default value of the textbox.",
         "SupportedProperties": [
           "Id",
           "Style",
@@ -73,7 +73,7 @@
       },
       "LinesBox": {
         "Description": "This element is a simple TextBox but with multiple line that allows the user to enter text in it.",
-        "InnerTextPurpose": "The text inside the `<ViewInput></ViewInput>` will be used to set the default value of the textbox.",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to set the default value of the textbox.",
         "SupportedProperties": [
           "Id",
           "Style",
@@ -84,7 +84,7 @@
       },
       "CheckBox": {
         "Description": "This element is a simple CheckBox that allows the user to tell if yes or no they want something (true/false value).",
-        "InnerTextPurpose": "The text inside the `<ViewInput></ViewInput>` will be used to set the label of the checkbox.",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to set the label of the checkbox.",
         "SupportedProperties": [
           "Id",
           "Style",
@@ -96,7 +96,7 @@
       },
       "DropDown": {
         "Description": "This element is a DropBox that allows the user to select a value from a list. Using DropList",
-        "InnerTextPurpose": "The text inside the `<ViewInput></ViewInput>` will be used to set the default value of the dropdown.",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to set the default value of the dropdown.",
         "SupportedProperties": [
           "Id",
           "Style",
@@ -110,11 +110,47 @@
     "ViewAction": {
       "Button": {
         "Description": "This element is a simple Button that allows the user to run action.",
-        "InnerTextPurpose": "The text inside the `<ViewAction></ViewAction>` will be used to display text in button",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to display text in button",
         "SupportedProperties": [
           "Id",
           "Style",
           "Class",
+          "Action",
+          "Arguments"
+        ]
+      },
+      "Linker": {
+        "Description": "This element is hiddent and should use to tranfert a value from variable to annother at each load",
+        "InnerTextPurpose": "N/A",
+        "SupportedProperties": [
+          "Id",
+          "Source",
+          "Target"
+        ]
+      },
+      "InputHandler": {
+        "Description": "This element is hidden it track change made to input (each built-in input element comme with it by default). The usage are for custom input in html",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to define the input id to track",
+        "SupportedProperties": [
+          "Id",
+          "Action",
+          "Arguments"
+        ]
+      },
+      "ViewLoad": {
+        "Description": "This element is hidden and should use to run action every time the view reload or load (disclaimer that can impact performance of application)",
+        "InnerTextPurpose": "N/A",
+        "SupportedProperties": [
+          "Id",
+          "Action",
+          "Arguments"
+        ]
+      },
+      "VariableHandler": {
+        "Description": "This element is hidden and should be use to track change made to variable.",
+        "InnerTextPurpose": "The text inside the Xml Element will be used to define the varaible name to track",
+        "SupportedProperties": [
+          "Id",
           "Action",
           "Arguments"
         ]
@@ -533,11 +569,11 @@
       "Description": "It allow to run a method of a extention that are loaded in settings",
       "Arguments": {
         "Id": {
-          "Description": "A number that represant the id of a loaded c# extention (from setting Extention)",
+          "Description2": "A number that represant the id of a loaded c# extention (from setting Extention)",
           "Mandatory": "true"
         },
         "Method": {
-          "Description": "The method to run in the extention like ExtentionMethod(MethodArgument,Argument)",
+          "Description2": "The method to run in the extention like ExtentionMethod(MethodArgument,Argument)",
           "Mandatory": "true"
         }
       }
@@ -546,11 +582,11 @@
       "Description": "It allow to run a code or function in a loaded powershell script (from setting powershell)",
       "Arguments": {
         "Id": {
-          "Description": "A number that represant the id of a loaded powershell file",
+          "Description2": "A number that represant the id of a loaded powershell file",
           "Mandatory": "true"
         },
         "Command": {
-          "Description": "Command that will be send in powershell environment like Write-Host \"Test of [Variable]\"; or Function(\"[VariableAsArgument]\");",
+          "Description2": "Command that will be send in powershell environment like Write-Host \"Test of [Variable]\"; or Function(\"[VariableAsArgument]\");",
           "Mandatory": "true"
         }
       }
@@ -559,11 +595,11 @@
       "Description": "It allow to run directly an executable and pass argument to it",
       "Arguments": {
         "Path": {
-          "Description": "Path to executable file you want to run",
+          "Description2": "Path to executable file you want to run",
           "Mandatory": "true"
         },
         "Argument": {
-          "Description": "Argument pass to executable like \"/Argument /S /Q\"",
+          "Description2": "Argument pass to executable like \"/Argument /S /Q\"",
           "Mandatory": "false"
         }
       }
@@ -572,7 +608,7 @@
       "Description": "It allow to run a powershell script file .ps1 (not in environment)",
       "Arguments": {
         "Path": {
-          "Description": "Path to ps1 file to run you can also try \"C:\\path\\file.ps1\" -ScriptArgument \"true\" (but it better to use powershell setting to load a script in environment to do that)",
+          "Description2": "Path to ps1 file to run you can also try \"C:\\path\\file.ps1\" -ScriptArgument \"true\" (but it better to use powershell setting to load a script in environment to do that)",
           "Mandatory": "true"
         }
       }
@@ -581,7 +617,7 @@
       "Description": "It allow to read content of variable",
       "Arguments": {
         "Name": {
-          "Description": "The name of variable to read value",
+          "Description2": "The name of variable to read value",
           "Mandatory": "true"
         }
       }
@@ -590,11 +626,11 @@
       "Description": "It allow to set value of a variable (existing one and new one)",
       "Arguments": {
         "Name": {
-          "Description": "A number that represant unique name for variable",
+          "Description2": "A number that represant unique name for variable",
           "Mandatory": "true"
         },
         "Value": {
-          "Description": "The value the varaible will now contain",
+          "Description2": "The value the varaible will now contain",
           "Mandatory": "true"
         }
       }
@@ -603,11 +639,11 @@
       "Description": "It allow to show all user variable or specified one using a dialog or not",
       "Arguments": {
         "Id": {
-          "Description": "If it set to Show::All::Id it will show all variable if it a array Var1,Var2 it will show all varaible in array else it will show the variable",
+          "Description2": "If it set to Show::All::Id it will show all variable if it a array Var1,Var2 it will show all varaible in array else it will show the variable",
           "Mandatory": "false"
         },
         "ShowDialog": {
-          "Description": "Did you want to show the dialog or not (true/false) it output result in variable",
+          "Description2": "Did you want to show the dialog or not (true/false) it output result in variable",
           "Mandatory": "false"
         }
       }
@@ -616,7 +652,7 @@
       "Description": "It show a basic yes/no dialog that return true/false",
       "Arguments": {
         "String": {
-          "Description": "A string to display in dialog",
+          "Description2": "A string to display in dialog",
           "Mandatory": "true"
         }
       }
@@ -625,7 +661,7 @@
       "Description": "It show a basic ok dialog that return true/false",
       "Arguments": {
         "String": {
-          "Description": "A string to display in dialog",
+          "Description2": "A string to display in dialog",
           "Mandatory": "true"
         }
       }
@@ -634,15 +670,15 @@
       "Description": "Browse file system load or save file or select folder",
       "Arguments": {
         "Type": {
-          "Description": "Select the type of browsing can be \"File\" or \"Folder\"",
+          "Description2": "Select the type of browsing can be \"File\" or \"Folder\"",
           "Mandatory": "true"
         },
         "Mode": {
-          "Description": "That only apply only for Type File the valid value are \"Save\" and \"Load\"",
+          "Description2": "That only apply only for Type File the valid value are \"Save\" and \"Load\"",
           "Mandatory": "true"
         },
         "Filter": {
-          "Description": "That only apply only for Type File by default it \"All Files|*.*\" you can apply custom filter to the browser like for xml file: \"Xml Files|*.xml\"",
+          "Description2": "That only apply only for Type File by default it \"All Files|*.*\" you can apply custom filter to the browser like for xml file: \"Xml Files|*.xml\"",
           "Mandatory": "false"
         }
       }
@@ -651,7 +687,7 @@
       "Description": "It allow to load a new xml page by specifing it path",
       "Arguments": {
         "Path": {
-          "Description": "Path of the xml page to load",
+          "Description2": "Path of the xml page to load",
           "Mandatory": "true"
         }
       }
@@ -668,15 +704,15 @@
       "Description": "It allow to configure a setting live (some setting may not load properly)",
       "Arguments": {
         "Name": {
-          "Description": "A string that represant the name of the setting",
+          "Description2": "A string that represant the name of the setting",
           "Mandatory": "true"
         },
         "Value": {
-          "Description": "A string that represent the value of the setting)",
+          "Description2": "A string that represent the value of the setting)",
           "Mandatory": "true"
         },
         "Id": {
-          "Description": "If setting allow to have a id define it (like Extention and Powershell)",
+          "Description2": "If setting allow to have a id define it (like Extention and Powershell)",
           "Mandatory": "false"
         }
       }
@@ -689,7 +725,7 @@
       "Description": "It allow to copy a value to cliboard",
       "Arguments": {
         "String": {
-          "Description": "Text you want to copy to cliboard",
+          "Description2": "Text you want to copy to cliboard",
           "Mandatory": "true"
         }
       }
@@ -698,7 +734,7 @@
       "Description": "It allow to exit the application with a exit code",
       "Arguments": {
         "ExitCode": {
-          "Description": "A number that represant the exit code of the application by default it throw 0",
+          "Description2": "A number that represant the exit code of the application by default it throw 0",
           "Mandatory": "false"
         }
       }

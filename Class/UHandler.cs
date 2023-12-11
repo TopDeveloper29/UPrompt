@@ -3,12 +3,15 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Input;
+using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -198,6 +201,24 @@ namespace UPrompt.Class
             json = json.Substring(0, json.Length - 1).Substring(1).Replace(@"\", null);
             JObject jsonObject = JsonConvert.DeserializeObject<JObject>(json);
 
+            foreach (var property in jsonObject.Properties())
+            {
+                string Name = property.Name;
+                JToken Value = property.Value;
+                if (Name.Contains("INPUT_"))
+                {
+                    string id = Name.Split(new string[] { "INPUT_" }, StringSplitOptions.None)[1];
+                    if (UCommon.GetVariable(id) != Value.ToString())
+                    {
+                        UCommon.SetVariable(id, Value.ToString());
+                    }
+                }
+                else if(Name.Contains("CheckBox_"))
+                {
+                    UCommon.SetVariable(Name, Value.ToString());
+                    Console.WriteLine(Name + " is now set to " + Value);
+                }
+            }
             // Accessing properties
             foreach (var property in jsonObject.Properties())
             {
@@ -218,19 +239,19 @@ namespace UPrompt.Class
                             string name = (string)EndItemJson["name"];
                             string id = (string)EndItemJson["id"];
                             string value = (string)EndItemJson["value"];
-                            switch (type)
+                            switch (type.ToLower())
                             {
                                 default:
                                 case "ui":
                                     RunAction(name, value, id);
                                     break;
-                                case "Linker":
+                                case "linker":
                                     string LinkerSource = value.Split(new string[] { "," }, StringSplitOptions.None)[0];
                                     string LinkerDestination = value.Split(new string[] { "," }, StringSplitOptions.None)[1];
                                     if (UCommon.GetVariable(LinkerSource) != null)
                                     { UCommon.SetVariable(LinkerDestination, UCommon.GetVariable(LinkerSource)); }
                                     break;
-                                case "ViewLoad":
+                                case "viewload":
                                     RunAction(name, value, id);
                                     break;
 
@@ -262,9 +283,9 @@ namespace UPrompt.Class
             try
             {
                 ActionValue = UParser.ParseSystemText(ActionValue);
-                switch (ActionName)
+                switch (ActionName.ToLower())
                 {
-                    case "RunMethod":
+                    case "runmethod":
                         try
                         {
                             foreach (ExtentionHandler EH in UHandler.ExtentionHandlers)
@@ -299,7 +320,7 @@ namespace UPrompt.Class
                         }
                         catch { UCommon.Warning($"The argument of {ActionName} must be in format \"Id,MethodName(argument)\"", LineTitle); }
                         break;
-                    case "RunPowershell":
+                    case "runpowershell":
                         try
                         {
                             int psid = int.Parse(ActionValue.Split(',')[0]);
@@ -338,7 +359,7 @@ namespace UPrompt.Class
                         }
                         catch { UCommon.Warning($"RunPowershell action value must be formated as this way PowershellInstamceId,FunctionToRunOrCode\n If you don't know id, please note it will be auto filled starting from 0 and increment by one each time you create an new powershell instance you can also set the id by specifing in xml configuration", LineTitle); }
                         break;
-                    case "RunExe":
+                    case "runexe":
                         try
                         {
                             if (ActionValue.Split(',').Length > 1)
@@ -349,7 +370,7 @@ namespace UPrompt.Class
                         }
                         catch { UCommon.Warning($"RunExe action argument must specify exe path and exe argument like: Argument=\"cmd.exe,/C echo Helllo User\"", LineTitle); }
                         break;
-                    case "RunPs1":
+                    case "runps1":
                         try
                         {
                             if (File.Exists(ActionValue) && ActionValue.ToLower().Contains(".ps1"))
@@ -376,21 +397,21 @@ namespace UPrompt.Class
                         }
                         catch { UCommon.Warning($"RunPs1 action argument must specify exe path that is a ps1 file (xml line: {UCommon.DebugXmlLineNumber})", LineTitle); LastActionOutput = "false"; }
                         break;
-                    case "GetVariable":
+                    case "getvariable":
                         try
                         {
                             LastActionOutput = UCommon.GetVariable(ActionValue);
                         }
                         catch { UCommon.Warning($"Could not found {ActionValue} variable.", LineTitle); LastActionOutput = "false"; }
                         break;
-                    case "SetVariable":
+                    case "setvariable":
                         try
                         {
                             UCommon.SetVariable(ActionValue.Split(',')[0], ActionValue.Split(',')[1]);
                         }
-                        catch { UCommon.Warning($"SetInternalVariable arguments must specify name and value as argument like: Argument=\"NewVar,Hello User\"", LineTitle); }
+                        catch { UCommon.Warning($"{ActionName} arguments must specify name and value as argument like: Argument=\"NewVar,Hello User\"", LineTitle); }
                         break;
-                    case "ShowVariable":
+                    case "showvariable":
                         try
                         {
                             if (ActionValue.Length < 1)
@@ -417,7 +438,7 @@ namespace UPrompt.Class
                         }
                         catch (Exception ex) { UCommon.Error(ex.Message, LineTitle); LastActionOutput = "false"; }
                         break;
-                    case "YesNoDialog":
+                    case "yesnodialog":
                         if (UCommon.Output(ActionValue, UCommon.Windows.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         {
                             LastActionOutput = "true";
@@ -428,7 +449,7 @@ namespace UPrompt.Class
                         }
 
                         break;
-                    case "OkDialog":
+                    case "okdialog":
                         if (UCommon.Output(ActionValue, UCommon.Windows.Text) == DialogResult.OK)
                         {
                             LastActionOutput = "true";
@@ -438,7 +459,7 @@ namespace UPrompt.Class
                             LastActionOutput = "false";
                         }
                         break;
-                    case "Browse":
+                    case "browse":
                         try
                         {
                             string Type = ActionValue.Split(',')[0];
@@ -487,7 +508,7 @@ namespace UPrompt.Class
                         catch { UCommon.Warning($"Browse action argument must be like: Argument=\"Type(File/Folder),Mode(Save/Load), Filter|*.*\" the filter is optional", LineTitle); }
 
                         break;
-                    case "LoadPage":
+                    case "loadpage":
                         if (File.Exists(ActionValue) && ActionValue.ToLower().Contains(".xml"))
                         {
                             try
@@ -503,7 +524,7 @@ namespace UPrompt.Class
                             LastActionOutput = "false";
                         }
                         break;
-                    case "ReloadView":
+                    case "reloadview":
                         try
                         {
                             UParser.ReloadView();
@@ -511,7 +532,7 @@ namespace UPrompt.Class
                         }
                         catch(Exception ex) { UCommon.Warning(ex.Message,LineTitle); LastActionOutput = "false"; }
                         break;
-                    case "ReloadSettings":
+                    case "reloadsettings":
                         try
                         {
                             USettings.ReLoad();
@@ -519,7 +540,7 @@ namespace UPrompt.Class
                         }
                         catch (Exception ex) { UCommon.Warning(ex.Message, LineTitle); LastActionOutput = "false"; }
                         break;
-                    case "LoadSetting":
+                    case "loadsetting":
                         try
                         {
                             USettings.Load(ActionValue.Split(',')[0], ActionValue.Split(',')[1], ActionValue.Split(',')[2]);
@@ -527,14 +548,14 @@ namespace UPrompt.Class
                         }
                         catch { UCommon.Warning($"The argument of {ActionName} should be formated as:\n Argument=\"Name,Value,Id\" The Id is optional", LineTitle); }
                         break;
-                    case "GetClipboard":
+                    case "getclipboard":
                         try
                         {
                             LastActionOutput = Clipboard.GetText();
                         }
                         catch (Exception ex) { UCommon.Error(ex.Message, LineTitle); LastActionOutput = "false"; }
                         break;
-                    case "SetClipboard":
+                    case "setclipboard":
                         try
                         {
                             Clipboard.SetText(ActionValue);
@@ -542,12 +563,12 @@ namespace UPrompt.Class
                         }
                         catch (Exception ex) { UCommon.Error(ex.Message, LineTitle); LastActionOutput = "false"; }
                         break;
-                    case "Exit":
+                    case "exit":
                         int value = 0;
                         int.TryParse(ActionValue, out value);
                         Environment.Exit(value);
                         break;
-                    default: UCommon.Warning($"{ActionName} do not exist or have ivalid uper and lower case", LineTitle); break;
+                    default: UCommon.Warning($"{ActionName} do not exist", LineTitle); break;
                 }
             }
             catch (Exception ex) { UCommon.Error(ex.Message, "Unknow Error"); }

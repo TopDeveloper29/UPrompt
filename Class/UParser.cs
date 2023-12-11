@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using UPrompt.Internal;
 
 namespace UPrompt.Class
@@ -24,6 +26,13 @@ namespace UPrompt.Class
             ClearHtml();
             UCommon.XmlDocument.Load(UCommon.Xml_Path);
             GenerateView(UCommon.XmlDocument.SelectSingleNode("/Application/View"));
+            UCommon.Windows.Invoke((Action)(() =>
+            {
+                if (UCommon.Windows.htmlhandler.Source != null)
+                {
+                    UCommon.Windows.htmlhandler.Reload();
+                }
+            }));
         }
         public static string NewInputValue(string type, string name, string id, string value)
         {
@@ -45,7 +54,8 @@ namespace UPrompt.Class
             UCommon.DebugXmlLineNumber = (File.ReadAllLines(UCommon.Xml_Path).Length - USettings.Count) - 5;
             foreach (XmlNode childNode in viewNode.ChildNodes)
             {
-                HtmlFromXml = GenerateHtmlFromXML(childNode.OuterXml);
+                // this generate html and include System parsing for inner value and other html element
+                HtmlFromXml = GenerateHtmlFromXML(childNode.OuterXml); 
             }
 
             if (HtmlFromXml.Length < 5) { HtmlFromXml = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
@@ -96,7 +106,7 @@ namespace UPrompt.Class
                 //Internal Input Variable Replace
                 foreach (string Key in UCommon.Variable.Keys)
                 {
-                    string Value = UCommon.Variable[Key];
+                    string Value = UCommon.GetVariable(Key);
                     ParsedText = ParsedText.Replace($"[{Key}]", Value);
                 }
                 return ParsedText;
@@ -162,6 +172,8 @@ namespace UPrompt.Class
             string DropList = childNode.Attributes["DropList"]?.Value;
             string Argument = childNode.Attributes["Argument"]?.Value ?? "";
 
+            string Checked = childNode.Attributes["Checked"]?.Value ?? "False";
+
             string ExtraStyle = childNode.Attributes["Style"]?.Value;
             string Class = childNode.Attributes["Class"]?.Value;
             if (Class == null) { Class = ""; }
@@ -208,7 +220,10 @@ namespace UPrompt.Class
                 {
                     case "viewinput":
                         //action that must be apply for all type of ViewInput
-                        if (UCommon.Variable.ContainsKey(Id)) { InnerValue = ParseSystemText(UCommon.Variable[Id]); }
+                        if (UCommon.GetVariable(Id) != null && UCommon.GetVariable(Id).Length > 0)
+                        {
+                            InnerValue = ParseSystemText(UCommon.Variable[Id]);
+                        }
                         if (Action != null) { GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
 
                         switch (Type.ToLower())
@@ -221,21 +236,26 @@ namespace UPrompt.Class
                                 HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
                                 break;
                             case "checkbox":
-                                string Checked = "";
-                                string cs = childNode.Attributes["Checked"]?.Value;
-                                bool ics = false;
-                                if (cs != null)
+                                if (UCommon.GetVariable($"CheckBox_{Id}") != null)
                                 {
-                                    ics = bool.Parse(cs);
+                                    Checked = UCommon.GetVariable($"CheckBox_{Id}");
+                                    Console.WriteLine($"CheckBox_{Id}" + " get value is " + Checked);
                                 }
-                                if (ics) { Checked = "checked"; }
+                                string Checked_Text = "";
+                                if (Checked != null)
+                                {
+                                    if (bool.Parse(Checked))
+                                    { Checked_Text = "checked"; }
+                                }
+                                
 
                                 HtmlFromXml += "\n" +
                                     $"<label style=\"{ExtraStyle}\" class=\"label-checkbox {Class}\">\r\n" +
-                                    $"  <input class=\"Checkbox\" type=\"checkbox\" id=\"{Id}\" name=\"INPUT_{Id}\" value=\"{InnerValue}\" {Checked} onclick=\"saveCheckboxStatus(this)\"/>\r\n" +
+                                    $"  <input type=\"checkbox\" id=\"{Id}\" name=\"INPUT_{Id}\" value=\"{InnerValue}\" {Checked_Text} onclick=\"saveCheckboxStatus(this)\"/>\r\n" +
                                     "  <span class=\"checkmark\"></span>\r\n" +
-                                    $"  {InnerValue}\r\n" +
-                                    "</label>";
+                                    $"{InnerValue}\r\n" +
+                                    "</label>\r\n" +
+                                    $"<input id=\"CheckBox_{Id}\" name=\"CheckBox_{Id}\" Value=\"{Checked}\" hidden/>";
                                 break;
                             case "dropdown":
                                 string url = "https://static.thenounproject.com/png/1590826-200.png";
@@ -269,22 +289,24 @@ namespace UPrompt.Class
                         }
                         AddJsInputHandler(Id);
                         break;
-                    case "viewitem":
+                    case "ViewItem":
                         switch (Type)
                         {
-                            case "Spacer":
+                            case "spacer":
                                 HtmlFromXml += "<div class=\"Spacer\">.</div>";
                                 break;
-                            case "Title":
+                            case "title":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title {Class}\">{InnerValue}</div>\n";
                                 break;
+
                             case "Label":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label {Class}\">{InnerValue}</div>\n";
                                 break;
+
                             case "LabelBox":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
                                 break;
-                            case "Box":
+                            case "box":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Box {Class}\">\n";
                                 foreach (XmlNode rowChildNode in childNode.ChildNodes)
                                 {
@@ -292,7 +314,7 @@ namespace UPrompt.Class
                                 }
                                 HtmlFromXml += "</div>\n";
                                 break;
-                            case "Row":
+                            case "row":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row {Class}\">\n";
                                 foreach (XmlNode rowChildNode in childNode.ChildNodes)
                                 {
@@ -302,10 +324,10 @@ namespace UPrompt.Class
                                 break;
                         }
                         break;
-                    case "viewaction":
+                    case "ViewAction":
                         switch (Type)
                         {
-                            case "Linker":
+                            case "linker":
                                 string source = childNode.Attributes["Source"]?.Value ?? "default";
                                 string target = childNode.Attributes["Target"]?.Value ?? "default";
                                 if (source != null && target != null)
@@ -318,25 +340,28 @@ namespace UPrompt.Class
                                 }
                                 break;
                             default:
-                            case "Button":
+                            case "button":
                                 HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui",Action,Id,Argument)}\">{InnerValue}</button>\n";
                                 break;
-                            case "InputHandler":
+                            case "inputhandler":
                                 try
                                 {
-                                    if (UCommon.GetVariable(InnerValue) == null) { UCommon.SetVariable(InnerValue, ""); }
                                     if (!UCommon.TrackedVariable.TryGetValue(InnerValue, out ActionStorage acs))
                                     {
-                                        Console.WriteLine(InnerValue);
-                                        UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue), InnerValue));
+                                        if (acs == null)
+                                        {
+                                            if (UCommon.GetVariable(InnerValue) == null) { UCommon.SetVariable(InnerValue, ""); }
+                                            UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue), InnerValue));
+
+                                        }
                                     }
                                 }
                                 catch (Exception ex) { UCommon.Error(ex.Message); }
                                 break;
-                            case "ViewLoad":
+                            case "viewload":
                                 HtmlFromXml += $"<input hidden=\"hidden\" name=\"Action_{Id}\" value=\"{NewInputValue("ViewLoad", Action, Id, Argument)}\"/>\n";
                                 break;
-                            case "VariableHandler":
+                            case "variablehandler":
                                 try
                                 {
                                     if (!UCommon.TrackedVariable.TryGetValue(InnerValue, out ActionStorage acs))
@@ -344,7 +369,7 @@ namespace UPrompt.Class
                                         UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue),Id));
                                     }
                                 }
-                                catch (Exception ex) { MessageBox.Show(ex.Message); }
+                                catch (Exception ex) { UCommon.Error(ex.Message); }
                                 break;
                         }
                         break;

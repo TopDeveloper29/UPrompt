@@ -60,7 +60,6 @@
                     var submitEvent = new Event('submit');
                     myForm.dispatchEvent(submitEvent);
 
-
                     event.preventDefault();
                 });
             });
@@ -69,39 +68,26 @@
     </script>
     <script>
         function saveCheckboxStatus(checkbox) {
-            if (typeof localStorage === 'undefined') {
-                console.log('localStorage is not available');
-                return;
-            }
-
-            localStorage.setItem(checkbox.id, checkbox.checked);
+            const Id = "CheckBox_" + checkbox.id;
+            const myInput = document.getElementById(Id);
+            myInput.value = checkbox.checked;
         }
-
-        window.addEventListener('load', function () {
-            if (typeof localStorage === 'undefined') {
-                console.log('localStorage is not available');
-                return;
-            }
-
-            var checkboxes = document.querySelectorAll('.Checkbox');
-            checkboxes.forEach(function (checkbox) {
-                var checkedStatus = localStorage.getItem(checkbox.id);
-                checkbox.checked = checkedStatus === 'true';
-            });
-        });
+        
     </script>
     <script>
-       document.getElementById('UForm').addEventListener('submit', function (event) {
-           event.preventDefault(); var formData = new FormData(event.target); 
-           // Get the clicked button
-           var clickedButton = document.querySelector('button[type="submit"]:focus');
-           // Add the button value to the form data
-           if (clickedButton) { 
-               formData.append(clickedButton.name, clickedButton.value); 
-               } 
-               var data = {};
-               formData.forEach(function (value, key) { data[key] = value; });
-               window.chrome.webview.postMessage(JSON.stringify(data)); });
+        document.getElementById('UForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(event.target);
+            // Get the clicked button
+            var clickedButton = document.querySelector('button[type="submit"]:focus');
+            // Add the button value to the form data
+            if (clickedButton) {
+                formData.append(clickedButton.name, clickedButton.value);
+            }
+            var data = {};
+            formData.forEach(function (value, key) { data[key] = value; });
+            window.chrome.webview.postMessage(JSON.stringify(data));
+        });
 
     </script>
 

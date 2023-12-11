@@ -27,7 +27,7 @@ namespace UPrompt.Class
         public string Name { get; set; }
         public string Value { get; set; }
         public string Id { get; set; }
-        public USetting(string Name,string Value,string Id)
+        public USetting(string Name, string Value, string Id)
         {
             this.Name = Name;
             this.Value = UParser.ParseSystemText(Value);
@@ -37,14 +37,14 @@ namespace UPrompt.Class
     public class USettings
     {
         // Properties that do not reflect any system or view setting
-        public static bool SkipSystemParsing {  get; set; } = false;
+        public static bool SkipSystemParsing { get; set; } = false;
         public static int Count { get; private set; } = 0;
         public static string Raw { get; private set; } = string.Empty;
         public static List<string> ElementsParsingSkip { get; set; } = new List<string>();
         internal static int PowershellFallbackId { get; private set; } = 0;
         internal static int ExtentionFallbackId { get; private set; } = 0;
         internal static bool FirstLoadCompleted { get; private set; } = false;
-        
+
 
         // All settings that reflect system and view setting (can be set using Load)
         public static string Text_Color { get; private set; } = "#fff";
@@ -95,10 +95,10 @@ namespace UPrompt.Class
             }
             NewFadeColor();
         }
-        public static void LoadXml(string path,bool loadsettings = true)
+        public static void LoadXml(string path, bool loadsettings = true)
         {
             UCommon.Xml_Path = path;
-            try{ UCommon.XmlDocument.Load(path);}
+            try { UCommon.XmlDocument.Load(path); }
             catch (Exception ex) { UCommon.Error($"{ex.Message}\n\n{UCommon.XmlDocument.InnerXml}", "Fatal error on XML Parsing"); }
             if (loadsettings)
             {
@@ -107,7 +107,10 @@ namespace UPrompt.Class
                 File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.css", css);
             }
             UParser.ReloadView();
-            UCommon.Windows.htmlhandler.Source = new Uri($"file:///{UCommon.Application_Path}Resources/Code/UView.html");
+            UCommon.Windows.Invoke((Action)(() =>
+            {
+                UCommon.Windows.htmlhandler.Source = new Uri($"file:///{UCommon.Application_Path}Resources/Code/UView.html");
+            }));
         }
         private static void NewFadeColor()
         {
@@ -117,7 +120,7 @@ namespace UPrompt.Class
         private static void ParseSettingsFromXml(string name, string value, string id = null)
         {
             string WarningTitle = "Wrong settings format";
-            
+
             value = UParser.ParseSystemText(value);
             switch (name)
             {
@@ -132,7 +135,8 @@ namespace UPrompt.Class
                 case "OnLoad":
                     try
                     {
-                        UHandler.RunAction(value.Split(',')[0], string.Join(",",value.Split(',').Skip(1).ToArray()),$"OnLoad_{value.Split(',')[0]}");
+                        string arg = string.Join(",", value.Split(',').Skip(1).ToArray());
+                        UHandler.RunAction(value.Split(',')[0], arg, $"OnLoad_{value.Split(',')[0]}");
                     }
                     catch { UCommon.Warning($"{name} value must be like Value=\"ActionName,ActionArgument\"", WarningTitle); }
                     break;
@@ -144,6 +148,20 @@ namespace UPrompt.Class
                     else
                     {
                         UCommon.Warning($"{name} provide an string that represent the id of element", WarningTitle);
+                    }
+                    break;
+                case "CSS":
+                    if (File.Exists(value) && value.ToLower().Contains(".css"))
+                    {
+                        NewFadeColor();
+                        string css = UParser.ParseSettingsText(File.ReadAllText(value));
+                        string copy = $@"{UCommon.Application_Path_Windows}Resources\Code\{UImage.GetImageNameFromLocalPath(value)}";
+                        File.WriteAllText(copy, css);
+                        UParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{copy}\">";
+                    }
+                    else
+                    {
+                        UCommon.Warning($"The setting for {name} file do not exist or is not a css file: \"{value}\"", WarningTitle);
                     }
                     break;
                 case "Variable":
@@ -160,10 +178,9 @@ namespace UPrompt.Class
                     {
                         UCommon.SetVariable(value, "");
                     }
-  
+
                     break;
- 
-                // Extention declaration
+
                 case "Extention":
                     string path = "";
                     string namespc = "";
@@ -212,8 +229,10 @@ namespace UPrompt.Class
                     }
                     PowershellFallbackId++;
                     break;
-                
-                // View customization
+
+                case "Font":
+                    Font_Name = value;
+                    break;
                 case "Item-Margin":
                     try
                     {
@@ -247,10 +266,6 @@ namespace UPrompt.Class
                     }
                     break;
 
-                // theme
-                case "Font":
-                    Font_Name = value;
-                    break;
                 case "Application-Color":
                     try
                     {
@@ -259,11 +274,14 @@ namespace UPrompt.Class
                         {
                             Back_Color = color;
                             Color RealColor = ColorTranslator.FromHtml(color);
-                            UCommon.Windows.Left.BackColor = RealColor;
-                            UCommon.Windows.Right.BackColor = RealColor;
-                            UCommon.Windows.Bottom.BackColor = RealColor;
-                            UCommon.Windows.TitleBar.BackColor = RealColor;
-                            UCommon.Windows.UpdateTitleBarColor();
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.Left.BackColor = RealColor;
+                                UCommon.Windows.Right.BackColor = RealColor;
+                                UCommon.Windows.Bottom.BackColor = RealColor;
+                                UCommon.Windows.TitleBar.BackColor = RealColor;
+                                UCommon.Windows.UpdateTitleBarColor();
+                            }));
                             FirstLoadCompleted = true;
                         }
                         else
@@ -330,13 +348,15 @@ namespace UPrompt.Class
                         UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an hexadecimal color", WarningTitle);
                     }
                     break;
-                
-                // Application customization
+
                 case "Width":
                     try
                     {
                         Width = int.Parse(value);
-                        UCommon.Windows.Width = Width;
+                        UCommon.Windows.Invoke((Action)(() =>
+                        {
+                            UCommon.Windows.Width = Width;
+                        }));
                     }
                     catch
                     {
@@ -347,7 +367,10 @@ namespace UPrompt.Class
                     try
                     {
                         Height = int.Parse(value);
-                        UCommon.Windows.Height = Height;
+                        UCommon.Windows.Invoke((Action)(() =>
+                        {
+                            UCommon.Windows.Height = Height;
+                        }));
                     }
                     catch
                     {
@@ -357,49 +380,64 @@ namespace UPrompt.Class
                 case "WindowsResizeMode":
                     switch (value.ToLower())
                     {
-                        case "all":
-                            UCommon.Windows.Top.Enabled = true;
-                            UCommon.Windows.Left.Enabled = true;
-                            UCommon.Windows.Right.Enabled = true;
-                            UCommon.Windows.Bottom.Enabled = true;
-                            UCommon.Windows.cornerleft.Enabled = true;
-                            UCommon.Windows.cornerright.Enabled = true;
+                        case "All":
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.Top.Enabled = true;
+                                UCommon.Windows.Left.Enabled = true;
+                                UCommon.Windows.Right.Enabled = true;
+                                UCommon.Windows.Bottom.Enabled = true;
+                                UCommon.Windows.cornerleft.Enabled = true;
+                                UCommon.Windows.cornerright.Enabled = true;
+                            }));
                             WindowsResizeMode = value;
                             break;
-                        case "horizontal":
-                            UCommon.Windows.Left.Enabled = true;
-                            UCommon.Windows.Right.Enabled = true;
-                            UCommon.Windows.Top.Enabled = false;
-                            UCommon.Windows.Bottom.Enabled = false;
-                            UCommon.Windows.cornerleft.Enabled = false;
-                            UCommon.Windows.cornerright.Enabled = false;
+                        case "Horizontal":
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.Left.Enabled = true;
+                                UCommon.Windows.Right.Enabled = true;
+                                UCommon.Windows.Top.Enabled = false;
+                                UCommon.Windows.Bottom.Enabled = false;
+                                UCommon.Windows.cornerleft.Enabled = false;
+                                UCommon.Windows.cornerright.Enabled = false;
+                            }));
                             WindowsResizeMode = value;
                             break;
-                        case "vertical":
-                            UCommon.Windows.Left.Enabled = false;
-                            UCommon.Windows.Right.Enabled = false;
-                            UCommon.Windows.Bottom.Enabled = true;
-                            UCommon.Windows.Top.Enabled = true;
-                            UCommon.Windows.cornerleft.Enabled = false;
-                            UCommon.Windows.cornerright.Enabled = false;
+                        case "Vertical":
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.Left.Enabled = false;
+                                UCommon.Windows.Right.Enabled = false;
+                                UCommon.Windows.Bottom.Enabled = true;
+                                UCommon.Windows.Top.Enabled = true;
+                                UCommon.Windows.cornerleft.Enabled = false;
+                                UCommon.Windows.cornerright.Enabled = false;
+                            }));
                             WindowsResizeMode = value;
                             break;
-                        case "diagonal":
-                            UCommon.Windows.Left.Enabled = false;
-                            UCommon.Windows.Right.Enabled = false;
-                            UCommon.Windows.Bottom.Enabled = false;
-                            UCommon.Windows.Top.Enabled = false;
-                            UCommon.Windows.cornerleft.Enabled = true;
-                            UCommon.Windows.cornerright.Enabled = true;
+                        case "Diagonal":
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.Left.Enabled = false;
+                                UCommon.Windows.Right.Enabled = false;
+                                UCommon.Windows.Bottom.Enabled = false;
+                                UCommon.Windows.Top.Enabled = false;
+                                UCommon.Windows.cornerleft.Enabled = true;
+                                UCommon.Windows.cornerright.Enabled = true;
+                            }));
                             WindowsResizeMode = value;
                             break;
-                        case "none":
-                            UCommon.Windows.Top.Enabled = false;
-                            UCommon.Windows.Left.Enabled = false;
-                            UCommon.Windows.Right.Enabled = false;
-                            UCommon.Windows.Bottom.Enabled = false;
-                            UCommon.Windows.cornerleft.Enabled = false;
-                            UCommon.Windows.cornerright.Enabled = false;
+                        case "None":
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.Top.Enabled = false;
+                                UCommon.Windows.Left.Enabled = false;
+                                UCommon.Windows.Right.Enabled = false;
+                                UCommon.Windows.Bottom.Enabled = false;
+                                UCommon.Windows.cornerleft.Enabled = false;
+                                UCommon.Windows.cornerright.Enabled = false;
+                            }));
                             WindowsResizeMode = value;
                             break;
                         default:
@@ -413,15 +451,24 @@ namespace UPrompt.Class
                     {
                         case "normal":
                             WindowsOpenMode = "Normal";
-                            UCommon.Windows.WindowState = FormWindowState.Normal;
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.WindowState = FormWindowState.Normal;
+                            }));
                             break;
                         case "minimized":
                             WindowsOpenMode = "Minimized";
-                            UCommon.Windows.WindowState = FormWindowState.Minimized;
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.WindowState = FormWindowState.Minimized;
+                            }));
                             break;
                         case "maximized":
                             WindowsOpenMode = "Maximized";
-                            UCommon.Windows.WindowState = FormWindowState.Maximized;
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.WindowState = FormWindowState.Maximized;
+                            }));
                             break;
                         default:
                             UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be Normal, Minimized or Maximized", WarningTitle);
@@ -444,14 +491,23 @@ namespace UPrompt.Class
                     }
                     break;
                 case "Application-Title":
-                    UCommon.Windows.Text = value;
+                    UCommon.Windows.Invoke((Action)(() =>
+                    {
+                        UCommon.Windows.Text = value;
+                    }));
+
+
                     break;
                 case "ShowMinimize":
                     try
                     {
                         ShowMinimize = bool.Parse(value);
-                        UCommon.Windows.MinimizeBox = ShowMinimize;
-                        UCommon.Windows.UpdateTitleBarIconAndFunction();
+                        UCommon.Windows.Invoke((Action)(() =>
+                        {
+                            UCommon.Windows.MinimizeBox = ShowMinimize;
+                            UCommon.Windows.UpdateTitleBarIconAndFunction();
+                        }));
+
                     }
                     catch
                     {
@@ -463,8 +519,11 @@ namespace UPrompt.Class
                     try
                     {
                         ShowMaximize = bool.Parse(value);
-                        UCommon.Windows.MaximizeBox = ShowMaximize;
-                        UCommon.Windows.UpdateTitleBarIconAndFunction();
+                        UCommon.Windows.Invoke((Action)(() =>
+                        {
+                            UCommon.Windows.MaximizeBox = ShowMaximize;
+                            UCommon.Windows.UpdateTitleBarIconAndFunction();
+                        }));
                     }
                     catch
                     {
@@ -473,8 +532,11 @@ namespace UPrompt.Class
                     break;
                 case "ShowClose":
                     bool Frame = bool.Parse(value);
-                    UCommon.Windows.ControlBox = Frame;
-                    UCommon.Windows.UpdateTitleBarIconAndFunction();
+                    UCommon.Windows.Invoke((Action)(() =>
+                    {
+                        UCommon.Windows.ControlBox = Frame;
+                        UCommon.Windows.UpdateTitleBarIconAndFunction();
+                    }));
                     break;
                 default:
                     UCommon.Warning($"This setting \"{name}\" is unknow please provide valid settings", WarningTitle);
