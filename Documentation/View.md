@@ -75,7 +75,7 @@ These elements are used for displaying content and organizing the layout.
 </ViewItem>
 ```
 ## ViewInput
-This kind of element includes all the elements that allow the user to enter or select a value. It comes with a `<ViewAction Type="InputHandler"/>` when you add the `Action` and `Argument` properties to track input changes and run an action. If you run action it will store the result in a variable startind with **Result_** folow by the Input **Id** so somthing like [Result_MyInputId].
+This kind of element includes all the elements that allow the user to enter or select a value. It comes with a `<ViewAction Type="InputHandler"/>` when you add the `Action` and `Argument` properties to track input changes and run an action. If you run action it will store the result in a variable startind with **Result_** folow by the Input **Id** so somthing like [Result_MyInputId]. It also create a variable name that is the **Id** so [MyInputId] that will hold the last value of the input.
 
 ### TextBox
 **Description:** A simple textbox that allows users to enter text.
