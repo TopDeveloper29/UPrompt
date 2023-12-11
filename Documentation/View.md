@@ -1,6 +1,27 @@
 # [Back](https://github.com/TopDeveloper29/UPrompt/blob/Post/README.md) | View
 In this section, you will learn about the different kinds and types of built-in elements you can use to create a user interface in the `View` node.
 
+## Section in the page:
+- [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewitem)
+	- [Spacer](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#spacer)
+	-  [Title](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#title)
+	- [Label](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#label)
+	- [LabelBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#labelbox)
+	- [Box](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#box)
+	- [Row](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#row)
+- [ViewInput](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewinput)
+	- [TextBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#textbox)
+	- [LinesBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#linesbox)
+	- [CheckBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#checkbox)
+	- [DropDown](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#dropdown)
+- [ViewAction](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewaction)
+	- [Linker](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#linker)
+	- [Button](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#button)
+	- [InputHandler](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#inputhandler)
+	- [ViewLoad](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewload)
+	- [VariableHandler](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#variablehandler)
+- [Html](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#html)
+
 ## ViewItem
 These elements are used for displaying content and organizing the layout.
 
