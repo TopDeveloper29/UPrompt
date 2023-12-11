@@ -132,7 +132,7 @@ the output will be **MY TEST**.
 
 ## SetVariable
 
-**Description:** It allows you to set the value of a variable (existing or new).
+**Description:** It allows you to set the value of a user variable (existing or new).
 
 **Arguments:**
 
