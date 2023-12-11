@@ -182,14 +182,16 @@ namespace UPrompt.Class
             string ImageSize = "";
             string ImageAutoColor = "";
             string RealImagePath = "";
+            
+            //Handle image argument
             if (ImageObject != null)
             {
                 if (!Directory.Exists($@"{UCommon.Application_Path}\Resources\Icon\")) { Directory.CreateDirectory($@"{UCommon.Application_Path}\Resources\Icon\"); }
                 try
                 {
                     ImagePath = ImageObject.Split(',')[0];
-                    ImageSize = ImageObject.Split(',')[1];
-                    ImageAutoColor = ImageObject.Split(',')[2];
+                    ImageSize = ImageObject.Split(',')[1] ?? "3";
+                    ImageAutoColor = ImageObject.Split(',')[2] ?? "true";
                 }
                 catch { UCommon.Warning($"ImageObject property should be write like ImageObject=\"Path (string),Size (integer),AutoColor (boolean)\""); }
                 if (UImage.IsUrl(ImagePath))
@@ -289,8 +291,8 @@ namespace UPrompt.Class
                         }
                         AddJsInputHandler(Id);
                         break;
-                    case "ViewItem":
-                        switch (Type)
+                    case "viewitem":
+                        switch (Type.ToLower())
                         {
                             case "spacer":
                                 HtmlFromXml += "<div class=\"Spacer\">.</div>";
@@ -298,12 +300,11 @@ namespace UPrompt.Class
                             case "title":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title {Class}\">{InnerValue}</div>\n";
                                 break;
-
-                            case "Label":
+                            default:
+                            case "label":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label {Class}\">{InnerValue}</div>\n";
                                 break;
-
-                            case "LabelBox":
+                            case "labelbox":
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
                                 break;
                             case "box":
@@ -324,8 +325,8 @@ namespace UPrompt.Class
                                 break;
                         }
                         break;
-                    case "ViewAction":
-                        switch (Type)
+                    case "viewaction":
+                        switch (Type.ToLower())
                         {
                             case "linker":
                                 string source = childNode.Attributes["Source"]?.Value ?? "default";

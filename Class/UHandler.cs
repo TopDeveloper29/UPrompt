@@ -195,7 +195,6 @@ namespace UPrompt.Class
                 }
             }
         }
-
         internal static void HandlePost(string json)
         {
             json = json.Substring(0, json.Length - 1).Substring(1).Replace(@"\", null);
