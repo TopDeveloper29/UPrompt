@@ -15,6 +15,7 @@ To get started with Uprompt, follow these steps:
 ## Table of Contents
 - [UPrompt Basic](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Basic.md)
 - [Setting](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Setting.md)
+- [Variables](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Variable.md)
 - [View](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md)
   - [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewitem)
     - [Spacer](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#spacer)
@@ -39,4 +40,3 @@ To get started with Uprompt, follow these steps:
 - [Create Extension]()
   - [C#]()
   - [Powershell]()
-- [Variables](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/Variable.md)
