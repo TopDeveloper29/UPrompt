@@ -1,19 +1,34 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
-using UPrompt.Class;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
-using System.Runtime.CompilerServices;
 using System.Linq;
-using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
+using UPrompt.Class;
 
 namespace UPrompt.UDesigner
 {
-    public class Settings
+
+    internal class Action
+    {
+        internal class Argument
+        {
+            public string Description2 { get; set; }
+            public string Mandatory { get; set; }
+        }
+        public string Description { get; set; }
+        public Dictionary<string,Argument> Arguments { get; set; }
+    }
+    internal class View
+    {
+        public string Description { get; set; }
+        public string InnerTextPurpose { get; set; }
+        public string[]  SupportedProperties { get; set; }
+    }
+    internal class Settings
     {
         public string Description { get; set; }
         public string[] Values { get; set; }
@@ -135,6 +150,33 @@ namespace UPrompt.UDesigner
 
                 if (name != null && value != null)
                 {
+                    OpenXmlGroup();
+                    Dictionary<string, View> data = JsonConvert.DeserializeObject<Dictionary<string, View>>(ListOfJson[name]);
+                    UCommon.SetVariable("ViewValue", value);
+                    xml += GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
+                    xml += GenrerateDropBox(data.Keys.ToArray(), "ViewValue", "210129,SelectView");
+
+                    foreach (string key in data.Keys)
+                    {
+                        if (key.ToLower() == value.ToLower())
+                        {
+                            string description = data[key].Description;
+                            string InnerPurpose = data[key].InnerTextPurpose;
+      
+                            ExtraXml += $"<ViewItem Type=\"Label\">Description: {description}</ViewItem>\n<ViewItem Type=\"Label\">Inner text behaviors:{InnerPurpose}</ViewItem>\n<ViewItem Type=\"Box\">\n";
+                            ExtraXml += $"<ViewItem Type=\"Label\">Valid Property: </ViewItem>\n<ViewItem Type=\"Row\">";
+                            foreach (string element in data[key].SupportedProperties)
+                            {
+                                ExtraXml += $"<ViewItem Type=\"Label\"> {element} </ViewItem>\n";
+                            }
+                            ExtraXml += "</ViewItem>\n</ViewItem>\n";
+                            UCommon.SetVariable("ViewValue", value);
+                            UCommon.SetVariable("GeneratedCode", $"<{name} Type='{value}'></{name}>");
+                        }
+                    }
+
+                    CloseXmlGroup();
+                    RefreshDesignerCode();
                 }
                 else
                 {
@@ -145,6 +187,7 @@ namespace UPrompt.UDesigner
             }
             catch (Exception ex) { UCommon.Error(ex.Message); }
         }
+
         private static void RefreshDesignerCode()
         {
             try
@@ -282,10 +325,15 @@ namespace UPrompt.UDesigner
                                             UCommon.SetVariable("ViewValue", data.Keys.First());
                                         }
                                         xml += GenrerateDropBox(data.Keys.ToArray(), "ViewValue", "210129,SelectView");
-
-                                        CloseXmlGroup();
                                         SelectView();
+                                        
                                         break;
+                                    case "action":
+                                        Console.WriteLine(ListOfJson.Values.First().ToString());
+                                        //Action acdata = JsonConvert.DeserializeObject<Action>();
+                                        CloseXmlGroup();
+                                        break;
+
                                     default:
                                         CloseXmlGroup();
                                         break;
