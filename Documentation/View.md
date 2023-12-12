@@ -4,7 +4,8 @@ In this section, you will learn about the different kinds and types of built-in 
 ## Section in the page:
 - [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewitem)
 	- [Spacer](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#spacer)
-	-  [Title](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#title)
+	- [Title](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#title)
+   	- [SubTitle](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#subtitle)
 	- [Label](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#label)
 	- [LabelBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#labelbox)
 	- [Box](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#box)
@@ -44,6 +45,21 @@ These elements are used for displaying content and organizing the layout.
 
 ```xml
 <ViewItem Type="Title">The title text that will be displayed in the UI</ViewItem>
+```
+
+### SubTitle
+**Description:** Displays text as a sub title.
+
+**Additional Properties:**
+
+| Name | Description |
+| ---- | ----------- |
+| Id   | Defines the Id in the HTML element. |
+| Style | You can add extra CSS style to the element. |
+| Class | Defines the CSS class of the element. |
+
+```xml
+<ViewItem Type="SubTitle">The title text that will be displayed in the UI</ViewItem>
 ```
 
 ### Label
