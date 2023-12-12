@@ -84,6 +84,9 @@ namespace UPrompt.Class
                 .Replace("#SHOWCLOSE#", USettings.ShowClose.ToString())
                 .Replace("#WIDTH#", USettings.Width.ToString())
                 .Replace("#HEIGHT#", USettings.Height.ToString())
+                .Replace("#APPLICATION_NAME#", USettings.Application_Name.ToString())
+                .Replace("#APPLICATION_ICON#", USettings.Application_Icon.ToString())
+                .Replace("#APPLICATION_ICONPATH#", USettings.Application_IconPath.ToString())
                 .Replace("#PRODUCTION#", USettings.Production.ToString())
 
                 ;
@@ -226,7 +229,6 @@ namespace UPrompt.Class
                         {
                             InnerValue = ParseSystemText(UCommon.Variable[Id]);
                         }
-                        if (Action != null) { GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
 
                         switch (Type.ToLower())
                         {
@@ -249,7 +251,7 @@ namespace UPrompt.Class
                                     if (bool.Parse(Checked))
                                     { Checked_Text = "checked"; }
                                 }
-                                
+
 
                                 HtmlFromXml += "\n" +
                                     $"<label style=\"{ExtraStyle}\" class=\"label-checkbox {Class}\">\r\n" +
@@ -289,7 +291,8 @@ namespace UPrompt.Class
                                 HtmlFromXml += $"</div>\n";
                                 break;
                         }
-                        AddJsInputHandler(Id);
+
+                        if (Action != null) { GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
                         break;
                     case "viewitem":
                         switch (Type.ToLower())
@@ -342,7 +345,7 @@ namespace UPrompt.Class
                                 break;
                             default:
                             case "button":
-                                HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui",Action,Id,Argument)}\">{InnerValue}</button>\n";
+                                HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui", Action, Id, Argument)}\">{InnerValue}</button>\n";
                                 break;
                             case "inputhandler":
                                 try
@@ -353,9 +356,9 @@ namespace UPrompt.Class
                                         {
                                             if (UCommon.GetVariable(InnerValue) == null) { UCommon.SetVariable(InnerValue, ""); }
                                             UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue), InnerValue));
-
                                         }
                                     }
+                                    AddJsInputHandler(InnerValue);
                                 }
                                 catch (Exception ex) { UCommon.Error(ex.Message); }
                                 break;
@@ -367,7 +370,7 @@ namespace UPrompt.Class
                                 {
                                     if (!UCommon.TrackedVariable.TryGetValue(InnerValue, out ActionStorage acs))
                                     {
-                                        UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue),Id));
+                                        UCommon.TrackedVariable.Add(InnerValue, new ActionStorage(Action, Argument, UCommon.GetVariable(InnerValue), Id));
                                     }
                                 }
                                 catch (Exception ex) { UCommon.Error(ex.Message); }
@@ -375,7 +378,26 @@ namespace UPrompt.Class
                         }
                         break;
                     default:
-                        HtmlFromXml += ParseSystemText($"{childNode.OuterXml}\n");
+                        if (UCommon.GetVariable(Id) != null && UCommon.GetVariable(Id).Length > 0)
+                        {
+                            InnerValue = ParseSystemText(UCommon.Variable[Id]);
+                            XElement inputElement = XElement.Parse(childNode.OuterXml);
+                            XAttribute valueAttribute = inputElement.Attribute("Value");
+
+                            if (valueAttribute == null)
+                            {
+                                inputElement.Add(new XAttribute("Value", InnerValue));
+                            }
+                            else
+                            {
+                                valueAttribute.Value = InnerValue;
+                            }
+                            HtmlFromXml += inputElement.ToString();
+                        }
+                        else
+                        {
+                            HtmlFromXml += ParseSystemText($"{childNode.OuterXml}\n");
+                        }
 
                         break;
                 }

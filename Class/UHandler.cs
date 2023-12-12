@@ -225,7 +225,7 @@ namespace UPrompt.Class
                 JToken Value = property.Value;
                 try
                 {
-                    if (!Name.Contains("INPUT_"))
+                    if (!Name.Contains("INPUT_") && !Name.Contains("Action_"))
                     {
                         string Itemjson = Decrypt(Value.ToString(), "UPromptKey2023");
                         if (Itemjson != null && Itemjson.Length > 5 && Itemjson.Contains("{") && Itemjson.Contains("}") && Itemjson.Contains(",") && Itemjson.Contains(":"))
@@ -257,6 +257,12 @@ namespace UPrompt.Class
                             }
                         }
                     }
+                    if (Name.Contains("Action_"))
+                    {
+                        string ActionName = Name.Split('_')[2];
+                        string ActionId = Name.Split('_')[1];
+                        RunAction(ActionName, Value.ToString(), ActionId);
+                    }
                 }
                 catch { }
             }
@@ -266,11 +272,13 @@ namespace UPrompt.Class
         {
             if (!ActionName.Contains("null"))
             {
+                LastActionOutput = "";
+
                 SwitchAction(ActionName, ActionValue);
 
                 if (LastActionOutput.Length > 0)
                 {
-                    UCommon.SetVariable(ActionId, LastActionOutput);
+                    UCommon.SetVariable($"Result_{ActionId}", LastActionOutput);
                 }
                 UParser.GenerateView(UCommon.XmlDocument.SelectSingleNode("/Application/View"));
             }
@@ -278,7 +286,7 @@ namespace UPrompt.Class
         internal static void SwitchAction(string ActionName, string ActionValue)
         {
             string LineTitle = $"Xml line: {UCommon.DebugXmlLineNumber}";
-            LastActionOutput = "";
+            
             try
             {
                 ActionValue = UParser.ParseSystemText(ActionValue);
@@ -305,7 +313,7 @@ namespace UPrompt.Class
                                             object Result = EH.CallExtensionMethod(methodtext.Split('(')[0], _value.Split(','));
                                             if (Result != null) { LastActionOutput = Result.ToString(); }
 
-                                            UCommon.SetVariable($"CS_{EH.Id}", LastActionOutput);
+                                            UCommon.SetVariable($"Result_{EH.Id}", LastActionOutput);
                                         }
                                         else
                                         { EH.CallExtensionMethod(ActionValue.Split(',')[1]); }
@@ -336,7 +344,7 @@ namespace UPrompt.Class
                                         LastActionOutput = PSH.ReadOutput();
                                         if (LastActionOutput != null && !LastActionOutput.Contains("ERROR:"))
                                         {
-                                            UCommon.SetVariable($"PS_{psid}", LastActionOutput);
+                                            UCommon.SetVariable($"Result_{psid}", LastActionOutput);
                                         }
                                         else
                                         {

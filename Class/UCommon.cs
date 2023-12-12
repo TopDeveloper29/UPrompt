@@ -95,7 +95,7 @@ namespace UPrompt.Class
             }
             return DialogResult.Ignore;
         }
-        public static Dictionary<string, string> ShowVariable(string Id = "it", bool ShowDialog = true)
+        public static Dictionary<string, string> ShowVariable(string Id = "Show::All::Id", bool ShowDialog = true)
         {
             Dictionary<string, string> variables = new Dictionary<string, string>();
             string PlainVariable = "";

@@ -62,7 +62,9 @@ namespace UPrompt.Class
         public static string Item_Margin { get; private set; } = "3%";
         public static string Font_Name { get; private set; } = "Arial";
         public static bool Production { get; private set; } = false;
-
+        public static string Application_Name { get; private set; } = "UPrompt Demo";
+        public static string Application_IconPath { get; private set; }
+        public static Icon Application_Icon { get; private set; }
         public static void ReLoad()
         {
             Load(UCommon.XmlDocument.SelectNodes("//Application/Setting"));
@@ -471,6 +473,8 @@ namespace UPrompt.Class
                         {
                             Icon icon = new Icon(value);
                             UCommon.Windows.Icon = icon;
+                            Application_Icon = icon;
+                            Application_IconPath = value;
                         }
                         catch { UCommon.Error("Could not load this file as image"); }
                     }
@@ -483,6 +487,7 @@ namespace UPrompt.Class
                     UCommon.Windows.Invoke((Action)(() =>
                     {
                         UCommon.Windows.Text = value;
+                        Application_Name = value;
                     }));
 
 

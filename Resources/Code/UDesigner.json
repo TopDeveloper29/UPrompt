@@ -561,7 +561,10 @@
       "#SHOWCLOSE#": "Return whether the close button is shown in window frames.",
       "#WIDTH#": "Return the width of the user interface or application.",
       "#HEIGHT#": "Return the height of the user interface or application.",
-      "#PRODUCTION#": "Return whether the application is in production mode."
+      "#PRODUCTION#": "Return whether the application is in production mode.",
+      "#APPLICATION_NAME#": "Return the application name",
+      "#APPLICATION_ICON#": "Return the application icon object as string",
+      "#APPLICATION_ICONPATH#": "Return the application icon path."
     }
   },
   "Action": {
