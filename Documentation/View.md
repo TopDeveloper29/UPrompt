@@ -1,6 +1,6 @@
 # [Back](https://github.com/TopDeveloper29/UPrompt/blob/Post/README.md) | View
 In this section, you will learn about the different kinds and types of built-in elements you can use to create a user interface in the `View` node.
-
+> Note in all element you can put `Id` property if you don't provide one it will create one each time the view load so some thing could not work as expect like checkbox won't keep it checkstate.
 ## Section in the page:
 - [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewitem)
 	- [Spacer](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#spacer)
@@ -134,6 +134,8 @@ This kind of element includes all the elements that allow the user to enter or s
 
 ### CheckBox
 **Description:** A simple checkbox that allows users to check or uncheck a box, returning a boolean value.
+> Do not forget Id property else the checkbox won't keep it state when user check or uncheck it.
+
 
 **Additional Properties:**
 
@@ -147,7 +149,7 @@ This kind of element includes all the elements that allow the user to enter or s
 | Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
 
 ```xml
-<ViewInput Type="CheckBox">The text next to the checkbox</ViewInput>
+<ViewInput Type="CheckBox" Id="CheckBox1">The text next to the checkbox</ViewInput>
 ```
 
 ### DropDown
