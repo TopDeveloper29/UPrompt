@@ -35,11 +35,11 @@ namespace UPrompt.UDesigner
     }
     public static class Designer
     {
-        private static string MainNodeName = "xml";
-        private static Dictionary<string, string> ListOfJson = new Dictionary<string, string>();
-        private static string xml = "";
-        private static string ExtraXml = "";
-        private static string PreferedEditorPath = @"C:\Program Files\Notepad++\notepad++.exe";
+        private static string MainNodeName { get; set; } = "xml";
+        private static Dictionary<string, string> ListOfJson { get; set; } = new Dictionary<string, string>();
+        private static string xml { get; set; } = "";
+        private static string ExtraXml { get; set; } = "";
+        private static string PreferedEditorPath { get; set; } = @"C:\Program Files\Notepad++\notepad++.exe";
         
         // Handle editor and file load
         public static void SetPreferedEditor(string path)

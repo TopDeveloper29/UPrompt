@@ -79,6 +79,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
@@ -122,13 +123,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UPrompt.Core\UPrompt.Core.csproj">
-      <Project>{deac98a9-2ad5-41b5-902e-e0f05cd0d15e}</Project>
-      <Name>UPrompt.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="Designer\UDesigner.csproj">
       <Project>{a564b452-c263-4d88-9821-8abe2ba9561c}</Project>
       <Name>UDesigner</Name>
+    </ProjectReference>
+    <ProjectReference Include="UPrompt.Core\UPrompt.Core.csproj">
+      <Project>{03f60a47-acd0-43ec-892f-ba9af6e25f39}</Project>
+      <Name>UPrompt.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
