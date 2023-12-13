@@ -30,6 +30,7 @@ To get started with Uprompt, follow these steps:
   - [ViewItem](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#viewitem)
     - [Spacer](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#spacer)
     - [Title](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#title)
+    - [SubTitle](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#subtitle)
     - [Label](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#label)
     - [LabelBox](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#labelbox)
     - [Box](https://github.com/TopDeveloper29/UPrompt/blob/Post/Documentation/View.md#box)
