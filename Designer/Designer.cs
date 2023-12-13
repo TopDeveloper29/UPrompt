@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using UPrompt.Class;
+using UPrompt.Core;
 
 namespace UPrompt.UDesigner
 {
-
     internal class Action
     {
         internal class Argument
@@ -39,10 +39,42 @@ namespace UPrompt.UDesigner
         private static Dictionary<string, string> ListOfJson = new Dictionary<string, string>();
         private static string xml = "";
         private static string ExtraXml = "";
-        public static string PreferedEditorPath = @"C:\Program Files\Notepad++\notepad++.exe";
+        private static string PreferedEditorPath = @"C:\Program Files\Notepad++\notepad++.exe";
+        
+        // Handle editor and file load
         public static void SetPreferedEditor(string path)
         {
             PreferedEditorPath = path;
+        }
+        public static void CallEditor(string @new = "true")
+        {
+            try
+            {
+                string path = "";
+                if (bool.Parse(@new)) { path = UCommon.GetVariable("Result_NewPath"); File.WriteAllText(path, ""); }
+                else { path = UCommon.GetVariable("Result_LoadPath"); }
+
+                if (Directory.Exists(Path.GetDirectoryName(path)))
+                {
+                    if (File.Exists(path))
+                    {
+                        UCommon.SetVariable("SavedPath", path);
+                        if (File.Exists(PreferedEditorPath))
+                        {
+                            Process.Start(PreferedEditorPath, $"\"{path}\"");
+                        }
+                        else
+                        {
+                            Process.Start(path);
+                        }
+                        PreviewXML();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                UCommon.Error(ex.Message);
+            }
         }
         public static void OpenNewUprompt()
         {
@@ -61,6 +93,7 @@ namespace UPrompt.UDesigner
                 }
             }
         }
+
         public static void PreviewXML()
         {
             try
@@ -90,36 +123,6 @@ namespace UPrompt.UDesigner
                 }
             }
             catch (Exception ex) { UCommon.Error(ex.Message); }
-        }
-        public static void CallEditor(string @new = "true")
-        {
-            try
-            {
-                string path = "";
-                if (bool.Parse(@new)) { path = UCommon.GetVariable("NewPath"); File.WriteAllText(path, ""); }
-                else { path = UCommon.GetVariable("LoadPath"); }
-
-                if (Directory.Exists(Path.GetDirectoryName(path)))
-                {
-                    if (File.Exists(path))
-                    {
-                        UCommon.SetVariable("SavedPath", path);
-                        if (File.Exists(PreferedEditorPath))
-                        {
-                            Process.Start(PreferedEditorPath, $"\"{path}\"");
-                        }
-                        else
-                        {
-                            Process.Start(path);
-                        }
-                        PreviewXML();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                UCommon.Error(ex.Message);
-            }
         }
         public static void SelectSetting()
         {
@@ -329,11 +332,30 @@ namespace UPrompt.UDesigner
                                         
                                         break;
                                     case "action":
-                                        Console.WriteLine(ListOfJson.Values.First().ToString());
-                                        //Action acdata = JsonConvert.DeserializeObject<Action>();
+                                        Action action = JsonConvert.DeserializeObject<Action>(ListOfJson[key]);
+                                        xml += $"\n<ViewItem Type=\"Label\">Description: {action.Description}</ViewItem>\n";
+                                        ExtraXml += "\n<ViewItem Type=\"Label\" Style=\"font-size:2em;\">Argument:</ViewItem><br/>\n<table style=\"margin-left: 520px; \">\r\n<tr><th>Name</th>\r\n<th>Description</th>\r\n<th>Mandatory</th>\r\n</tr>";
+                                        
+                                        foreach (string akey in action.Arguments.Keys)
+                                        {
+                                            ExtraXml += $"\n<tr><td>{akey}</td>\r\n<td>{action.Arguments[akey].Description2}</td>\r\n<td>{action.Arguments[akey].Mandatory}</td>\r\n</tr>";
+                                        }
+                                        ExtraXml += "</table>\n";
+                                        UCommon.SetVariable("GeneratedCode", $"<ViewAction Id='Test{key}' Type='Button' Action='{key}' Argument=''>Test of {key}</ViewAction>");
+
                                         CloseXmlGroup();
                                         break;
+                                    case "variable":
+                                        Dictionary<string, string> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(ListOfJson[key].ToString());
+                                        ExtraXml += "\n<table>\r\n<tr><th>Name</th>\r\n<th>Description</th>\r\n</tr>";
 
+                                        foreach (string vkey in jsonDict.Keys)
+                                        {
+                                            ExtraXml += $"\n<tr><td>{vkey.Replace("{","").Replace("}","").Replace("#","")}</td>\r\n<td>{jsonDict[vkey]}</td>\r\n</tr>";
+                                        }
+                                        ExtraXml += "</table>\n";
+                                        CloseXmlGroup();
+                                        break;
                                     default:
                                         CloseXmlGroup();
                                         break;

@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,10 +49,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UPrompt.csproj">
-      <Project>{6266f2a6-711b-4c21-94aa-9ae810db0539}</Project>
-      <Name>UPrompt</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\..\UPrompt.Core\UPrompt.Core.csproj">
+      <Project>{deac98a9-2ad5-41b5-902e-e0f05cd0d15e}</Project>
+      <Name>UPrompt.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
