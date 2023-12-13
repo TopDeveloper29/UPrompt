@@ -3,8 +3,6 @@ C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\C
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\UTemplate.css
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\UTemplate.html
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\UView.html
-C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Icon\u.ico
-C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Icon\u.png
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\PsHandler.ps1
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\UDesigner.json
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\Variables.ps1
@@ -25,3 +23,6 @@ C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Designer.cs
 C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
 C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
 C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Visual\u.png
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Visual\USplash.html
+C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Visual\uicon.ico

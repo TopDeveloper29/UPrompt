@@ -119,5 +119,35 @@ namespace UPrompt.Core.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot;&gt;
+        ///&lt;head&gt;
+        ///	&lt;meta charset=&quot;UTF-8&quot;&gt;
+        ///	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+        ///	&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+        ///	&lt;title&gt;UPrompt Loading&lt;/title&gt;
+        ///	&lt;style&gt;
+        ///	  body, html {
+        ///		padding: 0;
+        ///		height: 100%;
+        ///		font-family: &apos;Varela Round&apos;, sans-serif;
+        ///
+        ///        }
+        ///
+        ///            body::-webkit-scrollbar {
+        ///                display: none;
+        ///            }
+        ///
+        ///
+        ///	  .splash-screen {
+        ///  display [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string USplash {
+            get {
+                return ResourceManager.GetString("USplash", resourceCulture);
+            }
+        }
     }
 }

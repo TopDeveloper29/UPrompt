@@ -135,10 +135,6 @@ namespace UPrompt
                 }
                 else if (File.Exists($@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml"))
                 {
-                    UCommon.Windows.Invoke((Action)(() =>
-                    {
-                        UCommon.Windows.htmlhandler.Source = new Uri($@"{(AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/")}Resources/Icon/USplash.html");
-                    }));
                     UCommon.Xml_Path = $@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml";
                     USettings.LoadXml(UCommon.Xml_Path);
                 }

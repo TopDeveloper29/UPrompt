@@ -13,6 +13,7 @@
 	<Setting Name="WindowsResizeMode" Value="None"/>
 	<Setting Name="Width" Value="1400"/>
 	<Setting Name="Height" Value="950"/>
+	<Setting Name="ShowSplash" Value="True"/>
 
 	<Setting Name="Variable" Value="SavedPath, "/>
 	<Setting Name="Variable" Value="Result_NewPath, "/>

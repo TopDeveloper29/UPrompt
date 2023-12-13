@@ -66,7 +66,7 @@ namespace UPrompt.UDesigner
                         {
                             Process.Start(path);
                         }
-                        PreviewXML();
+                        //PreviewXML();
                     }
                 }
             }
@@ -363,6 +363,8 @@ namespace UPrompt.UDesigner
                         }
                     }
                     catch (Exception ex) { UCommon.Error(ex.Message); }
+                    UParser.ClearHtml();
+                    UCommon.SetVariable("PreviewHtml", UParser.GenerateHtmlFromXML(UCommon.GetVariable("GeneratedCode")));
                 }
                 else
                 {

@@ -69,9 +69,9 @@ namespace UPrompt
             this.htmlhandler.Dock = System.Windows.Forms.DockStyle.Fill;
             this.htmlhandler.Location = new System.Drawing.Point(0, 0);
             this.htmlhandler.Margin = new System.Windows.Forms.Padding(0);
-            this.htmlhandler.MinimumSize = new System.Drawing.Size(30, 31);
+            this.htmlhandler.MinimumSize = new System.Drawing.Size(20, 20);
             this.htmlhandler.Name = "htmlhandler";
-            this.htmlhandler.Size = new System.Drawing.Size(1171, 636);
+            this.htmlhandler.Size = new System.Drawing.Size(781, 413);
             this.htmlhandler.TabIndex = 0;
             this.htmlhandler.ZoomFactor = 1D;
             this.htmlhandler.NavigationCompleted += new System.EventHandler<Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs>(this.Htmlhandler_NavigationCompleted);
@@ -83,8 +83,9 @@ namespace UPrompt
             this.TitleBar.Controls.Add(this.ButtonSplitPanel);
             this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.TitleBar.Location = new System.Drawing.Point(0, 0);
+            this.TitleBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.TitleBar.Name = "TitleBar";
-            this.TitleBar.Size = new System.Drawing.Size(1200, 38);
+            this.TitleBar.Size = new System.Drawing.Size(800, 25);
             this.TitleBar.TabIndex = 1;
             this.TitleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TitleBar_MouseDown);
             this.TitleBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TitleBar_MouseMove);
@@ -94,8 +95,9 @@ namespace UPrompt
             // 
             this.Top.Dock = System.Windows.Forms.DockStyle.Top;
             this.Top.Location = new System.Drawing.Point(0, 0);
+            this.Top.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Top.Name = "Top";
-            this.Top.Size = new System.Drawing.Size(1042, 14);
+            this.Top.Size = new System.Drawing.Size(695, 9);
             this.Top.TabIndex = 1;
             this.Top.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.Top.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -113,23 +115,23 @@ namespace UPrompt
             this.ButtonSplitPanel.Controls.Add(this.maxpan, 1, 0);
             this.ButtonSplitPanel.Controls.Add(this.minpan, 0, 0);
             this.ButtonSplitPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ButtonSplitPanel.Location = new System.Drawing.Point(1042, 0);
+            this.ButtonSplitPanel.Location = new System.Drawing.Point(695, 0);
             this.ButtonSplitPanel.Margin = new System.Windows.Forms.Padding(0);
             this.ButtonSplitPanel.Name = "ButtonSplitPanel";
             this.ButtonSplitPanel.RowCount = 1;
             this.ButtonSplitPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ButtonSplitPanel.Size = new System.Drawing.Size(158, 38);
+            this.ButtonSplitPanel.Size = new System.Drawing.Size(105, 25);
             this.ButtonSplitPanel.TabIndex = 0;
             // 
             // closepan
             // 
             this.closepan.Controls.Add(this.closeButton);
             this.closepan.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.closepan.Location = new System.Drawing.Point(104, 0);
+            this.closepan.Location = new System.Drawing.Point(70, 0);
             this.closepan.Margin = new System.Windows.Forms.Padding(0);
             this.closepan.Name = "closepan";
-            this.closepan.Padding = new System.Windows.Forms.Padding(4, 8, 4, 8);
-            this.closepan.Size = new System.Drawing.Size(54, 38);
+            this.closepan.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.closepan.Size = new System.Drawing.Size(35, 25);
             this.closepan.TabIndex = 2;
             this.closepan.Click += new System.EventHandler(this.CloseButton_Click);
             this.closepan.MouseEnter += new System.EventHandler(this.CloseButton_MouseEnter);
@@ -140,10 +142,10 @@ namespace UPrompt
             this.closeButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.closeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.closeButton.Image = global::UPrompt.Core.Properties.Resources.CloseIcon;
-            this.closeButton.Location = new System.Drawing.Point(4, 8);
+            this.closeButton.Location = new System.Drawing.Point(3, 5);
             this.closeButton.Margin = new System.Windows.Forms.Padding(0);
             this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(46, 22);
+            this.closeButton.Size = new System.Drawing.Size(29, 15);
             this.closeButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.closeButton.TabIndex = 2;
             this.closeButton.TabStop = false;
@@ -155,11 +157,11 @@ namespace UPrompt
             // 
             this.maxpan.Controls.Add(this.maximizeButton);
             this.maxpan.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.maxpan.Location = new System.Drawing.Point(52, 0);
+            this.maxpan.Location = new System.Drawing.Point(35, 0);
             this.maxpan.Margin = new System.Windows.Forms.Padding(0);
             this.maxpan.Name = "maxpan";
-            this.maxpan.Padding = new System.Windows.Forms.Padding(4, 8, 4, 8);
-            this.maxpan.Size = new System.Drawing.Size(52, 38);
+            this.maxpan.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.maxpan.Size = new System.Drawing.Size(35, 25);
             this.maxpan.TabIndex = 1;
             this.maxpan.Click += new System.EventHandler(this.MaximizeButton_Click);
             this.maxpan.MouseEnter += new System.EventHandler(this.MaximizeButton_MouseEnter);
@@ -169,10 +171,10 @@ namespace UPrompt
             // 
             this.maximizeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.maximizeButton.Image = global::UPrompt.Core.Properties.Resources.MaximizeIcon;
-            this.maximizeButton.Location = new System.Drawing.Point(4, 8);
+            this.maximizeButton.Location = new System.Drawing.Point(3, 5);
             this.maximizeButton.Margin = new System.Windows.Forms.Padding(0);
             this.maximizeButton.Name = "maximizeButton";
-            this.maximizeButton.Size = new System.Drawing.Size(44, 22);
+            this.maximizeButton.Size = new System.Drawing.Size(29, 15);
             this.maximizeButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.maximizeButton.TabIndex = 1;
             this.maximizeButton.TabStop = false;
@@ -187,8 +189,8 @@ namespace UPrompt
             this.minpan.Location = new System.Drawing.Point(0, 0);
             this.minpan.Margin = new System.Windows.Forms.Padding(0);
             this.minpan.Name = "minpan";
-            this.minpan.Padding = new System.Windows.Forms.Padding(4, 8, 4, 8);
-            this.minpan.Size = new System.Drawing.Size(52, 38);
+            this.minpan.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.minpan.Size = new System.Drawing.Size(35, 25);
             this.minpan.TabIndex = 0;
             this.minpan.Click += new System.EventHandler(this.MinimizeButton_Click);
             this.minpan.MouseEnter += new System.EventHandler(this.MinimizeButton_MouseEnter);
@@ -198,10 +200,10 @@ namespace UPrompt
             // 
             this.minimizeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.minimizeButton.Image = global::UPrompt.Core.Properties.Resources.MinimizeIcon;
-            this.minimizeButton.Location = new System.Drawing.Point(4, 8);
+            this.minimizeButton.Location = new System.Drawing.Point(3, 5);
             this.minimizeButton.Margin = new System.Windows.Forms.Padding(0);
             this.minimizeButton.Name = "minimizeButton";
-            this.minimizeButton.Size = new System.Drawing.Size(44, 22);
+            this.minimizeButton.Size = new System.Drawing.Size(29, 15);
             this.minimizeButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.minimizeButton.TabIndex = 0;
             this.minimizeButton.TabStop = false;
@@ -213,9 +215,10 @@ namespace UPrompt
             // 
             this.Left.Controls.Add(this.cornerleft);
             this.Left.Dock = System.Windows.Forms.DockStyle.Left;
-            this.Left.Location = new System.Drawing.Point(0, 38);
+            this.Left.Location = new System.Drawing.Point(0, 25);
+            this.Left.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Left.Name = "Left";
-            this.Left.Size = new System.Drawing.Size(14, 654);
+            this.Left.Size = new System.Drawing.Size(9, 425);
             this.Left.TabIndex = 2;
             this.Left.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.Left.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -226,9 +229,10 @@ namespace UPrompt
             // cornerleft
             // 
             this.cornerleft.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.cornerleft.Location = new System.Drawing.Point(0, 629);
+            this.cornerleft.Location = new System.Drawing.Point(0, 409);
+            this.cornerleft.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cornerleft.Name = "cornerleft";
-            this.cornerleft.Size = new System.Drawing.Size(14, 25);
+            this.cornerleft.Size = new System.Drawing.Size(9, 16);
             this.cornerleft.TabIndex = 1;
             this.cornerleft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.cornerleft.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -240,9 +244,10 @@ namespace UPrompt
             // 
             this.Bottom.Controls.Add(this.cornerright);
             this.Bottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.Bottom.Location = new System.Drawing.Point(14, 674);
+            this.Bottom.Location = new System.Drawing.Point(9, 438);
+            this.Bottom.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Bottom.Name = "Bottom";
-            this.Bottom.Size = new System.Drawing.Size(1186, 18);
+            this.Bottom.Size = new System.Drawing.Size(791, 12);
             this.Bottom.TabIndex = 3;
             this.Bottom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.Bottom.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -253,9 +258,10 @@ namespace UPrompt
             // cornerright
             // 
             this.cornerright.Dock = System.Windows.Forms.DockStyle.Right;
-            this.cornerright.Location = new System.Drawing.Point(1171, 0);
+            this.cornerright.Location = new System.Drawing.Point(781, 0);
+            this.cornerright.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cornerright.Name = "cornerright";
-            this.cornerright.Size = new System.Drawing.Size(15, 18);
+            this.cornerright.Size = new System.Drawing.Size(10, 12);
             this.cornerright.TabIndex = 0;
             this.cornerright.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.cornerright.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -266,9 +272,10 @@ namespace UPrompt
             // Right
             // 
             this.Right.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Right.Location = new System.Drawing.Point(1185, 38);
+            this.Right.Location = new System.Drawing.Point(790, 25);
+            this.Right.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Right.Name = "Right";
-            this.Right.Size = new System.Drawing.Size(15, 636);
+            this.Right.Size = new System.Drawing.Size(10, 413);
             this.Right.TabIndex = 4;
             this.Right.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Border_MouseDown);
             this.Right.MouseLeave += new System.EventHandler(this.Border_MouseLeave);
@@ -280,18 +287,18 @@ namespace UPrompt
             // 
             this.body.Controls.Add(this.htmlhandler);
             this.body.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.body.Location = new System.Drawing.Point(14, 38);
-            this.body.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.body.Location = new System.Drawing.Point(9, 25);
             this.body.Name = "body";
-            this.body.Size = new System.Drawing.Size(1171, 636);
+            this.body.Size = new System.Drawing.Size(781, 413);
             this.body.TabIndex = 5;
             // 
             // Prompt
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1200, 692);
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ControlBox = false;
             this.Controls.Add(this.body);
             this.Controls.Add(this.Right);
             this.Controls.Add(this.Bottom);
@@ -299,7 +306,6 @@ namespace UPrompt
             this.Controls.Add(this.TitleBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = global::UPrompt.Core.Properties.Resources.uicon;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Prompt";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "UPrompt DEMO";

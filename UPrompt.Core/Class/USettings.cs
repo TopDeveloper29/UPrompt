@@ -46,6 +46,7 @@ namespace UPrompt.Core
 
 
         // All settings that reflect system and view setting (can be set using Load)
+        public static bool ShowSplash { get; private set; } = false;
         public static string Text_Color { get; private set; } = "#fff";
         public static string Back_Color { get; private set; } = "#22252e";
         public static string Main_Color { get; private set; } = "#272c33";
@@ -340,6 +341,25 @@ namespace UPrompt.Core
                     break;
 
                 // Application Customization
+                case "showsplash":
+                    try
+                    {
+                        bool show = bool.Parse(value);
+                        if (show)
+                        {
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                UCommon.Windows.htmlhandler.Source = new Uri($@"{(AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/")}Resources/Visual/USplash.html");
+                            }));
+                            ShowSplash = show;
+                        }
+                        else
+                        {
+                            ShowSplash = show;
+                        }
+                    }
+                    catch { UCommon.Warning($"This setting {name} as invalid value \"{value}\" the value must be an boolean", WarningTitle); }
+                    break;
                 case "width":
                     try
                     {

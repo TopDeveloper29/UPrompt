@@ -189,7 +189,7 @@ namespace UPrompt.Core
             //Handle image argument
             if (ImageObject != null)
             {
-                if (!Directory.Exists($@"{UCommon.Application_Path}\Resources\Icon\")) { Directory.CreateDirectory($@"{UCommon.Application_Path}\Resources\Icon\"); }
+                if (!Directory.Exists($@"{UCommon.Application_Path}Resources\Visual\")) { Directory.CreateDirectory($@"{UCommon.Application_Path}Resources\Visual\"); }
                 try
                 {
                     ImagePath = ImageObject.Split(',')[0];
@@ -199,12 +199,12 @@ namespace UPrompt.Core
                 catch { UCommon.Warning($"ImageObject property should be write like ImageObject=\"Path (string),Size (integer),AutoColor (boolean)\""); }
                 if (UImage.IsUrl(ImagePath))
                 {
-                    RealImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromUrl(ImagePath)}";
+                    RealImagePath = $@"{UCommon.Application_Path}Resources\Visual\{UImage.GetImageNameFromUrl(ImagePath)}";
                     UImage.DownloadImage(ImagePath, RealImagePath);
                 }
                 else
                 {
-                    RealImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromLocalPath(ImagePath)}";
+                    RealImagePath = $@"{UCommon.Application_Path}Resources\Visual\{UImage.GetImageNameFromLocalPath(ImagePath)}";
                     File.Move(ImagePath, RealImagePath);
                 }
 
@@ -214,7 +214,7 @@ namespace UPrompt.Core
 
                     UImage.ReverseImageColors(TempImage, RealImagePath);
                 }
-                ExtraStyle += $"background-image: url('{UCommon.Application_Path}Resources/Icon/{UImage.GetImageNameFromLocalPath(RealImagePath)}');background-size: {ImageSize}%;background-repeat: no-repeat;background-position: center;";
+                ExtraStyle += $"background-image: url('{UCommon.Application_Path}Resources/Visual/{UImage.GetImageNameFromLocalPath(RealImagePath)}');background-size: {ImageSize}%;background-repeat: no-repeat;background-position: center;";
             }
 
             if (!USettings.ElementsParsingSkip.Contains(Id))
@@ -265,14 +265,14 @@ namespace UPrompt.Core
                                 break;
                             case "dropdown":
                                 string url = "https://static.thenounproject.com/png/1590826-200.png";
-                                string RealDropImagePath = $@"{UCommon.Application_Path}\Resources\Icon\{UImage.GetImageNameFromUrl(url)}";
+                                string RealDropImagePath = $@"{UCommon.Application_Path}Resources\Visual\{UImage.GetImageNameFromUrl(url)}";
                                 UImage.DownloadImage(url, RealDropImagePath);
                                 if (UImage.IsDark(UCommon.Windows.TitleBar.BackColor))
                                 {
                                     Image TempImage = Image.FromFile(RealDropImagePath);
                                     UImage.ReverseImageColors(TempImage, RealDropImagePath);
                                 }
-                                string dropstyle = $"background-image: url('{UCommon.Application_Path}Resources/Icon/{UImage.GetImageNameFromLocalPath(RealDropImagePath)}');";
+                                string dropstyle = $"background-image: url('{UCommon.Application_Path}Resources/Visual/{UImage.GetImageNameFromLocalPath(RealDropImagePath)}');";
 
 
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" class=\"dropdown {Class}\">\n";
