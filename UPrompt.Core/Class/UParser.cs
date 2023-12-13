@@ -238,10 +238,10 @@ namespace UPrompt.Core
                         {
                             default:
                             case "textbox":
-                                HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
+                                HtmlFromXml += $"<input style=\"{ExtraStyle}\" class=\"TextBox Item-Margin Main-Text-Color Fade-Background-Color {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
                                 break;
                             case "linesbox":
-                                HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
+                                HtmlFromXml += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox Item-Margin {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
                                 break;
                             case "checkbox":
                                 if (UCommon.GetVariable($"CheckBox_{Id}") != null)
@@ -256,7 +256,7 @@ namespace UPrompt.Core
                                 }
 
                                 HtmlFromXml += "\n" +
-                                    $"<label style=\"{ExtraStyle}\" class=\"label-checkbox {Class}\">\r\n" +
+                                    $"<label style=\"{ExtraStyle}\" class=\"label-checkbox Item-Margin{Class}\">\r\n" +
                                     $"  <input type=\"checkbox\" id=\"{Id}\" name=\"INPUT_{Id}\" value=\"{InnerValue}\" {Checked_Text} onclick=\"saveCheckboxStatus(this)\"/>\r\n" +
                                     "  <span class=\"checkmark\"></span>\r\n" +
                                     $"{InnerValue}\r\n" +
@@ -276,7 +276,7 @@ namespace UPrompt.Core
 
 
                                 HtmlFromXml += $"<div style=\"{ExtraStyle}\" class=\"dropdown {Class}\">\n";
-                                HtmlFromXml += $"<input style=\"{dropstyle}\" readonly type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>\n";
+                                HtmlFromXml += $"<input style=\"{dropstyle}\" class=\"Main-Text-Color Fade-Background-Color\" readonly type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>\n";
                                 HtmlFromXml += $"<div class=\"dropdown-content\">\n";
                                 if (DropList == null)
                                 {
@@ -300,23 +300,23 @@ namespace UPrompt.Core
                         switch (Type.ToLower())
                         {
                             case "spacer":
-                                HtmlFromXml += "<div class=\"Spacer\">.</div>";
+                                HtmlFromXml += "<div class=\"Spacer Background-Color\">.</div>";
                                 break;
                             case "title":
-                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title {Class}\">{InnerValue}</div>\n";
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title Item-Margin {Class}\">{InnerValue}</div>\n";
                                 break;
                             case "subtitle":
-                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"SubTitle {Class}\">{InnerValue}</div>\n";
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"SubTitle Item-Margin {Class}\">{InnerValue}</div>\n";
                                 break;
                             default:
                             case "label":
-                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label {Class}\">{InnerValue}</div>\n";
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label Item-Margin {Class}\">{InnerValue}</div>\n";
                                 break;
                             case "labelbox":
-                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox Item-Margin {Class}\">{InnerValue}</div>\n";
                                 break;
                             case "box":
-                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Box {Class}\">\n";
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Box Item-Margin {Class}\">\n";
                                 foreach (XmlNode rowChildNode in childNode.ChildNodes)
                                 {
                                     GenerateHtmlFromXML(rowChildNode.OuterXml);
@@ -324,7 +324,7 @@ namespace UPrompt.Core
                                 HtmlFromXml += "</div>\n";
                                 break;
                             case "row":
-                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row {Class}\">\n";
+                                HtmlFromXml += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row Item-Margin {Class}\">\n";
                                 foreach (XmlNode rowChildNode in childNode.ChildNodes)
                                 {
                                     GenerateHtmlFromXML(rowChildNode.OuterXml);
@@ -350,7 +350,7 @@ namespace UPrompt.Core
                                 break;
                             default:
                             case "button":
-                                HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui", Action, Id, Argument)}\">{InnerValue}</button>\n";
+                                HtmlFromXml += $"<button style=\"{ExtraStyle}\" class=\"Button Item-Margin Main-Background-Color Main-Text-Color {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui", Action, Id, Argument)}\">{InnerValue}</button>\n";
                                 break;
                             case "inputhandler":
                                 try

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+	<title>UPrompt Loading</title>
+	<style>
+	  body, html {
+		padding: 0;
+		height: 100%;
+		font-family: 'Varela Round', sans-serif;
+
+        }
+
+            body::-webkit-scrollbar {
+                display: none;
+            }
+
+
+	  .splash-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  text-align: center;
+  background-image: linear-gradient(10deg, #15161d, #334a52);
+}
+
+	  .splash-image {
+  width: 420px;
+  height: 440px;
+  border-radius: 20%; /* Corrected by adding a semicolon */
+  background-color: #eee;
+  background-image: url('u.png');
+  background-size: cover;
+  background-position: center;
+  margin-top: auto;
+}
+
+
+	  .splash-text {
+		font-size: 6em;
+		color: #fff;
+		margin-bottom: auto;
+	  }
+	</style>
+</head>
+<body>
+
+<div class="splash-screen">
+  <div class="splash-image"></div>
+  <br/><br/><br/>
+  <div class="splash-text">UPrompt is loading...</div>
+</div>
+
+</body>
+</html>

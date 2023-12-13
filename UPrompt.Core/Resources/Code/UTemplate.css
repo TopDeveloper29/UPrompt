@@ -1,35 +1,51 @@
 /*
+    This css represent all class to define aditional common property
+*/
+
+.Item-Margin {
+    margin: #ITEM_MARGIN#;
+}
+
+.Background-Color {
+    background-color: #BACKGROUND_COLOR#;
+}
+.Main-Background-Color {
+    background-color: #MAIN_COLOR#;
+}
+
+.Fade-Background-Color {
+    background-color: #FADE_BACKGROUND_COLOR#;
+}
+
+Text-Color {
+    color: #TEXT_COLOR#;
+}
+
+.Main-Text-Color {
+    color: #MAIN_TEXT_COLOR#;
+}
+/*
                 This css represent all kind of input or ui element in xml
                 You can create you own class to create you custom element
                 but if you only want to edit a detail of existing one
                 you could use Style property directly inside xml
 */
 .Title {
-    margin: 5px;
-    margin-bottom: #ITEM_MARGIN#;
-    margin-top: #ITEM_MARGIN#;
     font-size: 2.8rem;
     font-weight: bold;
     text-align: center;
 }
 .SubTitle {
-    margin: 5px;
-    margin-bottom: #ITEM_MARGIN#;
-    margin-top: #ITEM_MARGIN#;
     font-size: 1.8rem;
     font-weight: bold;
     text-align: center;
 }
 
 .Button {
-    margin-bottom: #ITEM_MARGIN#;
-    margin-top: #ITEM_MARGIN#;
     display: inline-block;
     padding: 1rem 2rem;
     font-size: 1.2rem;
     font-weight: bold;
-    color: #MAIN_TEXT_COLOR#;
-    background-color: #MAIN_COLOR#;
     border: none;
     border-radius: 0.5rem;
     text-decoration: none;
@@ -43,9 +59,6 @@
     }
 
 .LabelBox {
-    margin: 5px;
-    margin-bottom: #ITEM_MARGIN#;
-    margin-top: #ITEM_MARGIN#;
     border: 2px solid #MAIN_COLOR#;
     border-radius: 0.5rem;
     width: 90%;
@@ -53,39 +66,27 @@
 }
 
 .Label {
-    margin: 5px;
-    margin-bottom: #ITEM_MARGIN#;
-    margin-top: #ITEM_MARGIN#;
     width: 90%;
     padding: 1rem;
 }
 .Box {
-    margin-top: #ITEM_MARGIN#;
-    margin-bottom: #ITEM_MARGIN#;
-    margin-top: #ITEM_MARGIN#;
     border: 2px solid #MAIN_COLOR#;
     border-radius: 0.5rem;
     width: 100%;
 }
 
 .Row {
-    margin-top: #ITEM_MARGIN#;
     display: flex;
     justify-content: space-between;
     width: 100%;
 }
 
 .TextBox {
-    margin: 5px;
-    margin-bottom: #ITEM_MARGIN#;
-    margin-top: #ITEM_MARGIN#;
     border: 1px groove #FADE_MAIN_COLOR#;
-    background-color: #FADE_BACKGROUND_COLOR#;
     width: 99%;
     border-radius: 6px;
     padding: 8px;
     font-size: 16px;
-    color: #TEXT_COLOR#;
 }
 
     .TextBox:focus {
@@ -94,8 +95,8 @@
     }
 
 .Spacer {
+    color: #BACKGROUND_COLOR#;
     width: 50px;
-    color: #MAIN_COLOR#;
 }
 
 .dropdown {
@@ -107,9 +108,7 @@
         padding: 10px;
         border: 1px solid #MAIN_COLOR#;
         border-radius: 4px;
-        background-color: #FADE_BACKGROUND_COLOR#;
         font-size: 16px;
-        color: #TEXT_COLOR#;
         width: 200px;
     }
 
@@ -130,7 +129,6 @@
             display: block;
             padding: 10px;
             text-decoration: none;
-            font-family: #FONT_NAME#;
             color: #MAIN_TEXT_COLOR#;
             background-color: #MAIN_COLOR#;
         }
@@ -141,7 +139,6 @@
 
     .dropdown.open .dropdown-content {
         display: block;
-        font-family: #FONT_NAME#;
         color: #MAIN_TEXT_COLOR#;
         background-color: #MAIN_COLOR#;
     }
@@ -163,7 +160,6 @@
     display: inline-block;
     position: relative;
     padding-top: 2px;
-    font-family: #FONT_NAME#;
     padding-left: 25px;
     cursor: pointer;
 }
@@ -182,7 +178,6 @@
     width: 20px;
     border-radius: 3px;
     border: solid 1px #FADE_BACKGROUND_COLOR#;
-    background-color: #FADE_BACKGROUND_COLOR#;
 }
 
 .label-checkbox:hover input ~ .checkmark {

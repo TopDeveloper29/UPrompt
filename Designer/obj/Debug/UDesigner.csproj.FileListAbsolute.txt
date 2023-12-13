@@ -1,6 +1,3 @@
-C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
-C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
-C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\UDesigner.css
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\UDesigner.xml
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Resources\Code\UTemplate.css
@@ -19,10 +16,12 @@ C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Microsoft.W
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Microsoft.Web.WebView2.Core.dll
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\UPrompt.Core.pdb
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Newtonsoft.Json.xml
-C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Microsoft.Web.WebView2.WinForms.xml
-C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Microsoft.Web.WebView2.Core.xml
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.AssemblyReference.cache
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.CoreCompileInputs.cache
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.CopyComplete
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.dll
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.pdb
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Designer.cs
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
+C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
