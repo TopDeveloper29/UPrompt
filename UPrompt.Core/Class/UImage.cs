@@ -2,19 +2,65 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace UPrompt.Core
 {
-    internal class UImage
+    public class UImage
     {
+        public static string GetCopyOfImage(string path, bool AutoRevertColor = false)
+        {
+            string VisualDir = $@"{UCommon.Application_Path}Resources\Visual\";
+            string RealImagePath;
+
+            // Create Visual directory if not exist
+            if (!Directory.Exists(VisualDir)) { Directory.CreateDirectory(VisualDir); }
+
+            // Donwload if it a url copy if it a local file
+            if (IsUrl(path))
+            {
+                RealImagePath = VisualDir + GetFileNameFromUrl(path);
+
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadFile(path, RealImagePath);
+                }
+            }
+            else
+            {
+                RealImagePath = VisualDir + GetFileLocalPath(path);
+                File.Copy(path, RealImagePath, true);
+            }
+
+            // If application should mange image theme automatically revert color if dark
+            if (IsDark(UCommon.Windows.TitleBar.BackColor) && AutoRevertColor)
+            {
+                Image TempImage = Image.FromFile(RealImagePath);
+                ReverseImageColors(TempImage, RealImagePath);
+            }
+            return RealImagePath.Replace("\\","/");
+        }
+        internal static string GetFileLocalPath(string localPath)
+        {
+            string imageName = Path.GetFileName(localPath);
+            return imageName;
+        }
+        internal static string GetFileNameFromUrl(string url)
+        {
+            Uri uri = new Uri(url);
+            string imageName = Path.GetFileName(uri.LocalPath);
+            return imageName;
+        }
         internal static bool IsDark(Color color)
         {
             double perceivedBrightness = (color.R * 0.299 + color.G * 0.587 + color.B * 0.114) / 255;
             return perceivedBrightness <= 0.5;
         }
-        internal static bool IsUrl(string path)
+
+        private static bool IsUrl(string path)
         {
             Uri uriResult;
             bool isUrl = Uri.TryCreate(path, UriKind.Absolute, out uriResult)
@@ -22,33 +68,7 @@ namespace UPrompt.Core
 
             return isUrl;
         }
-        internal static void DownloadImage(string path, string outputLocation)
-        {
-            if (IsUrl(path))
-            {
-                using (WebClient client = new WebClient())
-                {
-                    client.DownloadFile(path, outputLocation);
-                }
-            }
-            else
-            {
-                File.Copy(path, outputLocation, true);
-            }
-        }
-        internal static string GetImageNameFromLocalPath(string localPath)
-        {
-            string imageName = Path.GetFileName(localPath);
-            return imageName;
-        }
-        internal static string GetImageNameFromUrl(string url)
-        {
-            Uri uri = new Uri(url);
-            string imageName = Path.GetFileName(uri.LocalPath);
-            return imageName;
-        }
-
-        internal static void ReverseImageColors(Image image, string outputFilePath)
+        private static void ReverseImageColors(Image image, string outputFilePath)
         {
             if (image != null)
             {
@@ -76,6 +96,7 @@ namespace UPrompt.Core
                 originalBitmap.Save(outputFilePath);
             }
         }
+        
         internal static void ReverseImageColors(PictureBox[] pictureBoxs)
         {
             foreach (PictureBox pictureBox in pictureBoxs)

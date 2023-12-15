@@ -65,45 +65,45 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Code\PsHandler.ps1">
+    <AdditionalFiles Include="Resources\Code\PsHandler.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Code\UDesigner.json">
+    </AdditionalFiles>
+    <AdditionalFiles Include="Resources\Code\UDesigner.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Code\Variables.ps1">
+    </AdditionalFiles>
+    <AdditionalFiles Include="Resources\Code\Variables.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </AdditionalFiles>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Code\UDesigner.css">
+    <AdditionalFiles Include="Resources\Code\UDesigner.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Code\UDesigner.xml">
+    </AdditionalFiles>
+    <AdditionalFiles Include="Resources\Code\UDesigner.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Code\UTemplate.css">
+    </AdditionalFiles>
+    <AdditionalFiles Include="Resources\Code\UTemplate.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Code\UTemplate.html">
+    </AdditionalFiles>
+    <AdditionalFiles Include="Resources\Code\UTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Code\UView.html">
+    </AdditionalFiles>
+    <AdditionalFiles Include="Resources\Code\UView.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </AdditionalFiles>
     <Content Include="Resources\Visual\CloseIcon.png" />
     <Content Include="Resources\Visual\MaximizeIcon.png" />
     <Content Include="Resources\Visual\MaximizeIcon2.png" />
     <Content Include="Resources\Visual\MinimizeIcon.png" />
-    <Content Include="Resources\Visual\uicon.ico">
+    <AdditionalFiles Include="Resources\Visual\uicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Visual\u.png">
+    </AdditionalFiles>
+    <AdditionalFiles Include="Resources\Visual\u.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Visual\USplash.html">
+    </AdditionalFiles>
+    <AdditionalFiles Include="Resources\Visual\USplash.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </AdditionalFiles>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Class\Prompt.resx">

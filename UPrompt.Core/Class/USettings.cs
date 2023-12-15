@@ -225,7 +225,7 @@ namespace UPrompt.Core
                     {
                         NewFadeColor();
                         string css = UParser.ParseSettingsText(File.ReadAllText(value));
-                        string copy = $@"{UCommon.Application_Path_Windows}Resources\Code\{UImage.GetImageNameFromLocalPath(value)}";
+                        string copy = $@"{UCommon.Application_Path_Windows}Resources\Code\{UImage.GetFileLocalPath(value)}";
                         File.WriteAllText(copy, css);
                         UParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{copy}\">";
                     }

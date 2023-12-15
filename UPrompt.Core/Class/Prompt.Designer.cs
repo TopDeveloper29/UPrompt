@@ -63,7 +63,9 @@ namespace UPrompt
             // 
             // htmlhandler
             // 
-            this.htmlhandler.AllowExternalDrop = true;
+            this.htmlhandler.AllowExternalDrop = false;
+            this.htmlhandler.BackColor = System.Drawing.SystemColors.HighlightText;
+            this.htmlhandler.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.htmlhandler.CreationProperties = null;
             this.htmlhandler.DefaultBackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(45)))), ((int)(((byte)(55)))));
             this.htmlhandler.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -83,7 +85,7 @@ namespace UPrompt
             this.TitleBar.Controls.Add(this.ButtonSplitPanel);
             this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.TitleBar.Location = new System.Drawing.Point(0, 0);
-            this.TitleBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.TitleBar.Margin = new System.Windows.Forms.Padding(2);
             this.TitleBar.Name = "TitleBar";
             this.TitleBar.Size = new System.Drawing.Size(800, 25);
             this.TitleBar.TabIndex = 1;
@@ -95,7 +97,7 @@ namespace UPrompt
             // 
             this.Top.Dock = System.Windows.Forms.DockStyle.Top;
             this.Top.Location = new System.Drawing.Point(0, 0);
-            this.Top.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Top.Margin = new System.Windows.Forms.Padding(2);
             this.Top.Name = "Top";
             this.Top.Size = new System.Drawing.Size(695, 9);
             this.Top.TabIndex = 1;
@@ -216,7 +218,7 @@ namespace UPrompt
             this.Left.Controls.Add(this.cornerleft);
             this.Left.Dock = System.Windows.Forms.DockStyle.Left;
             this.Left.Location = new System.Drawing.Point(0, 25);
-            this.Left.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Left.Margin = new System.Windows.Forms.Padding(2);
             this.Left.Name = "Left";
             this.Left.Size = new System.Drawing.Size(9, 425);
             this.Left.TabIndex = 2;
@@ -230,7 +232,7 @@ namespace UPrompt
             // 
             this.cornerleft.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.cornerleft.Location = new System.Drawing.Point(0, 409);
-            this.cornerleft.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cornerleft.Margin = new System.Windows.Forms.Padding(2);
             this.cornerleft.Name = "cornerleft";
             this.cornerleft.Size = new System.Drawing.Size(9, 16);
             this.cornerleft.TabIndex = 1;
@@ -245,7 +247,7 @@ namespace UPrompt
             this.Bottom.Controls.Add(this.cornerright);
             this.Bottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.Bottom.Location = new System.Drawing.Point(9, 438);
-            this.Bottom.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Bottom.Margin = new System.Windows.Forms.Padding(2);
             this.Bottom.Name = "Bottom";
             this.Bottom.Size = new System.Drawing.Size(791, 12);
             this.Bottom.TabIndex = 3;
@@ -259,7 +261,7 @@ namespace UPrompt
             // 
             this.cornerright.Dock = System.Windows.Forms.DockStyle.Right;
             this.cornerright.Location = new System.Drawing.Point(781, 0);
-            this.cornerright.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cornerright.Margin = new System.Windows.Forms.Padding(2);
             this.cornerright.Name = "cornerright";
             this.cornerright.Size = new System.Drawing.Size(10, 12);
             this.cornerright.TabIndex = 0;
@@ -273,7 +275,7 @@ namespace UPrompt
             // 
             this.Right.Dock = System.Windows.Forms.DockStyle.Right;
             this.Right.Location = new System.Drawing.Point(790, 25);
-            this.Right.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Right.Margin = new System.Windows.Forms.Padding(2);
             this.Right.Name = "Right";
             this.Right.Size = new System.Drawing.Size(10, 413);
             this.Right.TabIndex = 4;

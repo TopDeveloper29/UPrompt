@@ -46,8 +46,15 @@ namespace UPrompt.Core
             {
                 try
                 {
-                    MethodInfo methodInfo = extensionType.GetMethod(methodName);
-                    return methodInfo.Invoke(methodInfo, arguments);
+                    MethodInfo methodInfo = extensionType.GetMethod(methodName.Replace("()",null));
+                    if (arguments == null)
+                    {
+                        return methodInfo.Invoke(methodInfo,null);
+                    }
+                    else
+                    {
+                        return methodInfo.Invoke(methodInfo, arguments);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -236,7 +243,7 @@ namespace UPrompt.Core
                 if (Name.Contains("INPUT_"))
                 {
                     string id = Name.Split(new string[] { "INPUT_" }, StringSplitOptions.None)[1];
-                    if (UCommon.GetVariable(id) != Value.ToString())
+                    if (!id.ToLower().Contains("skipme_") && UCommon.GetVariable(id) != Value.ToString())
                     {
                         UCommon.SetVariable(id, Value.ToString());
                     }
@@ -270,7 +277,7 @@ namespace UPrompt.Core
                             string id = (string)EndItemJson["id"];
                             string value = (string)EndItemJson["value"];
 
-                            switch (type.ToLower())
+                            switch (type.ToLower() ?? type)
                             {
                                 default:
                                 case "ui":
@@ -305,22 +312,27 @@ namespace UPrompt.Core
             if (!ActionName.Contains("null"))
             {
                 LastActionOutput = "";
-
-                SwitchAction(ActionName, ActionValue);
-
-                
+                SwitchAction(ActionName, ActionValue,ActionId);
 
                 if (LastActionOutput.Length > 0)
                 {
                     UCommon.SetVariable($"Result_{ActionId}", LastActionOutput);
                 }
-                UParser.GenerateView(UCommon.XmlDocument.SelectSingleNode("/Application/View"));
+                //UParser.GenerateView();
             }
         }
-        internal static void SwitchAction(string ActionName, string ActionValue)
+        internal static void SwitchAction(string ActionName, string ActionValue, string ActionId)
         {
-            string LineTitle = $"Xml line: {UCommon.DebugXmlLineNumber}";
-            
+            int DebugLine = 0;
+            foreach (string Line in File.ReadAllLines(UCommon.Xml_Path))
+            {
+                DebugLine++;
+                if (Line.ToLower().Contains($"{ActionId.ToLower()}"))
+                {
+                    break;
+                }
+            }
+            string LineTitle = $"Xml Line: {DebugLine}";
             try
             {
                 ActionValue = UParser.ParseSystemText(ActionValue);
@@ -342,24 +354,34 @@ namespace UPrompt.Core
 
                                         if (matches.Count > 0)
                                         {
-                                            string _value = "";
-                                            foreach (Match match in matches) { _value = match.Groups[1].Value; }
-                                            object Result = EH.CallExtensionMethod(methodtext.Split('(')[0], _value.Split(','));
-                                            if (Result != null) { LastActionOutput = Result.ToString(); }
+                                            string _value = ""; foreach (Match match in matches) { _value = match.Groups[1].Value; }
+                                            object[] Argument = new object[] { };
+                                            if (_value.Length > 1)
+                                            {
+                                                if (_value.Split(',').Length == 1) // if only on argument create a array with only one item
+                                                { Argument = new object[] { $"{_value}" }; }
+                                                else // if multiple argument create aray for each element separate by ,
+                                                { Argument = _value.Split(','); }
 
-                                            UCommon.SetVariable($"Result_{EH.Id}", LastActionOutput);
+                                                object Result = EH.CallExtensionMethod(methodtext.Split('(')[0], Argument);
+                                                if (Result != null) { LastActionOutput = Result.ToString(); }
+
+                                                UCommon.SetVariable($"Result_{EH.Id}", LastActionOutput);
+                                            }
+                                            else
+                                            { EH.CallExtensionMethod(ActionValue.Split(',')[1], null); }
                                         }
                                         else
-                                        { EH.CallExtensionMethod(ActionValue.Split(',')[1]); }
+                                        { EH.CallExtensionMethod(ActionValue.Split(',')[1],null); }
                                     }
                                     else
-                                    { EH.CallExtensionMethod(ActionValue.Split(',')[1]); }
+                                    { EH.CallExtensionMethod(ActionValue.Split(',')[1],null); }
                                     return;
                                 }
                             }
 
                         }
-                        catch { UCommon.Warning($"The argument of {ActionName} must be in format \"Id,MethodName(argument)\"", LineTitle); }
+                        catch(Exception ex) { Console.WriteLine(ex.Message); UCommon.Warning($"The argument of {ActionName} argument: {ActionValue} must be in format \"Id,MethodName(argument)\"", LineTitle); }
                         break;
                     case "runpowershell":
                         try
@@ -436,7 +458,7 @@ namespace UPrompt.Core
                                 LastActionOutput = "false";
                             }
                         }
-                        catch { UCommon.Warning($"RunPs1 action argument must specify exe path that is a ps1 file (xml line: {UCommon.DebugXmlLineNumber})", LineTitle); LastActionOutput = "false"; }
+                        catch { UCommon.Warning($"RunPs1 action argument must specify exe path that is a ps1 file", LineTitle); LastActionOutput = "false"; }
                         break;
                     case "getvariable":
                         try

@@ -64,7 +64,6 @@ namespace UPrompt.Core
         public static string Application_Path_Windows { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
         public static string UPrompt_exe = Assembly.GetEntryAssembly().Location;
         public static string Xml_Path { get; set; } = $@"{Application_Path}\MainPage.xml";
-        internal static int DebugXmlLineNumber { get; set; } = 0;
 
         public static DialogResult Output(string Text, string Title = "Output", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
         {
@@ -157,6 +156,12 @@ namespace UPrompt.Core
             else
             { return Value; }
         }
-
+        public static void DeleteVariable(string Id)
+        {
+            if (Variable.ContainsKey(Id))
+            {
+                Variable.Remove(Id);
+            }
+        }
     }
 }

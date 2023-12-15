@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml;
 using UPrompt.Core;
 
@@ -19,13 +20,13 @@ namespace UPrompt.UDesigner
             public string Mandatory { get; set; }
         }
         public string Description { get; set; }
-        public Dictionary<string,Argument> Arguments { get; set; }
+        public Dictionary<string, Argument> Arguments { get; set; }
     }
     internal class View
     {
         public string Description { get; set; }
         public string InnerTextPurpose { get; set; }
-        public string[]  SupportedProperties { get; set; }
+        public string[] SupportedProperties { get; set; }
     }
     internal class Settings
     {
@@ -34,12 +35,13 @@ namespace UPrompt.UDesigner
     }
     public static class Designer
     {
-        private static string MainNodeName { get; set; } = "xml";
+        private static string MainNodeName { get; set; } = "Xml";
         private static Dictionary<string, string> ListOfJson { get; set; } = new Dictionary<string, string>();
-        private static string xml { get; set; } = "";
+        private static string Xml { get; set; } = "";
         private static string ExtraXml { get; set; } = "";
         private static string PreferedEditorPath { get; set; } = @"C:\Program Files\Notepad++\notepad++.exe";
-        
+        private static string ErrorTitle = "UDesigner Internal Error";
+
         // Handle editor and file load
         public static void SetPreferedEditor(string path)
         {
@@ -66,14 +68,10 @@ namespace UPrompt.UDesigner
                         {
                             Process.Start(path);
                         }
-                        //PreviewXML();
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                UCommon.Error(ex.Message);
-            }
+            catch (Exception ex) { UCommon.Error(ex.Message, ErrorTitle); }
         }
         public static void OpenNewUprompt()
         {
@@ -84,141 +82,23 @@ namespace UPrompt.UDesigner
                 {
                     Process upromt = new Process();
                     upromt.StartInfo.FileName = UCommon.UPrompt_exe;
-                    //upromt.StartInfo.WorkingDirectory = UCommon.Application_Path_Windows;
                     upromt.StartInfo.Arguments = $"/Path \"{path}\"";
                     upromt.Start();
-                    upromt.WaitForExit();
-                    UParser.ReloadView();
                 }
             }
         }
 
-        public static void PreviewXML()
-        {
-            try
-            {
-                string path = UCommon.GetVariable("SavedPath");
-                if (path.Length > 2 && path.ToLower().Contains(":\\"))
-                {
-                    UCommon.SetVariable("PreviewHtml", "");
-                    UParser.ClearHtml();
-
-                    if (File.Exists(path))
-                    {
-                        string rawxml = File.ReadAllText(path);
-                        if (rawxml.ToLower().Contains("<Application>".ToLower()) && rawxml.ToLower().Contains("<View>".ToLower()) && rawxml.ToLower().Contains("</Application>".ToLower()) && rawxml.ToLower().Contains("</View>".ToLower()))
-                        {
-                            XmlDocument xmlDocument = new XmlDocument();
-                            xmlDocument.Load(path);
-                            string html = "";
-                            foreach (XmlNode childNode in xmlDocument.SelectSingleNode("/Application/View").ChildNodes)
-                            {
-                                html = UParser.GenerateHtmlFromXML(childNode.OuterXml);
-                            }
-                            UCommon.SetVariable("PreviewHtml", html);
-                        }
-                    }
-                    UParser.ReloadView();
-                }
-            }
-            catch (Exception ex) { UCommon.Error(ex.Message); }
-        }
-        public static void SelectSetting()
-        {
-            try
-            {
-                string name = UCommon.GetVariable("SubType");
-                string value = UCommon.GetVariable("SettingValue");
-
-                if (name != null && value != null)
-                {
-                    UCommon.SetVariable("GeneratedCode", "<Setting Name='" + name + "' Value='" + value + "'/>");
-                }
-                else
-                {
-                    Settings Settings = JsonConvert.DeserializeObject<Settings>(ListOfJson[ListOfJson.Keys.First()].ToString());
-                    UCommon.SetVariable("SettingValue", Settings.Values[0]);
-                    SelectSetting();
-                }
-            }
-            catch (Exception ex) { UCommon.Error(ex.Message); }
-        }
-        public static void SelectView()
-        {
-            try
-            {
-                string name = UCommon.GetVariable("SubType");
-                string value = UCommon.GetVariable("ViewValue");
-
-                if (name != null && value != null)
-                {
-                    OpenXmlGroup();
-                    Dictionary<string, View> data = JsonConvert.DeserializeObject<Dictionary<string, View>>(ListOfJson[name]);
-                    UCommon.SetVariable("ViewValue", value);
-                    xml += GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
-                    xml += GenrerateDropBox(data.Keys.ToArray(), "ViewValue", "210129,SelectView");
-
-                    foreach (string key in data.Keys)
-                    {
-                        if (key.ToLower() == value.ToLower())
-                        {
-                            string description = data[key].Description;
-                            string InnerPurpose = data[key].InnerTextPurpose;
-      
-                            ExtraXml += $"<ViewItem Type=\"Label\">Description: {description}</ViewItem>\n<ViewItem Type=\"Label\">Inner text behaviors:{InnerPurpose}</ViewItem>\n<ViewItem Type=\"Box\">\n";
-                            ExtraXml += $"<ViewItem Type=\"Label\">Valid Property: </ViewItem>\n<ViewItem Type=\"Row\">";
-                            foreach (string element in data[key].SupportedProperties)
-                            {
-                                ExtraXml += $"<ViewItem Type=\"Label\"> {element} </ViewItem>\n";
-                            }
-                            ExtraXml += "</ViewItem>\n</ViewItem>\n";
-                            UCommon.SetVariable("ViewValue", value);
-                            UCommon.SetVariable("GeneratedCode", $"<{name} Type='{value}'></{name}>");
-                        }
-                    }
-
-                    CloseXmlGroup();
-                    RefreshDesignerCode();
-                }
-                else
-                {
-                    Dictionary<string, Dictionary<string, object>> data = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(ListOfJson.Keys.First().ToString());
-                    UCommon.SetVariable("ViewValue", data.Keys.First());
-                    SelectView();
-                }
-            }
-            catch (Exception ex) { UCommon.Error(ex.Message); }
-        }
-
-        private static void RefreshDesignerCode()
-        {
-            try
-            {
-                if (xml.Length > 5)
-                {
-                    UParser.ClearHtml();
-                    if (ExtraXml.Length > 10)
-                    {
-                        if (ExtraXml.Contains("</ViewItem>"))
-                        {
-                            UCommon.SetVariable("DesignerExtraHtml", UParser.GenerateHtmlFromXML(ExtraXml));
-                            UParser.ClearHtml();
-                        }
-                    }
-                    string html = UParser.GenerateHtmlFromXML(xml);
-                    UCommon.SetVariable("DesignerHtml", html);
-                    UParser.ReloadView();
-                }
-            }
-            catch (Exception ex) { UCommon.Error(ex.Message); }
-        }
+        // General node generation
         public static void SelectMainNode(string NodeName)
         {
             try
             {
+                UCommon.DeleteVariable("ViewValue");
+                UCommon.DeleteVariable("SettingValue");
+
                 string json = File.ReadAllText($@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.json");
                 JObject jsonObject = JsonConvert.DeserializeObject<JObject>(json);
-                xml = "";
+                Xml = "";
                 ExtraXml = "";
                 ListOfJson.Clear();
                 MainNodeName = NodeName.ToLower();
@@ -242,154 +122,201 @@ namespace UPrompt.UDesigner
                     }
                 }
                 UCommon.SetVariable("SubType", ListOfJson.Keys.First());
-                xml = GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
-   
-                UParser.ClearHtml();
-                UCommon.SetVariable("GeneratedCode", "");
-                UCommon.SetVariable("DesignerHtml", "");
-                if (xml.Length > 1)
-                {
-                    UCommon.SetVariable("DesignerHtml", UParser.GenerateHtmlFromXML(xml));
-                }
-
                 SelectSubNode();
             }
-            catch (Exception ex) { UCommon.Error(ex.Message); }
+            catch (Exception ex) { UCommon.Error(ex.Message, ErrorTitle); }
         }
         public static void SelectSubNode()
         {
-            xml = "";
-            ExtraXml = "";
-              
             try
             {
-                string Node = UCommon.GetVariable("SubType");
-                if (Node != null)
-                {
-                    try
-                    {
-                        if (ListOfJson.Keys.Contains(Node))
-                        {
-                            OpenXmlGroup();
-                        }
-                        foreach (string key in ListOfJson.Keys)
-                        {
-                            if (key.ToLower() == (Node.ToLower()))
-                            {
-                                UCommon.SetVariable("SubType", key);
-                                xml += GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
-                                switch (MainNodeName)
-                                {
-                                    case "xml":
-                                        UCommon.SetVariable("GeneratedCode", ListOfJson[key].ToString());
-                                        CloseXmlGroup();
-                                        break;
-                                    case "settings":
-                                        Settings Settings = JsonConvert.DeserializeObject<Settings>(ListOfJson[Node].ToString());
-                                        if (UCommon.GetVariable("SettingValue") != null)
-                                        {
-                                            if (Settings.Values.Contains(UCommon.GetVariable("SettingValue")))
-                                            {
-                                                UCommon.SetVariable("SettingValue", UCommon.GetVariable("SettingValue"));
-                                            }
-                                            else
-                                            {
-                                                UCommon.SetVariable("SettingValue", Settings.Values[0]);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            UCommon.SetVariable("SettingValue", Settings.Values[0]);
-                                        }
-                                        xml += $"<ViewItem Type=\"Label\">Description: {Settings.Description}</ViewItem>";
-                                        
-                                        ExtraXml += "<ViewItem Type=\"Label\">Examples Value:</ViewItem>";
-                                        ExtraXml += GenrerateDropBox(Settings.Values, "SettingValue", "210129,SelectSetting");
-                                        
-                                        CloseXmlGroup();
-                                        SelectSetting();
-                                        break;
-                                    case "view":
-                                        Dictionary<string, Dictionary<string, object>> data = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(ListOfJson[Node].ToString());
-                                        if (UCommon.GetVariable("ViewValue") != null)
-                                        {
-                                            if (data.Keys.Contains(UCommon.GetVariable("ViewValue") ?? ""))
-                                            {
-                                                UCommon.SetVariable("ViewValue", UCommon.GetVariable("ViewValue"));
-                                            }
-                                            else
-                                            {
-                                                UCommon.SetVariable("ViewValue", data.Keys.First());
-                                            }
-                                        }
-                                        else
-                                        {
-                                            UCommon.SetVariable("ViewValue", data.Keys.First());
-                                        }
-                                        xml += GenrerateDropBox(data.Keys.ToArray(), "ViewValue", "210129,SelectView");
-                                        SelectView();
-                                        
-                                        break;
-                                    case "action":
-                                        Action action = JsonConvert.DeserializeObject<Action>(ListOfJson[key]);
-                                        xml += $"\n<ViewItem Type=\"Label\">Description: {action.Description}</ViewItem>\n";
-                                        ExtraXml += "\n<ViewItem Type=\"Label\" Style=\"font-size:2em;\">Argument:</ViewItem><br/>\n<table style=\"margin-left: 520px; \">\r\n<tr><th>Name</th>\r\n<th>Description</th>\r\n<th>Mandatory</th>\r\n</tr>";
-                                        
-                                        foreach (string akey in action.Arguments.Keys)
-                                        {
-                                            ExtraXml += $"\n<tr><td>{akey}</td>\r\n<td>{action.Arguments[akey].Description2}</td>\r\n<td>{action.Arguments[akey].Mandatory}</td>\r\n</tr>";
-                                        }
-                                        ExtraXml += "</table>\n";
-                                        UCommon.SetVariable("GeneratedCode", $"<ViewAction Id='Test{key}' Type='Button' Action='{key}' Argument=''>Test of {key}</ViewAction>");
+                UCommon.DeleteVariable("ViewValue");
+                UCommon.DeleteVariable("SettingValue");
 
-                                        CloseXmlGroup();
-                                        break;
-                                    case "variable":
-                                        Dictionary<string, string> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(ListOfJson[key].ToString());
-                                        ExtraXml += "\n<table>\r\n<tr><th>Name</th>\r\n<th>Description</th>\r\n</tr>";
+                Xml = ""; ExtraXml = "";
+                string key = UCommon.GetVariable("SubType") ?? ListOfJson.Keys.First();
+                if (!ListOfJson.Keys.Contains(key)) { key = ListOfJson.Keys.First(); UCommon.SetVariable("SubType", ListOfJson.Keys.First()); }
 
-                                        foreach (string vkey in jsonDict.Keys)
-                                        {
-                                            ExtraXml += $"\n<tr><td>{vkey.Replace("{","").Replace("}","").Replace("#","")}</td>\r\n<td>{jsonDict[vkey]}</td>\r\n</tr>";
-                                        }
-                                        ExtraXml += "</table>\n";
-                                        CloseXmlGroup();
-                                        break;
-                                    default:
-                                        CloseXmlGroup();
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex) { UCommon.Error(ex.Message); }
-                    UParser.ClearHtml();
-                    UCommon.SetVariable("PreviewHtml", UParser.GenerateHtmlFromXML(UCommon.GetVariable("GeneratedCode")));
-                }
-                else
+                switch (MainNodeName.ToLower() ?? MainNodeName)
                 {
-                    xml = "";
-                    ExtraXml = "";
-                    OpenXmlGroup();
-                    CloseXmlGroup();
-                    UParser.ClearHtml();
-                    UCommon.SetVariable("SubType", ListOfJson.Keys.First());
-                    SelectSubNode();
+                    case "xml":
+                        UCommon.SetVariable("XmlCode", ListOfJson[key].ToString());
+                        Xml = GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
+                        break;
+                    case "settings":
+                        Settings Settings = JsonConvert.DeserializeObject<Settings>(ListOfJson[key].ToString());
+                        if (UCommon.GetVariable("SettingValue") == null) { UCommon.SetVariable("SettingValue", Settings.Values[0]); }
+                        Xml = GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
+                        Xml += $"<ViewItem Type=\"Label\">Description: {Settings.Description}</ViewItem>";
+                        SelectSetting();
+                        break;
+                    case "view":
+                        Dictionary<string, Dictionary<string, object>> View = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(ListOfJson[key].ToString());
+                        if (UCommon.GetVariable("ViewValue") == null) { UCommon.SetVariable("ViewValue", View.Keys.First()); }
+                        SelectView();
+
+                        break;
+                    case "action":
+                        Action action = JsonConvert.DeserializeObject<Action>(ListOfJson[key]);
+                        Xml = GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
+                        Xml += $"\n<ViewItem Type=\"Label\">Description: {action.Description}</ViewItem>\n";
+                        ExtraXml =
+                            "<table>\r\n" +
+                            "   <caption style=\"font-size: 1.5em; font-weight: bold; text-align: left;\">Arguments: </caption>\n" +
+                            "   <tr>\n" +
+                            "       <th>Name</th>\r\n" +
+                            "       <th>Description</th>\r\n" +
+                            "       <th>Mandatory</th>\r\n" +
+                            "   </tr>\n";
+
+                        foreach (string akey in action.Arguments.Keys)
+                        {
+                            ExtraXml += 
+                            $"  <tr>\n" +
+                            $"      <td>{akey}</td>\r\n" +
+                            $"      <td>{action.Arguments[akey].Description2}</td>\r\n" +
+                            $"      <td>{action.Arguments[akey].Mandatory}</td>\r\n" +
+                            $"  </tr>\n";
+                        }
+                        ExtraXml += "</table>";
+                        UCommon.SetVariable("XmlCode", $"<ViewAction Id='Test{key}' Type='Button' Action='{key}' Argument='Test of {key}'>Test of {key}</ViewAction>");
+
+                        break;
+                    case "variable":
+                        
+                        Xml = GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
+                        Dictionary<string, string> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(ListOfJson[key].ToString());
+                        
+                        ExtraXml = 
+                        "   <table>\r\n" +
+                        "       <tr>\n" +
+                        "           <th>Name</th>\r\n" +
+                        "           <th>Description</th>\r\n" +
+                        "       </tr>\n";
+
+                        foreach (string vkey in jsonDict.Keys)
+                        {
+                            ExtraXml += 
+                            "       <tr>\n" +
+                            $"          <td>{vkey.Replace("{", "").Replace("}", "").Replace("#", "")}</td>\r\n" +
+                            $"          <td>{jsonDict[vkey]}</td>\r\n" +
+                            $"      </tr>\n";
+                        }
+                        ExtraXml += "   </table>";
+                        
+                        UCommon.SetVariable("XmlCode", "N/A");
+                        break;
+                    default:
+                        Xml = GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
+                        break;
                 }
+                RefreshDesignerCode();
             }
-            catch (Exception ex) { UCommon.Error(ex.Message); }
-            RefreshDesignerCode();
+            catch (Exception ex) { UCommon.Error($"Select Node Error: {ex.Message}", ErrorTitle); }
         }
-        private static void OpenXmlGroup()
+
+        // Special node generation
+        public static void SelectSetting(string Refresh = "false")
         {
-            xml = "<ViewItem Type=\"Row\">";
-            ExtraXml = "<ViewItem Type=\"Row\">";
+            try
+            {
+                string name = UCommon.GetVariable("SubType");
+                Settings Settings = JsonConvert.DeserializeObject<Settings>(ListOfJson[name].ToString());
+                string value = UCommon.GetVariable("SettingValue") ?? Settings.Values[0];
+                if (!Settings.Values.Contains(value)) { value = Settings.Values[0]; UCommon.SetVariable("SettingValue", Settings.Values[0]); }
+
+                Xml = GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
+                ExtraXml = "<ViewItem Type=\"SubTitle\">Examples Value:</ViewItem>";
+                ExtraXml += GenrerateDropBox(Settings.Values, "SettingValue", "210129,SelectSetting(true)");
+                UCommon.SetVariable("XmlCode", "<Setting Name='" + name + "' Value='" + value + "'/>");
+                if (Refresh.Contains("true")) { RefreshDesignerCode(); }
+            }
+            catch (Exception ex) { UCommon.Error(ex.Message, ErrorTitle); }
         }
-        private static void CloseXmlGroup()
+        public static void SelectView(string Refresh = "false")
         {
-            xml += "</ViewItem>";
-            ExtraXml += "</ViewItem>";
+            try
+            {
+                string name = UCommon.GetVariable("SubType");
+                Dictionary<string, View> View = JsonConvert.DeserializeObject<Dictionary<string, View>>(ListOfJson[name]);
+                string value = UCommon.GetVariable("ViewValue") ?? View.Keys.First();
+                if (!View.Keys.Contains(value)) { value = View.Keys.First(); UCommon.SetVariable("SettingValue", View.Keys.First()); }
+
+                Xml = GenrerateDropBox(ListOfJson.Keys.ToArray(), "SubType", "210129,SelectSubNode");
+                Xml += "<ViewItem Type=\"Label\"> Type: </ViewItem>";
+                Xml += GenrerateDropBox(View.Keys.ToArray(), "ViewValue", "210129,SelectView(true)");
+
+                string description = View[value].Description;
+                string InnerPurpose = View[value].InnerTextPurpose;
+
+                ExtraXml = 
+                    "<table>\r\n" +
+                    "  <tr>\n" +
+                    "      <td>Description</td>\n" +
+                    $"      <td>{description}</td>\n" +
+                    "  </tr>" +
+                    "  <tr>" +
+                    "       <td>Inner text behaviors</td>\n" +
+                    $"      <td>{InnerPurpose}</td>\n" +
+                    "   </tr>" +
+                    "   <tr>" +
+                    "       <td>Valid Property</td>" +
+                    "       <td>";
+                int index = 0;
+                int end = View[value].SupportedProperties.Length - 1;
+                foreach (string element in View[value].SupportedProperties)
+                {
+                    string Virgule = ",";if (index == end) { Virgule = ""; }
+                    ExtraXml += $"{element} {Virgule}\n";
+                    index++;
+                }
+                ExtraXml += "</td></tr>\n</table>\n";
+
+                string innertext;
+                
+                switch(value.ToLower() ?? value)
+                {
+                    case "row":
+                    case "box":
+                    case "spacer":
+                        innertext = string.Empty;
+                        break;
+                    default:
+                        innertext = "Test";
+                        break;
+                }
+                UCommon.SetVariable("XmlCode", $"<{name} Type='{value}'>{innertext}</{name}>");
+                if (Refresh.Contains("true")) { RefreshDesignerCode(); }
+            }
+            catch (Exception ex) { UCommon.Error(ex.Message, ErrorTitle); }
         }
+
+        // Generation of html
+        public static void PreviewXML(string ReadBox = "false")
+        {
+            string htmlcode;
+            if (ReadBox.Contains("false"))
+            { htmlcode = UParser.GenerateHtmlFromXML(UCommon.GetVariable("XmlCode")); }
+            else
+            { htmlcode = UParser.GenerateHtmlFromXML(UCommon.GetVariable("TestIt")); }
+            UCommon.SetVariable("PreviewHtml", htmlcode);
+        }
+        private static void RefreshDesignerCode()
+        {
+            // Add Row and close it
+            Xml = $"<ViewItem Type=\"Row\">\n{Xml}\n</ViewItem>";
+            ExtraXml = $"<ViewItem Type=\"Row\">\n{ExtraXml}\n</ViewItem>";
+            try
+            {
+                UCommon.SetVariable("DesignerHtml", UParser.GenerateHtmlFromXML(Xml));
+                UCommon.SetVariable("DesignerExtraHtml", UParser.GenerateHtmlFromXML(ExtraXml));
+            }
+            catch (Exception ex) { UCommon.Error("Refresh Error: " + ex.Message, ErrorTitle); }
+
+            PreviewXML();
+            UParser.ReloadView();
+        }
+
         private static string GenrerateDropBox(string[] items, string id, string method)
         {
             try
