@@ -1,47 +1,26 @@
 /*
-    This css represent all class to define aditional common property
-*/
-
-.Item-Margin {
-    margin: #ITEM_MARGIN#;
-}
-
-.Background-Color {
-    background-color: #BACKGROUND_COLOR#;
-}
-.Main-Background-Color {
-    background-color: #MAIN_COLOR#;
-}
-
-.Fade-Background-Color {
-    background-color: #FADE_BACKGROUND_COLOR#;
-}
-
-Text-Color {
-    color: #TEXT_COLOR#;
-}
-
-.Main-Text-Color {
-    color: #MAIN_TEXT_COLOR#;
-}
-/*
                 This css represent all kind of input or ui element in xml
                 You can create you own class to create you custom element
                 but if you only want to edit a detail of existing one
                 you could use Style property directly inside xml
 */
 .Title {
+    margin: #ITEM_MARGIN#;
     font-size: 2.8rem;
     font-weight: bold;
     text-align: center;
 }
 .SubTitle {
+    margin: #ITEM_MARGIN#;
     font-size: 1.8rem;
     font-weight: bold;
     text-align: center;
 }
 
 .Button {
+    background-color: #ACCENT_COLOR#;
+    color: #ACCENT_TEXT_COLOR#;
+    margin: #ITEM_MARGIN#;
     display: inline-block;
     padding: 1rem 2rem;
     font-size: 1.2rem;
@@ -55,34 +34,41 @@ Text-Color {
 
     .Button:hover {
         cursor: pointer;
-        background-color: #FADE_MAIN_COLOR#;
+        background-color: #FADE_ACCENT_COLOR#;
     }
 
 .LabelBox {
-    border: 2px solid #MAIN_COLOR#;
+    margin: #ITEM_MARGIN#;
+    border: 2px solid #FADE_BACKGROUND_COLOR#;
     border-radius: 0.5rem;
     width: 90%;
     padding: 1rem;
 }
 
 .Label {
+    margin: #ITEM_MARGIN#;
     width: 90%;
     padding: 1rem;
 }
 .Box {
-    border: 2px solid #MAIN_COLOR#;
+    margin: #ITEM_MARGIN#;
+    border: 2px solid #FADE_BACKGROUND_COLOR#;
     border-radius: 0.5rem;
     width: 100%;
 }
 
 .Row {
+    margin: #ITEM_MARGIN#;
     display: flex;
     justify-content: space-between;
     width: 100%;
 }
 
 .TextBox {
-    border: 1px groove #FADE_MAIN_COLOR#;
+    color: #ACCENT_TEXT_COLOR#;
+    background-color: #FADE_BACKGROUND_COLOR#;
+    margin: #ITEM_MARGIN#;
+    border: 1px groove #FADE_ACCENT_COLOR#;
     width: 99%;
     border-radius: 6px;
     padding: 8px;
@@ -91,25 +77,29 @@ Text-Color {
 
     .TextBox:focus {
         outline: none;
-        box-shadow: 0px 0px 8px #MAIN_COLOR#;
+        box-shadow: 0px 0px 8px #ACCENT_COLOR#;
     }
 
 .Spacer {
+    margin: #ITEM_MARGIN#;
     color: #BACKGROUND_COLOR#;
     width: 50px;
 }
 
 .dropdown {
+    margin: #ITEM_MARGIN#;
     position: relative;
     display: inline-block;
 }
 
     .dropdown input[type="text"] {
         padding: 10px;
-        border: 1px solid #MAIN_COLOR#;
+        border: 1px solid #ACCENT_COLOR#;
         border-radius: 4px;
         font-size: 16px;
         width: 200px;
+        background-color: #ACCENT_COLOR#;
+        color: #ACCENT_TEXT_COLOR#;
     }
 
     .dropdown .dropdown-content {
@@ -119,8 +109,8 @@ Text-Color {
         top: 100%;
         left: 0;
         width: 100%;
-        background-color: #MAIN_COLOR#;
-        box-shadow: 0px 0px 5px #FADE_MAIN_COLOR#;
+        background-color: #ACCENT_COLOR#;
+        box-shadow: 0px 0px 5px #FADE_ACCENT_COLOR#;
         border-top: none;
         border-radius: 2px 2px 4px 4px;
     }
@@ -129,22 +119,22 @@ Text-Color {
             display: block;
             padding: 10px;
             text-decoration: none;
-            color: #MAIN_TEXT_COLOR#;
-            background-color: #MAIN_COLOR#;
+            color: #ACCENT_TEXT_COLOR#;
+            background-color: #ACCENT_COLOR#;
         }
 
             .dropdown .dropdown-content a:hover {
-                background-color: #FADE_MAIN_COLOR#;
+                background-color: #FADE_ACCENT_COLOR#;
             }
 
     .dropdown.open .dropdown-content {
         display: block;
-        color: #MAIN_TEXT_COLOR#;
-        background-color: #MAIN_COLOR#;
+        color: #ACCENT_TEXT_COLOR#;
+        background-color: #ACCENT_COLOR#;
     }
 
     .dropdown input[type="text"] {
-        padding: 10px 30px 10px 10px; /* Add padding to the right for the arrow */
+        padding: 10px 30px 10px 10px;
         background-repeat: no-repeat;
         background-position: right 10px center;
         background-size: 16px 16px;
@@ -155,7 +145,6 @@ Text-Color {
         cursor: pointer;
     }
 
-    /* CheckBox style */
 .label-checkbox {
     display: inline-block;
     position: relative;
@@ -178,6 +167,7 @@ Text-Color {
     width: 20px;
     border-radius: 3px;
     border: solid 1px #FADE_BACKGROUND_COLOR#;
+    background-color: #ACCENT_COLOR#;
 }
 
 .label-checkbox:hover input ~ .checkmark {
@@ -186,7 +176,7 @@ Text-Color {
 }
 
 .label-checkbox input:checked ~ .checkmark {
-    background-color: #MAIN_COLOR#;
+    background-color: #FADE_ACCENT_COLOR#;
 }
 
 .checkmark:after {

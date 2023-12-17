@@ -14,7 +14,6 @@ namespace UPrompt.Core
     public static class UParser
     {
         internal static string CSSLink = "";
-
         public static void ReloadView()
         {
             UCommon.XmlDocument.Load(UCommon.Xml_Path);
@@ -32,7 +31,7 @@ namespace UPrompt.Core
             if (type != null && name != null && id != null && value != null)
             {
                 string json = $"{{\"type\": \"{type}\", \"name\": \"{name}\", \"id\": \"{id}\", \"value\": \"{value}\"}}";
-                string encryptedJson = Encrypt(json, "UPromptKey2023");
+                string encryptedJson = Encrypt(json, $"{DateTime.Now.Day}__U+{DateTime.Now.DayOfWeek}+Prompt{DateTime.Now.Year}__{DateTime.Now.Month}");
                 return encryptedJson;
             }
             else
@@ -43,34 +42,38 @@ namespace UPrompt.Core
         }
         internal static void GenerateView()
         {
-            string Template = File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.html");
-            string Generated_Html = "";
-
-            foreach (XmlNode ChildNode in UCommon.XmlDocument.SelectSingleNode("/Application/View").ChildNodes)
+            try
             {
-                // this generate html and include System parsing for inner value and other html element
-                if (ChildNode.OuterXml.Length > 4)
-                {
-                    Generated_Html += GenerateHtmlFromXML(ChildNode.OuterXml) ?? "";
-                }
-            }
-            if (Generated_Html.Length < 5) { Generated_Html = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
-            Generated_Html = $"{CSSLink}\n{Generated_Html}";
+                string Template = File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.html");
+                string Generated_Html = "";
 
-            string Html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", Generated_Html);
-            File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UView.html", ParseSettingsText(Html));
+                foreach (XmlNode ChildNode in UCommon.XmlDocument.SelectSingleNode("/Application/View").ChildNodes)
+                {
+                    // this generate html and include System parsing for inner value and other html element
+                    if (ChildNode.OuterXml.Length > 4)
+                    {
+                        Generated_Html += GenerateHtmlFromXML(ChildNode.OuterXml) ?? "";
+                    }
+                }
+                if (Generated_Html.Length < 5) { Generated_Html = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
+                Generated_Html = $"{CSSLink}\n{Generated_Html}";
+
+                string Html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", Generated_Html).Replace("#UTemplateCSS#",ParseSettingsText(File.ReadAllText($@"{UCommon.Application_Path_Windows}Resources\Code\UTemplate.css")));
+                File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UView.html", ParseSettingsText(Html));
+            }
+            catch { }
         }
         public static string ParseSettingsText(string Text)
         {
             string ParsedText = Text
                 .Replace("#TEXT_COLOR#", USettings.Text_Color)
-                .Replace("#MAIN_COLOR#", USettings.Main_Color)
-                .Replace("#BACKGROUND_COLOR#", USettings.Back_Color)
-                .Replace("#FADE_BACKGROUND_COLOR#", USettings.Fade_Back_Color)
-                .Replace("#FADE_MAIN_COLOR#", USettings.Fade_Main_Color)
+                .Replace("#BACKGROUND_COLOR#", USettings.Background_Color)
+                .Replace("#ACCENT_COLOR#", USettings.Accent_Color)
+                .Replace("#ACCENT_TEXT_COLOR#", USettings.Text_Accent_Color)
+                .Replace("#FADE_BACKGROUND_COLOR#", USettings.Fade_Background_Color)
+                .Replace("#FADE_ACCENT_COLOR#", USettings.Fade_Accent_Color)
                 .Replace("#ITEM_MARGIN#", USettings.Item_Margin)
-                .Replace("#MAIN_TEXT_COLOR#", USettings.Text_Main_Color)
-                .Replace("#FONT_NAME#", USettings.Font_Name)
+                .Replace("#FONT#", USettings.Font_Name)
                 .Replace("#WINDOWSOPENMODE#", USettings.WindowsOpenMode)
                 .Replace("#WINDWOWSRESIZEMODE#", USettings.WindowsResizeMode)
                 .Replace("#SHOWMINIMIZE#", USettings.ShowMinimize.ToString())
@@ -168,7 +171,7 @@ namespace UPrompt.Core
                 string Action = childNode.Attributes["Action"]?.Value;
                 string Argument = childNode.Attributes["Argument"]?.Value ?? "";
 
-                string Id = childNode.Attributes["Id"]?.Value ?? $"{Type}_StaticId";
+                string Id = childNode.Attributes["Id"]?.Value ?? $"RandomId{new Random().Next()}";
                 string ExtraStyle = childNode.Attributes["Style"]?.Value ?? "";
                 string Class = childNode.Attributes["Class"]?.Value ?? "";
 
@@ -185,8 +188,6 @@ namespace UPrompt.Core
                         ImageAutoColor = ImageObject.Split(',')[2] ?? "true";
                     }
                     catch { UCommon.Warning($"ImageObject property should be write like ImageObject=\"Path (string),Size (integer),AutoColor (boolean)\""); }
-
-
 
                     ExtraStyle += $"background-image: url('{UImage.GetCopyOfImage(ImagePath, bool.Parse(ImageAutoColor))}');background-size: {ImageSize}%;background-repeat: no-repeat;background-position: center;";
                 }
@@ -212,10 +213,10 @@ namespace UPrompt.Core
                             {
                                 default:
                                 case "textbox":
-                                    Html += $"<input style=\"{ExtraStyle}\" class=\"TextBox Item-Margin Main-Text-Color Fade-Background-Color {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
+                                    Html += $"<input style=\"{ExtraStyle}\" class=\"TextBox {Class}\" type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>";
                                     break;
                                 case "linesbox":
-                                    Html += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox Item-Margin Main-Text-Color Fade-Background-Color {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
+                                    Html += $"<textarea style=\"{ExtraStyle}\" class=\"TextBox {Class}\" name=\"INPUT_{Id}\" Id=\"{Id}\">{InnerValue}</textarea>";
                                     break;
                                 case "checkbox":
                                     string Checked = childNode.Attributes["Checked"]?.Value ?? "False";
@@ -245,7 +246,7 @@ namespace UPrompt.Core
 
 
                                     Html += $"<div style=\"{ExtraStyle}\" class=\"dropdown {Class}\">\n";
-                                    Html += $"<input style=\"{dropstyle}\" class=\"Main-Text-Color Fade-Background-Color\" readonly type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>\n";
+                                    Html += $"<input style=\"{dropstyle}\" readonly type=\"text\" name=\"INPUT_{Id}\" Id=\"{Id}\" value=\"{InnerValue}\"/>\n";
                                     Html += $"<div class=\"dropdown-content\">\n";
                                     if (DropList == null)
                                     {
@@ -269,23 +270,23 @@ namespace UPrompt.Core
                             switch (Type.ToLower() ?? Type)
                             {
                                 case "spacer":
-                                    Html += "<div class=\"Spacer Background-Color\">.</div>";
+                                    Html += "<div class=\"Spacer\">.</div>";
                                     break;
                                 case "title":
-                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title Item-Margin {Class}\">{InnerValue}</div>\n";
+                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Title {Class}\">{InnerValue}</div>\n";
                                     break;
                                 case "subtitle":
-                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"SubTitle Item-Margin {Class}\">{InnerValue}</div>\n";
+                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"SubTitle {Class}\">{InnerValue}</div>\n";
                                     break;
                                 default:
                                 case "label":
-                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label Item-Margin {Class}\">{InnerValue}</div>\n";
+                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Label {Class}\">{InnerValue}</div>\n";
                                     break;
                                 case "labelbox":
-                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox Item-Margin {Class}\">{InnerValue}</div>\n";
+                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"LabelBox {Class}\">{InnerValue}</div>\n";
                                     break;
                                 case "box":
-                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Box Item-Margin {Class}\">\n";
+                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Box {Class}\">\n";
                                     foreach (XmlNode rowChildNode in childNode.ChildNodes)
                                     {
                                         Html += GenerateHtmlFromXML(rowChildNode.OuterXml);
@@ -293,7 +294,7 @@ namespace UPrompt.Core
                                     Html += "</div>\n";
                                     break;
                                 case "row":
-                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row Item-Margin {Class}\">\n";
+                                    Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Row {Class}\">\n";
                                     foreach (XmlNode rowChildNode in childNode.ChildNodes)
                                     {
                                         Html += GenerateHtmlFromXML(rowChildNode.OuterXml);
@@ -324,11 +325,11 @@ namespace UPrompt.Core
                                     case "button":
                                         if (Action != null)
                                         {
-                                            Html += $"<button style=\"{ExtraStyle}\" class=\"Button Item-Margin Main-Background-Color Main-Text-Color {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui", Action, Id, Argument)}\">{InnerValue}</button>\n";
+                                            Html += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("ui", Action, Id, Argument)}\">{InnerValue}</button>\n";
                                         }
                                         else
                                         {
-                                            Html += $"<button style=\"{ExtraStyle}\" class=\"Button Item-Margin Main-Background-Color Main-Text-Color {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\">{InnerValue}</button>\n";
+                                            Html += $"<button style=\"{ExtraStyle}\" class=\"Button {Class}\" type=\"submit\" Id=\"{Id}\" name=\"Action_{Id}\">{InnerValue}</button>\n";
                                         }
                                         break;
                                     case "inputhandler":

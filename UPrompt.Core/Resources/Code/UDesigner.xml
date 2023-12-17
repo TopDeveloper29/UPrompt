@@ -7,8 +7,8 @@
 	<Setting Name="Item-Margin" Value="2px"/>
 	<Setting Name="CSS" Value="{AppPath}Resources/Code/UDesigner.css"/>
 	<Setting Name="Application-Title" Value="Uprompt Designer"/>
-	<Setting Name='WindowsOpenMode' Value='Maximized'/>
-	<Setting Name="WindowsResizeMode" Value="None"/>
+	<Setting Name='WindowsOpenMode' Value='Normal'/>
+	<Setting Name="WindowsResizeMode" Value="All"/>
 	<Setting Name="Width" Value="1400"/>
 	<Setting Name="Height" Value="950"/>
 	<Setting Name="ShowSplash" Value="True"/>
@@ -60,7 +60,7 @@
 		</ViewItem>
 		<br/>
 		<ViewItem Id="RowLine" Type="Row">
-			<ViewInput Type="TextBox" Id="TestIt">[Code]</ViewInput>
+			<ViewInput Type="TextBox" Id="TestIt"></ViewInput>
 			<ViewAction Id="PreviewBt" Type="Button" Action="RunMethod" Argument="210129,PreviewXML(true)">Preview</ViewAction>
 
 		</ViewItem>

@@ -12,27 +12,6 @@ using UPrompt.Core;
 
 namespace UPrompt.UDesigner
 {
-    internal class Action
-    {
-        internal class Argument
-        {
-            public string Description2 { get; set; }
-            public string Mandatory { get; set; }
-        }
-        public string Description { get; set; }
-        public Dictionary<string, Argument> Arguments { get; set; }
-    }
-    internal class View
-    {
-        public string Description { get; set; }
-        public string InnerTextPurpose { get; set; }
-        public string[] SupportedProperties { get; set; }
-    }
-    internal class Settings
-    {
-        public string Description { get; set; }
-        public string[] Values { get; set; }
-    }
     public static class Designer
     {
         private static string MainNodeName { get; set; } = "Xml";
@@ -76,13 +55,13 @@ namespace UPrompt.UDesigner
         public static void OpenNewUprompt()
         {
             string path = UCommon.GetVariable("SavedPath");
-            if (path.Length > 2 && path.ToLower().Contains(":\\"))
+            if (path.Length > 2 && path.ToLower().Contains(@":\"))
             {
                 if (File.Exists(path))
                 {
                     Process upromt = new Process();
                     upromt.StartInfo.FileName = UCommon.UPrompt_exe;
-                    upromt.StartInfo.Arguments = $"/Path \"{path}\"";
+                    upromt.StartInfo.Arguments = $"/p \"{path}\"";
                     upromt.Start();
                 }
             }
@@ -349,5 +328,27 @@ namespace UPrompt.UDesigner
             catch { return null; }
         }
     }
+    internal class Action
+    {
+        internal class Argument
+        {
+            public string Description2 { get; set; }
+            public string Mandatory { get; set; }
+        }
+        public string Description { get; set; }
+        public Dictionary<string, Argument> Arguments { get; set; }
+    }
+    internal class View
+    {
+        public string Description { get; set; }
+        public string InnerTextPurpose { get; set; }
+        public string[] SupportedProperties { get; set; }
+    }
+    internal class Settings
+    {
+        public string Description { get; set; }
+        public string[] Values { get; set; }
+    }
+
 }
 

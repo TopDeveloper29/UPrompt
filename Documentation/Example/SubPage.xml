@@ -1,13 +1,6 @@
 <Application>
 	<View>
 		<ViewItem Type="Title">Page 2</ViewItem>
-        <ViewItem Type="LabelBox">This page is use to test variable output like [yn] and [PS_29]</ViewItem>
-		<ViewItem Type="Row">
-			<ViewAction Type="Button" Action="RunMethod" Argument="2001,ShowDemo(Test of [NewVar] DEMO)">Run Me</ViewAction>
-			<ViewAction Type="Button" Action='ReloadPage' Argument="false">Refresh</ViewAction>
-			<ViewAction Type="Button" Action="LoadPage" Argument="C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO.xml">Page 1</ViewAction>
-		</ViewItem>
-		<br/>
-		<ViewAction Type="Button" Action="RunPowershell" Argument="29,Test">Run Powershell 2</ViewAction>
+		<ViewAction Type="Button" Action="LoadPage" Argument="[Page1]">Page 1</ViewAction>
 	</View>
 </Application>

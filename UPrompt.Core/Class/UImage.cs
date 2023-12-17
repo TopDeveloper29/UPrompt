@@ -23,11 +23,13 @@ namespace UPrompt.Core
             if (IsUrl(path))
             {
                 RealImagePath = VisualDir + GetFileNameFromUrl(path);
-
-                using (WebClient client = new WebClient())
+                try
                 {
-                    client.DownloadFile(path, RealImagePath);
-                }
+                    using (WebClient client = new WebClient())
+                    {
+                        client.DownloadFile(path, RealImagePath);
+                    }
+                } catch { }
             }
             else
             {
@@ -38,8 +40,12 @@ namespace UPrompt.Core
             // If application should mange image theme automatically revert color if dark
             if (IsDark(UCommon.Windows.TitleBar.BackColor) && AutoRevertColor)
             {
-                Image TempImage = Image.FromFile(RealImagePath);
-                ReverseImageColors(TempImage, RealImagePath);
+                try
+                {
+                    Image TempImage = Image.FromFile(RealImagePath);
+
+                    ReverseImageColors(TempImage, RealImagePath);
+                }catch { }
             }
             return RealImagePath.Replace("\\","/");
         }
@@ -72,28 +78,32 @@ namespace UPrompt.Core
         {
             if (image != null)
             {
-                Bitmap originalBitmap = new Bitmap(image.Width, image.Height);
-                using (Graphics graphics = Graphics.FromImage(originalBitmap))
+                try
                 {
-                    using (ImageAttributes attributes = new ImageAttributes())
+                    Bitmap originalBitmap = new Bitmap(image.Width, image.Height);
+                    using (Graphics graphics = Graphics.FromImage(originalBitmap))
                     {
-                        ColorMatrix colorMatrix = new ColorMatrix(new float[][]
+                        using (ImageAttributes attributes = new ImageAttributes())
                         {
+                            ColorMatrix colorMatrix = new ColorMatrix(new float[][]
+                            {
                     new float[] {-1, 0, 0, 0, 0},
                     new float[] {0, -1, 0, 0, 0},
                     new float[] {0, 0, -1, 0, 0},
                     new float[] {0, 0, 0, 1, 0},
                     new float[] {1, 1, 1, 0, 1}
-                        });
+                            });
 
-                        attributes.SetColorMatrix(colorMatrix);
-                        graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height),
-                            0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+                            attributes.SetColorMatrix(colorMatrix);
+                            graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height),
+                                0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+                        }
                     }
+                    image.Dispose();
+                    File.Delete(outputFilePath);
+                    originalBitmap.Save(outputFilePath);
                 }
-                image.Dispose();
-                File.Delete(outputFilePath);
-                originalBitmap.Save(outputFilePath);
+                catch { }
             }
         }
         

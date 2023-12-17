@@ -1,38 +1,49 @@
 <Application>
 	<Setting Name="Width" Value="700"/>
-	<Setting Name="Height" Value="600"/>
+	<Setting Name="Height" Value="800"/>
 	<Setting Name="WindowsOpenMode" Value="Normal"/>
-	<Setting Name="AllowMinimize" Value="true"/>
-	<Setting Name="AllowMaximize" Value="true"/>
-	<Setting Name="AllowClose" Value="true"/>
+	<Setting Name="ShowMinimize" Value="true"/>
+	<Setting Name="ShowMaximize" Value="true"/>
+	<Setting Name="ShowClose" Value="true"/>
 	<Setting Name="Text-Color" Value="#fff"/>
-	<Setting Name="Application-Color" Value="#22252e"/>
-	<Setting Name="Accent-Color" Value="#272c33"/>
+	<Setting Name="Application-Color" Value="#222e42"/>
+	<Setting Name="Accent-Color" Value="#1a2538"/>
 	<Setting Name="Accent-Text-Color" Value="#fff"/>
-	<Setting Name="Item-Margin" Value="3%"/>
-	<Setting Name="Font-Name" Value="Arial"/>
-	<Setting Name="Powershell" Value="C:\Users\{USER}\source\repos\TopDeveloper29\UPrompt\DEMO.ps1" Id="29"/>
-	<Setting Name="DLL" Value="C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO\DEMO\bin\Debug\DEMO.dll,DEMO.DemoPrompt" Id="2001"/>
+	<Setting Name="Item-Margin" Value="1%"/>
+	<Setting Name="Font" Value="Arial"/>
+	<Setting Name="Powershell" Value="{AppPathWindows}Example\Powershell Extention.ps1" Id="29"/>
+	<Setting Name="Extention" Value="{AppPathWindows}Example\Extention\DEMO\bin\Debug\DEMO.dll,DEMO.DemoPrompt" Id="2001"/>
 	<Setting Name="Production" Value="false"/>
 	<Setting Name="Variable" Value="yn,N/A"/>
-	<Setting Name="Variable" Value="Page2,C:\Users\beah\source\repos\TopDeveloper29\UPrompt\DEMO_PAGE.xml"/>
+	<Setting Name="Variable" Value="Page1,{AppPathWindows}Example\MainPage.xml"/>
+	<Setting Name="Variable" Value="Page2,{AppPathWindows}Example\SubPage.xml"/>
+
 	<View>
 		<ViewItem Type="Title">Welcome to UPrompt</ViewItem>
-		<ViewItem Type="Row">
-			<ViewInput Type="TextBox" Id="TextBox1">{USER}</ViewInput>
-			<ViewInput Type="TextBox" Action="SetVariable" Argument="NewVar2,[TextBox2]" Id="TextBox2">{DEVICE}</ViewInput>
-		</ViewItem>
-		<ViewItem Type="Row">
-			<ViewItem Type="LabelBox">#TEXT_COLOR# - #MAIN_COLOR# for {USER}</ViewItem>
-			<ViewItem Type="Label">#BACKGROUND_COLOR# - #FADE_BACKGROUND_COLOR#</ViewItem>
-		</ViewItem>
-		<ViewItem Type="Row">
-			<ViewAction Id="yn" Type="Button" Action="Browse" Argument="Folder,Load">Click Me</ViewAction>
-			<ViewAction Type="Button" Action='RunPowershell' Argument="29,Get-Dir('C:\TEMP')">Run Powershell</ViewAction>
-			<ViewAction Type="Button" Image="https://cdn-icons-png.flaticon.com/512/1827/1827938.png,60,true" Action='SetClipboard' Argument="[yn]"></ViewAction>
-			<ViewAction Type="Button" Action="LoadPage" Argument="[Page2]">Page 2</ViewAction>
-		</ViewItem>
-		<ViewAction Type="Linker" Source="TextBox1" Target="NewVar"/>
-		<ViewAction Type="Button" Action="EXIT=0">Exit</ViewAction>
+		<ViewItem Type='Label'>Note some item2 could be omited because they are just used for real in the DEMO</ViewItem>
+		<div Style="border-bottom: 1px solid #FADE_BACKGROUND_COLOR#;width:100%;"></div>
+		<ViewItem Type='SubTitle'>Item:</ViewItem>
+		<ViewItem Type='Row'>
+			<ViewItem Type='Label'>Test of label</ViewItem>
+			<ViewItem Type='Spacer'></ViewItem>
+			<ViewItem Type='LabelBox'>Test of label box</ViewItem>
+		</ViewItem>	
+
+		<ViewItem Type='SubTitle'>Input:</ViewItem>
+		<ViewInput Id="TextBox1" Type='TextBox'>Test of text box</ViewInput>
+		<br/>
+		<ViewInput Id="LinesBox1" Type='LinesBox'>Test of linebox</ViewInput>
+		<br/>
+		<ViewInput Id="CheckBox1" Type='CheckBox'>Test of CheckBox</ViewInput>
+		<br/>
+		<ViewInput Id="" Type='DropDown' DropList="Test1,Test2">Test of DropDown</ViewInput>
+		<br/>
+		<div Style="border-bottom: 1px solid #FADE_BACKGROUND_COLOR#;width:100%;"></div>
+		<br/>
+		<ViewItem Type='Row'>
+			<ViewAction Id="RefreshBt1" Type="Button" Action="reloadsettings" Argument="true">Refresh</ViewAction>
+			<ViewAction Id="LoadPage2Bt" Type="Button" Action="LoadPage" Argument="[Page2]">Page 2</ViewAction>
+			<ViewAction Id="ExitBt1" Type="Button" Action="EXIT" Argument="0">Exit</ViewAction>
+		</ViewItem>	
 	</View>
 </Application>

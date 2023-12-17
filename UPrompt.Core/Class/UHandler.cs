@@ -257,53 +257,58 @@ namespace UPrompt.Core
             // Accessing properties
             foreach (var property in jsonObject.Properties())
             {
-                string Name = property.Name;
-                JToken Value = property.Value;
-
-                try
+                new Thread(() =>
                 {
-                    if (!Name.Contains("INPUT_"))
+                    string Name = property.Name;
+                    JToken Value = property.Value;
+
+                    try
                     {
-                        string Itemjson = Decrypt(Value.ToString(), "UPromptKey2023");
-                        
-                        if (Itemjson != null && Itemjson.Length > 5 && Itemjson.Contains("{") && Itemjson.Contains("}") && Itemjson.Contains(",") && Itemjson.Contains(":"))
+                        if (!Name.Contains("INPUT_"))
                         {
-                            int lastIndex = Itemjson.LastIndexOf('}');
-                            string removestring = Itemjson.Substring(lastIndex + 1);
-                            string parsedjson = Itemjson.Replace(removestring, null);
-                            JObject EndItemJson = JObject.Parse(parsedjson);
-                            string type = (string)EndItemJson["type"];
-                            string name = (string)EndItemJson["name"];
-                            string id = (string)EndItemJson["id"];
-                            string value = (string)EndItemJson["value"];
+                            
+                            string Itemjson = Decrypt(Value.ToString(), $"{DateTime.Now.Day}__U+{DateTime.Now.DayOfWeek}+Prompt{DateTime.Now.Year}__{DateTime.Now.Month}");
 
-                            switch (type.ToLower() ?? type)
+                            if (Itemjson != null && Itemjson.Length > 5 && Itemjson.Contains("{") && Itemjson.Contains("}") && Itemjson.Contains(",") && Itemjson.Contains(":"))
                             {
-                                default:
-                                case "ui":
-                                    RunAction(name, value, id);
-                                    break;
-                                case "linker":
-                                    string LinkerSource = value.Split(new string[] { "," }, StringSplitOptions.None)[0];
-                                    string LinkerDestination = value.Split(new string[] { "," }, StringSplitOptions.None)[1];
-                                    if (UCommon.GetVariable(LinkerSource) != null)
-                                    { UCommon.SetVariable(LinkerDestination, UCommon.GetVariable(LinkerSource)); }
-                                    break;
-                                case "viewload":
-                                    RunAction(name, value, id);
-                                    break;
+                                int lastIndex = Itemjson.LastIndexOf('}');
+                                string removestring = Itemjson.Substring(lastIndex + 1);
+                                string parsedjson = Itemjson.Replace(removestring, null);
+                                JObject EndItemJson = JObject.Parse(parsedjson);
+                                string type = (string)EndItemJson["type"];
+                                string name = (string)EndItemJson["name"];
+                                string id = (string)EndItemJson["id"];
+                                string value = (string)EndItemJson["value"];
 
+                                switch (type.ToLower() ?? type)
+                                {
+                                    default:
+                                    case "ui":
+                                        RunAction(name, value, id);
+                                        break;
+                                    case "linker":
+                                        string LinkerSource = value.Split(new string[] { "," }, StringSplitOptions.None)[0];
+                                        string LinkerDestination = value.Split(new string[] { "," }, StringSplitOptions.None)[1];
+                                        if (UCommon.GetVariable(LinkerSource) != null)
+                                        { UCommon.SetVariable(LinkerDestination, UCommon.GetVariable(LinkerSource)); }
+                                        break;
+                                    case "viewload":
+                                        RunAction(name, value, id);
+                                        break;
+
+                                }
                             }
                         }
+                        if (Name.Contains("Action_") && Name.Split('_').Length > 2)
+                        {
+                            string ActionName = Name.Split('_')[2];
+                            string ActionId = Name.Split('_')[1];
+                            RunAction(ActionName, Value.ToString(), ActionId);
+                        }
                     }
-                    if (Name.Contains("Action_") && Name.Split('_').Length > 2)
-                    {
-                        string ActionName = Name.Split('_')[2];
-                        string ActionId = Name.Split('_')[1];
-                        RunAction(ActionName, Value.ToString(), ActionId);
-                    }
-                }
-                catch { }
+                    catch { }
+                }).Start();
+
             }
         }
   
@@ -327,7 +332,7 @@ namespace UPrompt.Core
             foreach (string Line in File.ReadAllLines(UCommon.Xml_Path))
             {
                 DebugLine++;
-                if (Line.ToLower().Contains($"{ActionId.ToLower()}"))
+                if (!Line.ToLower().Contains("setting") && Line.ToLower().Contains($"{ActionId.ToLower()}"))
                 {
                     break;
                 }
@@ -372,16 +377,16 @@ namespace UPrompt.Core
                                             { EH.CallExtensionMethod(ActionValue.Split(',')[1], null); }
                                         }
                                         else
-                                        { EH.CallExtensionMethod(ActionValue.Split(',')[1],null); }
+                                        { EH.CallExtensionMethod(ActionValue.Split(',')[1], null); }
                                     }
                                     else
-                                    { EH.CallExtensionMethod(ActionValue.Split(',')[1],null); }
+                                    { EH.CallExtensionMethod(ActionValue.Split(',')[1], null); }
                                     return;
                                 }
                             }
 
                         }
-                        catch(Exception ex) { Console.WriteLine(ex.Message); UCommon.Warning($"The argument of {ActionName} argument: {ActionValue} must be in format \"Id,MethodName(argument)\"", LineTitle); }
+                        catch (Exception ex) { Console.WriteLine(ex.Message); UCommon.Warning($"The argument of {ActionName} argument: {ActionValue} must be in format \"Id,MethodName(argument)\"", LineTitle); }
                         break;
                     case "runpowershell":
                         try
@@ -429,7 +434,7 @@ namespace UPrompt.Core
                             { Process.Start(ActionValue.Split(',')[0], ActionValue.Split(',')[1]); }
                             else
                             { Process.Start(ActionValue.Split(',')[0]); }
-                            
+
                         }
                         catch { UCommon.Warning($"RunExe action argument must specify exe path and exe argument like: Argument=\"cmd.exe,/C echo Helllo User\"", LineTitle); }
                         break;
@@ -526,51 +531,54 @@ namespace UPrompt.Core
                     case "browse":
                         try
                         {
-                            string Type = ActionValue.Split(',')[0];
-                            string Mode = ActionValue.Split(',')[1];
-                            string Filter = " ";
-                            if (ActionValue.Split(',').Length > 2) { Filter = ActionValue.Split(',')[2]; }
-                            if (Type.Contains("File"))
+                            UCommon.Windows.Invoke((Action)(() =>
                             {
-                                if (Mode.Contains("Save"))
+                                string Type = ActionValue.Split(',')[0];
+                                string Mode = ActionValue.Split(',')[1];
+                                string Filter = " ";
+                                if (ActionValue.Split(',').Length > 2) { Filter = ActionValue.Split(',')[2]; }
+                                if (Type.Contains("File"))
                                 {
-                                    SaveFileDialog saveFileDialog = new SaveFileDialog();
-                                    saveFileDialog.Filter = Filter;
-                                    saveFileDialog.Title = "Save a File";
-
-                                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                                    if (Mode.Contains("Save"))
                                     {
-                                        LastActionOutput = saveFileDialog.FileName;
+                                        SaveFileDialog saveFileDialog = new SaveFileDialog();
+                                        saveFileDialog.Filter = Filter;
+                                        saveFileDialog.Title = "Save a File";
+
+                                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                                        {
+                                            LastActionOutput = saveFileDialog.FileName;
+                                        }
+                                        else { LastActionOutput = "false"; }
                                     }
-                                    else { LastActionOutput = "false"; }
+                                    else
+                                    {
+                                        OpenFileDialog openFileDialog = new OpenFileDialog();
+                                        openFileDialog.Filter = Filter;
+                                        openFileDialog.Title = "Select a File";
+
+                                        if (openFileDialog.ShowDialog() == DialogResult.OK)
+                                        {
+                                            LastActionOutput = openFileDialog.FileName;
+                                        }
+                                        else { LastActionOutput = "false"; }
+                                    }
                                 }
                                 else
                                 {
-                                    OpenFileDialog openFileDialog = new OpenFileDialog();
-                                    openFileDialog.Filter = Filter;
-                                    openFileDialog.Title = "Select a File";
+                                    FolderBrowserDialog Folderdialog = new FolderBrowserDialog();
+                                    Folderdialog.Description = "Select a Folder";
 
-                                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                                    if (Folderdialog.ShowDialog() == DialogResult.OK)
                                     {
-                                        LastActionOutput = openFileDialog.FileName;
+                                        LastActionOutput = Folderdialog.SelectedPath;
                                     }
                                     else { LastActionOutput = "false"; }
                                 }
-                            }
-                            else
-                            {
-                                FolderBrowserDialog Folderdialog = new FolderBrowserDialog();
-                                Folderdialog.Description = "Select a Folder";
-
-                                if (Folderdialog.ShowDialog() == DialogResult.OK)
-                                {
-                                    LastActionOutput = Folderdialog.SelectedPath;
-                                }
-                                else { LastActionOutput = "false"; }
-                            }
+                            }));
                         }
                         catch { UCommon.Warning($"Browse action argument must be like: Argument=\"Type(File/Folder),Mode(Save/Load), Filter|*.*\" the filter is optional", LineTitle); }
-
+                        
                         break;
                     case "loadpage":
                         if (File.Exists(ActionValue) && ActionValue.ToLower().Contains(".xml"))
@@ -579,6 +587,8 @@ namespace UPrompt.Core
                             {
                                 USettings.LoadXml(ActionValue, false);
                                 LastActionOutput = "true";
+                                Thread.Sleep(100);
+                                UParser.ReloadView();
                             }
                             catch (Exception ex) { UCommon.Error(ex.Message, LineTitle); }
                         }
@@ -615,14 +625,20 @@ namespace UPrompt.Core
                     case "getclipboard":
                         try
                         {
-                            LastActionOutput = Clipboard.GetText();
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                LastActionOutput = Clipboard.GetText();
+                            }));
                         }
                         catch (Exception ex) { UCommon.Error(ex.Message, LineTitle); LastActionOutput = "false"; }
                         break;
                     case "setclipboard":
                         try
                         {
-                            Clipboard.SetText(ActionValue);
+                            UCommon.Windows.Invoke((Action)(() =>
+                            {
+                                Clipboard.SetText(ActionValue);
+                            }));
                             LastActionOutput = "true";
                         }
                         catch (Exception ex) { UCommon.Error(ex.Message, LineTitle); LastActionOutput = "false"; }

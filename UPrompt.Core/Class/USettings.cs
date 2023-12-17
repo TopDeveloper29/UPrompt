@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -48,11 +49,11 @@ namespace UPrompt.Core
         // All settings that reflect system and view setting (can be set using Load)
         public static bool ShowSplash { get; private set; } = false;
         public static string Text_Color { get; private set; } = "#fff";
-        public static string Back_Color { get; private set; } = "#22252e";
-        public static string Main_Color { get; private set; } = "#272c33";
-        public static string Text_Main_Color { get; private set; } = "#000000";
-        public static string Fade_Back_Color { get; private set; } = "#000";
-        public static string Fade_Main_Color { get; private set; } = "#fff";
+        public static string Background_Color { get; private set; } = "#22252e";
+        public static string Accent_Color { get; private set; } = "#272c33";
+        public static string Text_Accent_Color { get; private set; } = "#000000";
+        public static string Fade_Background_Color { get; private set; } = "#000";
+        public static string Fade_Accent_Color { get; private set; } = "#fff";
         public static string WindowsOpenMode { get; private set; } = "Normal";
         public static string WindowsResizeMode { get; private set; } = "All";
         public static bool ShowMinimize { get; private set; } = true;
@@ -105,10 +106,8 @@ namespace UPrompt.Core
             if (loadsettings)
             {
                 Load(UCommon.XmlDocument.SelectNodes("//Application/Setting"));
-                string css = UParser.ParseSettingsText(File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.css"));
-                File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.css", css);
             }
-            UParser.ReloadView();
+            UParser.GenerateView();
             UCommon.Windows.Invoke((Action)(() =>
             {
                 UCommon.Windows.htmlhandler.Source = new Uri($"file:///{UCommon.Application_Path}Resources/Code/UView.html");
@@ -116,8 +115,8 @@ namespace UPrompt.Core
         }
         private static void NewFadeColor()
         {
-            Fade_Back_Color = ColorTranslator.ToHtml(ControlPaint.Light(ColorTranslator.FromHtml(Back_Color), 0.1f));
-            Fade_Main_Color = ColorTranslator.ToHtml(ControlPaint.Light(ColorTranslator.FromHtml(Main_Color), 0.2f));
+            Fade_Background_Color = ColorTranslator.ToHtml(ControlPaint.Light(ColorTranslator.FromHtml(Background_Color), 0.1f));
+            Fade_Accent_Color = ColorTranslator.ToHtml(ControlPaint.Light(ColorTranslator.FromHtml(Accent_Color), 0.2f));
         }
         private static void ParseSettingsFromXml(string name, string value, string id = null)
         {
@@ -263,10 +262,12 @@ namespace UPrompt.Core
                         string color = value;
                         if (color.Contains("#") && color.Length > 3 && color.Length < 8)
                         {
-                            Back_Color = color;
+                            Background_Color = color;
                             Color RealColor = ColorTranslator.FromHtml(color);
                             UCommon.Windows.Invoke((Action)(() =>
                             {
+                                UCommon.Windows.BackColor = RealColor;
+                                UCommon.Windows.htmlhandler.BackColor = RealColor;
                                 UCommon.Windows.Left.BackColor = RealColor;
                                 UCommon.Windows.Right.BackColor = RealColor;
                                 UCommon.Windows.Bottom.BackColor = RealColor;
@@ -309,7 +310,7 @@ namespace UPrompt.Core
                         string color = value;
                         if (color.Contains("#") && color.Length > 3 && color.Length < 8)
                         {
-                            Main_Color = color;
+                            Accent_Color = color;
                         }
                         else
                         {
@@ -327,7 +328,7 @@ namespace UPrompt.Core
                         string color = value;
                         if (color.Contains("#") && color.Length > 3 && color.Length < 8)
                         {
-                            Text_Main_Color = color;
+                            Text_Accent_Color = color;
                         }
                         else
                         {

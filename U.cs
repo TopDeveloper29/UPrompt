@@ -10,20 +10,18 @@ namespace UPrompt
         [STAThread]
         static void Main(string[]Args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+
             if (Args.Length > 0)
             {
                 bool Path = false;
                 if (Args.Length == 1) { Path = true; }
                 foreach (string arg in Args)
                 {
-                    switch (arg)
+                    switch (arg.ToLower() ?? arg)
                     {
-                        case "/Path":
                         case "/path":
+                        case "-p":
                         case "/p":
-                        case "/P":
                             Path = true;
                             break;
                         default:
@@ -39,6 +37,9 @@ namespace UPrompt
                     }
                 }
             }
+
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Prompt());
         }
     }
