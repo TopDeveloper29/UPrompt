@@ -19,7 +19,6 @@ C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.c
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.csproj.CopyComplete
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.dll
 C:\Users\beah\source\repos\TopDeveloper29\UPrompt\Designer\obj\Debug\UDesigner.pdb
-C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\Designer.cs
 C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
 C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
 C:\Users\beah\Source\Repos\TopDeveloper29\UPrompt\Designer\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll

@@ -51,6 +51,7 @@ namespace UPrompt.UDesigner
                 }
             }
             catch (Exception ex) { UCommon.Error(ex.Message, ErrorTitle); }
+            UParser.ReloadView();
         }
         public static void OpenNewUprompt()
         {

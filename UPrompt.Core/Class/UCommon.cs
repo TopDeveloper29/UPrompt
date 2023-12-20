@@ -126,7 +126,10 @@ namespace UPrompt.Core
             {
                 if (MessageBox.Show($"Key Id | Key Value\n-----------------------\n{PlainVariable}", "Here the Variable do you want to copy this to your cliboard?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    Clipboard.SetText(PlainVariable);
+                    Windows.Invoke((Action)(() =>
+                    {
+                        Clipboard.SetText(PlainVariable);
+                    }));
                 }
             }
             return variables;

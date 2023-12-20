@@ -23,6 +23,7 @@
 	<Setting Id="210129" Name="Extention" Value="{AppPathWindows}\UDesigner.dll,UPrompt.UDesigner.Designer"/>
 	<Setting Name="OnLoad" Value="RunMethod,210129,SetPreferedEditor(C:\Users\{USER}\AppData\Local\Programs\Microsoft VS Code\code.exe)"/>
 	<Setting Name="OnLoad" Value="SetVariable,GlobalType,Xml"/>
+	<Setting Name="OnLoad" Value="RunMethod,210129,SelectMainNode([GlobalType])"/>
 	<View>
 		<ViewItem Type="Row" Class="top-div" Id="TopRow">
 			<ViewItem Type="Spacer" Id="Spc1"/>

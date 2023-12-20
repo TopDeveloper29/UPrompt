@@ -100,7 +100,7 @@ namespace UPrompt.Core
                         Powershell.StartInfo.FileName = @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe";
                     }
 
-                    Powershell.StartInfo.Arguments = $"-File \"{UCommon.Application_Path}\\Resources\\Code\\PsHandler.ps1\" -Path \"{Path}\"";
+                    Powershell.StartInfo.Arguments = $"-ExecutionPolicy Bypass -File \"{UCommon.Application_Path}\\Resources\\Code\\PsHandler.ps1\" -Path \"{Path}\"";
                     Powershell.StartInfo.CreateNoWindow = true;
                     Powershell.StartInfo.RedirectStandardOutput = true;
                     Powershell.StartInfo.RedirectStandardError = true;
@@ -312,8 +312,9 @@ namespace UPrompt.Core
             }
         }
   
-        public static void RunAction(string ActionName, string ActionValue, string ActionId)
+        public static void RunAction(string ActionName, string ActionValue, string ActionId = "!RANDOM_NUMBER<>")
         {
+            if (ActionId == "!RANDOM_NUMBER<>") { ActionId = new Random().Next().ToString(); }
             if (!ActionName.Contains("null"))
             {
                 LastActionOutput = "";
@@ -396,32 +397,35 @@ namespace UPrompt.Core
                             bool PS_FOUND = false;
                             foreach (PowershellHandler PSH in PowershellHandlers)
                             {
-                                new Thread(() =>
-                                {
+                                
                                     if (PSH.Id == psid)
                                     {
-                                        PSH.SendInput(command);
-                                        do { Thread.Sleep(1000); } while (PSH.NewOutput != true);
-                                        LastActionOutput = PSH.ReadOutput();
-                                        if (LastActionOutput != null && !LastActionOutput.Contains("ERROR:"))
+                                        new Thread(() =>
                                         {
-                                            UCommon.SetVariable($"Result_{psid}", LastActionOutput);
-                                        }
-                                        else
-                                        {
-                                            if (LastActionOutput.Contains("ERROR:"))
+                                            PSH.SendInput(command);
+                                            do { Thread.Sleep(1000); } while (PSH.NewOutput != true);
+                                            LastActionOutput = PSH.ReadOutput();
+                                            if (LastActionOutput != null && !LastActionOutput.Contains("ERROR:"))
                                             {
-                                                UCommon.Error($"Powershell instance #{psid} throw an error:\n {LastActionOutput}");
+                                                UCommon.SetVariable($"Result_{psid}", LastActionOutput);
                                             }
                                             else
                                             {
-                                                UCommon.Warning($"Powershell instance #{psid} run without any output");
+                                                if (LastActionOutput.Contains("ERROR:"))
+                                                {
+                                                    UCommon.Error($"Powershell instance #{psid} throw an error:\n {LastActionOutput}");
+                                                }
+                                                else
+                                                {
+                                                    UCommon.Warning($"Powershell instance #{psid} run without any output");
+                                                }
                                             }
-                                        }
+                                        }).Start();
                                     }
                                     PS_FOUND = true;
-                                    if (PS_FOUND == false) { UCommon.Error($"The id \"{psid}\" was not found!!!\n If you don't know id, please note it will be auto filled starting from 0 and increment by one each time you create an new powershell instance you can also set the id by specifing in xml configuration", LineTitle); }
-                                }).Start();
+                                    if (PS_FOUND == false)
+                                    { UCommon.Error($"The id \"{psid}\" was not found!!!\n If you don't know id, please note it will be auto filled starting from 0 and increment by one each time you create an new powershell instance you can also set the id by specifing in xml configuration", LineTitle); }
+                                
                             }
 
                         }

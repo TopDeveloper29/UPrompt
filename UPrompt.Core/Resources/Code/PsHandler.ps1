@@ -13,16 +13,11 @@ class PowershellHandler {
     [string[]] $OutputHistory = @("");
 
     hidden [void] Run($Command) {
-        try {
             $this.LastInput = $Command;
             $this.InputHistory += $Command;
-            Invoke-Expression $Command;
+            Invoke-Expression -Command "$Command";
             $this.LastOutput = Get-History -Count 1 | Select-Object -ExpandProperty CommandLine;
             $this.OutputHistory = Get-History | Select-Object -ExpandProperty CommandLine;
-        }
-        catch {
-            Write-Error $Error
-        }
     }
     [void] LoadScript([string]$path) {
         try {
@@ -42,10 +37,10 @@ class PowershellHandler {
     [void] Start() {
         [string]$ReadInput = ""
         Invoke-Expression $this.ScriptBlock.ToString()
-
         do {
             $ReadInput = Read-Host -Prompt "PowershellHandler waiting for input function or command";
-            & "$PSScriptRoot`\Variables.ps1";
+            [string]$Variables = Get-Content "$PSScriptRoot`\Variables.ps1" -Force;
+            Invoke-Expression -Command "$Variables";
             $this.Run($ReadInput);
             Start-Sleep -Milliseconds 1000;
         }
@@ -53,5 +48,13 @@ class PowershellHandler {
     }
 }
 
+[string]$LogFile = "C:\LogFiles\UPrompt" + ( Get-Date -Format "yyyy-MM-dd hh-mm" ) + ".log";
+Start-Transcript -Path $LogFile;
+Write-Host "Create the powershell handler instance";
 $PSH = New-Object PowershellHandler;
-$PSH.LoadScript($Path); $PSH.Start();
+Write-Host "Loading script file `"$Path`"";
+$PSH.LoadScript($Path); 
+if($? -eq $false){Write-Error -Message "Fail to load the script file now exiting script!!!"; exit;}
+Write-Host "Starting handler..."
+$PSH.Start();
+Stop-Transcript;
