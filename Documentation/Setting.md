@@ -11,7 +11,7 @@ All setting elements have two properties: Name and Value. You can write them in 
 ```xml
 <Setting Name="CSS" Value="C:\MyStyle.css"/>
 ```
-> The `Setting` element also has an optional `Id` property that can be added in addition to `Name` and `Value`.
+> The `Setting` element also has an optional `Id` property that can be added in addition to `Name` and `Value` in some specific case.
 
 ## Theme
 These settings are related to customizing the application's theme.
