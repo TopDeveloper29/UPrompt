@@ -50,7 +50,7 @@ You can start application in specific mode or load a page instead of using the d
 |  Long Name  |  Short Name  |  Description  |
 |-----------------|-----------------|-----------------|
 | /path | /p  | This allow you to load a xml page by giving it path. Note if you pass directly a xml path as argument it will do the same. Exemple: `Uprompt.exe /path "MyPage.xml"` will do the same as `Uprompt.exe "MyPage.xml"`  |
-| /designer  |  /d  | This will force the application to open in designer mode whatever if a MainPage.xml exist or not |
+| /designer  |  /d  | This will force the application to open in designer mode whatever if a MainPage.xml exist or not, note if MainPage.xml do not exist it will do the same behavior |
 
 
 ------------
