@@ -15,6 +15,7 @@ To get started with Uprompt, follow these steps:
 
 ## Table of Contents
 - [UPrompt Basic](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Basic.md)
+  -  [Comand Line Arguments](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Basic.md#Arguments)
 - [Setting](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Setting.md)
   - [XML Structure](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Setting.md#xml-structure)
   - [Theme](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Setting.md#theme)
