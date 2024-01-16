@@ -12,8 +12,8 @@ In summary, Uprompt enhances UI creation by providing a straightforward and effe
 
 ## Getting Started
 To get started with Uprompt, follow these steps:
-1. Download the latest release of Uprompt.
-> Actually there no release you must clone repository and build it using Visual Studio (Some feature still under developement)
+1. Download the latest release of [Uprompt](https://github.com/TopDeveloper29/UPrompt/releases/download/24.01.16.2/UPrompt.24.01.16.2.zip).
+
 3. Read the documentation provided above to learn how to use Uprompt.
 4. Launch UPrompt.exe and start creating your UI.
 
