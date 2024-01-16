@@ -6,13 +6,13 @@ Setting variables in UPrompt are denoted by starting and ending with **#**. Thes
 | Name                  | Description                                                     |
 | --------------------- | --------------------------------------------------------------- |
 | #TEXT_COLOR#          | Returns the color of text in the user interface or application. |
-| #MAIN_COLOR#          | Returns the main color used in the user interface or application. |
+| #ACCENT_COLOR#        | Returns the main color used in the user interface or application. |
 | #BACKGROUND_COLOR#    | Returns the background color used in the user interface or application. |
 | #FADE_BACKGROUND_COLOR# | Returns the fade background color used in the user interface or application. |
-| #FADE_MAIN_COLOR#     | Returns the fade main color used in the user interface or application. |
+| #FADE_ACCENT_COLOR#   | Returns the fade main color used in the user interface or application. |
 | #ITEM_MARGIN#         | Returns the margin used for items in the user interface or application. |
-| #MAIN_TEXT_COLOR#     | Returns the main color used for text in the user interface or application. |
-| #FONT_NAME#           | Returns the font used for text in the user interface or application. |
+| #ACCENT_TEXT_COLOR#   | Returns the main color used for text in the user interface or application. |
+| #FONT#                | Returns the font used for text in the user interface or application. |
 | #WINDOWSOPENMODE#    | Returns how windows are opened in the user interface or application. |
 | #WINDOWRESIZEMODE#    | Returns how windows can be resized in the user interface or application. |
 | #SHOWMINIMIZE#        | Returns whether the minimize button is shown in window frames. |
