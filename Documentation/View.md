@@ -160,6 +160,7 @@ This kind of element includes all the elements that allow the user to enter or s
 | Id   | Defines the Id in the HTML element and sets the variable name of the action result. |
 | Style | You can add extra CSS style to the element. |
 | Class | Defines the CSS class of the element. |
+| DropList | Defines the list of item to display in combobox it should be separate by comma like `DropList="Item1,Item2,Etc"` |
 | Action | Specifies the name of the action you want to run (refer to the [Action](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Action.md) section). |
 | Argument | Passes arguments to the action you are running (if you do not specify `Action`, it will not work). |
 
