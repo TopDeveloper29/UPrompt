@@ -67,6 +67,11 @@ To get started with Uprompt, follow these steps:
   - [SetClipboard](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Action.md#setclipboard)
   - [Exit](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Action.md#exit)
 - [Create Extension](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md)
-  - [Powershell](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md)
-  - [C#](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md)
+  - [Powershell](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md#powershell)
+    - [How it work in back-en](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md#how-it-works-in-the-back-end)
+    - [How to use it](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md#how-to-use-it)
+  - [C#]([https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md#c-dll)https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md#c-dll)
+    - [Get Started](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md#get-started)
+    - [How to use it in Uprompt](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md#how-to-use-it-in-uprompt)
+    - [Class Overview](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Extention.md#class-overview)
   
