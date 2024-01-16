@@ -18,6 +18,7 @@ These settings are related to customizing the application's theme.
 
 | Name | Accepted Value | Description |
 | ---- | -------------- | ----------- |
+| ShowSplash | boolean | This configure if at load of the page it should display a Splash screnn (it recoment to use only with heavy page that take some time to load else it will just flicker) |
 | Font | Name of font | This sets the default font for all built-in elements. The font must exist in the CSS context. If you want to import a new font, you can do it from CSS. Refer to [Import font in CSS](https://www.w3schools.com/css/tryit.asp?filename=trycss3_font-face_rule) for more information.
 | Application-Color | Hexadecimal color | This defines the main color of the application. The background will be of this color, and other elements will adapt their color accordingly.
 | Text-Color | Hexadecimal color | This sets the default text color for built-in elements in the application.
