@@ -19,7 +19,16 @@ namespace UPrompt
                 {
                     switch (arg.ToLower() ?? arg)
                     {
+                        case "/designer":
+                        case "/d":
+                        case "-designer":
+                        case "-d":
+                        case "--designer":
+                            UCommon.ForceOpenDesinger = true;
+                            break;
                         case "/path":
+                        case "-path":
+                        case "--path":
                         case "-p":
                         case "/p":
                             Path = true;

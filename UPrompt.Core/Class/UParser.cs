@@ -13,20 +13,8 @@ namespace UPrompt.Core
 {
     public static class UParser
     {
-        internal static string CSSLink = "";
-        public static void ReloadView()
-        {
-            UCommon.XmlDocument.Load(UCommon.Xml_Path);
-            GenerateView();
-            UCommon.Windows.Invoke((Action)(() =>
-            {
-                if (UCommon.Windows.htmlhandler.CoreWebView2 != null && UCommon.Windows.htmlhandler.Source != null)
-                {
-                    UCommon.Windows.htmlhandler.Reload();
-                }
-            }));
-        }
-        public static string NewInputValue(string type, string name, string id, string value)
+        internal static string CSSLink { get; set; } = "";
+        internal static string NewInputValue(string type, string name, string id, string value)
         {
             if (type != null && name != null && id != null && value != null)
             {
@@ -62,6 +50,62 @@ namespace UPrompt.Core
                 File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UView.html", ParseSettingsText(Html));
             }
             catch { }
+        }
+        internal static string JsInputHandler(string ID)
+        {
+            string scriptContent = $"const Input_{ID} = document.getElementById(\"{ID}\");\n" +
+                       $"Input_{ID}.addEventListener(\"change\" , function() {{\n" +
+                       $"const myForm = document.getElementById(\"UForm\");\r\n" +
+                       $"var submitEvent = new Event('submit');myForm.dispatchEvent(submitEvent);\r\n" +
+                       "});";
+            return $"<script>{scriptContent}</script>";
+        }
+        private static string Encrypt(string plainText, string encryptionKey)
+        {
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+
+            // Pad the input data to a multiple of the block size
+            int blockSize = 16;
+            int paddingSize = blockSize - (plainTextBytes.Length % blockSize);
+            byte[] paddedBytes = new byte[plainTextBytes.Length + paddingSize];
+            Array.Copy(plainTextBytes, paddedBytes, plainTextBytes.Length);
+
+            byte[] keyBytes = new Rfc2898DeriveBytes(encryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 }, 1000).GetBytes(32);
+
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = keyBytes;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+
+                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    memoryStream.Write(BitConverter.GetBytes(aes.IV.Length), 0, sizeof(int));
+                    memoryStream.Write(aes.IV, 0, aes.IV.Length);
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                    {
+                        cryptoStream.Write(paddedBytes, 0, paddedBytes.Length);
+                        cryptoStream.FlushFinalBlock();
+                        byte[] cipherTextBytes = memoryStream.ToArray();
+                        return Convert.ToBase64String(cipherTextBytes);
+                    }
+                }
+            }
+        }
+        
+        public static void ReloadView()
+        {
+            UCommon.XmlDocument.Load(UCommon.Xml_Path);
+            GenerateView();
+            UCommon.Windows.Invoke((Action)(() =>
+            {
+                if (UCommon.Windows.htmlhandler.CoreWebView2 != null && UCommon.Windows.htmlhandler.Source != null)
+                {
+                    UCommon.Windows.htmlhandler.Reload();
+                }
+            }));
         }
         public static string ParseSettingsText(string Text)
         {
@@ -112,50 +156,6 @@ namespace UPrompt.Core
             }
             return Text;
         }
-        internal static string JsInputHandler(string ID)
-        {
-            string scriptContent = $"const Input_{ID} = document.getElementById(\"{ID}\");\n" +
-                       $"Input_{ID}.addEventListener(\"change\" , function() {{\n" +
-                       $"const myForm = document.getElementById(\"UForm\");\r\n" +
-                       $"var submitEvent = new Event('submit');myForm.dispatchEvent(submitEvent);\r\n" +
-                       "});";
-            return $"<script>{scriptContent}</script>";
-        }
-        private static string Encrypt(string plainText, string encryptionKey)
-        {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-
-            // Pad the input data to a multiple of the block size
-            int blockSize = 16;
-            int paddingSize = blockSize - (plainTextBytes.Length % blockSize);
-            byte[] paddedBytes = new byte[plainTextBytes.Length + paddingSize];
-            Array.Copy(plainTextBytes, paddedBytes, plainTextBytes.Length);
-
-            byte[] keyBytes = new Rfc2898DeriveBytes(encryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 }, 1000).GetBytes(32);
-
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = keyBytes;
-                aes.Mode = CipherMode.CBC;
-                aes.Padding = PaddingMode.PKCS7;
-
-                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    memoryStream.Write(BitConverter.GetBytes(aes.IV.Length), 0, sizeof(int));
-                    memoryStream.Write(aes.IV, 0, aes.IV.Length);
-                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-                    {
-                        cryptoStream.Write(paddedBytes, 0, paddedBytes.Length);
-                        cryptoStream.FlushFinalBlock();
-                        byte[] cipherTextBytes = memoryStream.ToArray();
-                        return Convert.ToBase64String(cipherTextBytes);
-                    }
-                }
-            }
-        }
-
         public static string GenerateHtmlFromXML(string XML)
         {
             string Html = null;

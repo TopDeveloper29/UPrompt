@@ -52,7 +52,9 @@ namespace UPrompt.Core
         internal static VariableDictionary Variable { get; private set; } = new VariableDictionary();
 
         internal static Dictionary<string,ActionStorage> TrackedVariable = new Dictionary<string, ActionStorage>();
-        public static XmlDocument XmlDocument { get; set; } = new XmlDocument();
+        internal static XmlDocument XmlDocument { get; set; } = new XmlDocument();
+        public static bool ForceOpenDesinger { get; set; } = false;
+       
         public static string LastWarning { get; internal set; } = "";
         public static List<string> WarningHistory { get; internal set; } = new List<string>();
         public static string LastError { get; internal set; } = "";

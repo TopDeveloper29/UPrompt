@@ -129,7 +129,7 @@ namespace UPrompt
         {
             Thread thread = new Thread(() =>
             {
-                if (File.Exists(UCommon.Xml_Path))
+                if (File.Exists(UCommon.Xml_Path) && UCommon.ForceOpenDesinger != true)
                 {
                     USettings.LoadXml(UCommon.Xml_Path);
                 }

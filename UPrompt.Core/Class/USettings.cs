@@ -38,14 +38,14 @@ namespace UPrompt.Core
     public class USettings
     {
         // Properties that do not reflect any system or view setting
+        internal static int ExtentionFallbackId { get; private set; } = 0;
+        internal static bool FirstLoadCompleted { get; private set; } = false;
+
         public static bool SkipSystemParsing { get; set; } = false;
         public static int Count { get; private set; } = 0;
         public static string Raw { get; private set; } = string.Empty;
         public static List<string> ElementsParsingSkip { get; set; } = new List<string>();
-        internal static int ExtentionFallbackId { get; private set; } = 0;
-        internal static bool FirstLoadCompleted { get; private set; } = false;
-
-
+        
         // All settings that reflect system and view setting (can be set using Load)
         public static bool ShowSplash { get; private set; } = false;
         public static string Text_Color { get; private set; } = "#fff";
