@@ -45,6 +45,14 @@ UPrompt will replace the text **=== XML CODE WILL GENERATE THIS VIEW ===** with 
 
 If you are looking for information on how to create extensions in C# (DLL) or how to use PowerShell scripts as extensions, please refer to the "Extension and Code" section.
 
+## Arguments
+You can start application in specific mode or load a page instead of using the default MainPage.xml or Designer
+|  Long Name  |  Short Name  |  Description  |
+|-----------------|-----------------|-----------------|
+| /path | /p  | This allow you to load a xml page by giving it path. Note if you pass directly a xml path as argument it will do the same. Exemple: `Uprompt.exe /path "MyPage.xml"` will do the same as `Uprompt.exe "MyPage.xml"`  |
+| /designer  |  /d  | This will force the application to open in designer mode whatever if a MainPage.xml exist or not |
+
+
 ------------
 #### Related Page
 - [Setting](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Setting.md)
