@@ -52,20 +52,16 @@ namespace UPrompt.Core
         internal static VariableDictionary Variable { get; private set; } = new VariableDictionary();
 
         internal static Dictionary<string,ActionStorage> TrackedVariable = new Dictionary<string, ActionStorage>();
-        internal static XmlDocument XmlDocument { get; set; } = new XmlDocument();
-        public static bool ForceOpenDesinger { get; set; } = false;
-       
         public static string LastWarning { get; internal set; } = "";
         public static List<string> WarningHistory { get; internal set; } = new List<string>();
         public static string LastError { get; internal set; } = "";
         public static List<string> ErrorHistory { get; internal set; } = new List<string>();
         public static string LastOutput { get; internal set; }  = "";
         public static List<string> OutputHistory { get; internal set; } = new List<string>();
-        public static Prompt Windows { get; set; } = new Prompt();
+        public static Prompt Windows { get; set; } = new Prompt(new string[] { });
         public static string Application_Path { get; set; } = (AppDomain.CurrentDomain.BaseDirectory).Replace(@"\", "/");
         public static string Application_Path_Windows { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
         public static string UPrompt_exe = Assembly.GetEntryAssembly().Location;
-        public static string Xml_Path { get; set; } = $@"{Application_Path}\MainPage.xml";
 
         public static DialogResult Output(string Text, string Title = "Output", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
         {

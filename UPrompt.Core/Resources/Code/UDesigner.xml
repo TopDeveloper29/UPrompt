@@ -52,7 +52,6 @@
 					[DesignerExtraHtml]
 				</div>
 			</ViewItem>
-
 			<br/>
 			<ViewItem Id="RowLine" Type="Row">
 				<ViewInput Type="TextBox" Id="SkipMe_Code" Action="ReloadView">[XmlCode]</ViewInput>

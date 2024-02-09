@@ -13,8 +13,8 @@ namespace UPrompt.Core
 {
     public static class UParser
     {
-        internal static string CSSLink { get; set; } = "";
-        internal static string NewInputValue(string type, string name, string id, string value)
+        internal static string CSSLink = "";
+        public static string NewInputValue(string type, string name, string id, string value)
         {
             if (type != null && name != null && id != null && value != null)
             {
@@ -28,28 +28,67 @@ namespace UPrompt.Core
                 return null;
             }
         }
-        internal static void GenerateView()
+
+        public enum ParseMode
         {
-            try
+            Setting,
+            System,
+            User,
+            Both,
+            All
+        }
+
+        public static string ParseText(string Text, ParseMode Mode)
+        {
+            string ParsedText = Text;
+            if (Mode == ParseMode.Setting || Mode == ParseMode.All)
             {
-                string Template = File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.html");
-                string Generated_Html = "";
-
-                foreach (XmlNode ChildNode in UCommon.XmlDocument.SelectSingleNode("/Application/View").ChildNodes)
-                {
-                    // this generate html and include System parsing for inner value and other html element
-                    if (ChildNode.OuterXml.Length > 4)
-                    {
-                        Generated_Html += GenerateHtmlFromXML(ChildNode.OuterXml) ?? "";
-                    }
-                }
-                if (Generated_Html.Length < 5) { Generated_Html = "=== THE VIEW IS EMPTY PLEASE FILL IT IN XML ==="; }
-                Generated_Html = $"{CSSLink}\n{Generated_Html}";
-
-                string Html = Template.Replace("=== XML CODE WILL GENERATE THIS VIEW ===", Generated_Html).Replace("#UTemplateCSS#",ParseSettingsText(File.ReadAllText($@"{UCommon.Application_Path_Windows}Resources\Code\UTemplate.css")));
-                File.WriteAllText($@"{UCommon.Application_Path}\Resources\Code\UView.html", ParseSettingsText(Html));
+                ParsedText = Text
+               .Replace("#TEXT_COLOR#", USettings.Text_Color)
+               .Replace("#BACKGROUND_COLOR#", USettings.Background_Color)
+               .Replace("#ACCENT_COLOR#", USettings.Accent_Color)
+               .Replace("#ACCENT_TEXT_COLOR#", USettings.Text_Accent_Color)
+               .Replace("#FADE_BACKGROUND_COLOR#", USettings.Fade_Background_Color)
+               .Replace("#FADE_ACCENT_COLOR#", USettings.Fade_Accent_Color)
+               .Replace("#ITEM_MARGIN#", USettings.Item_Margin)
+               .Replace("#FONT#", USettings.Font_Name)
+               .Replace("#WINDOWSOPENMODE#", USettings.WindowsOpenMode)
+               .Replace("#WINDWOWSRESIZEMODE#", USettings.WindowsResizeMode)
+               .Replace("#SHOWMINIMIZE#", USettings.ShowMinimize.ToString())
+               .Replace("#SHOWMAXIMIZE#", USettings.ShowMaximize.ToString())
+               .Replace("#SHOWCLOSE#", USettings.ShowClose.ToString())
+               .Replace("#WIDTH#", USettings.Width.ToString())
+               .Replace("#HEIGHT#", USettings.Height.ToString())
+               .Replace("#APPLICATION_NAME#", USettings.Application_Name.ToString())
+               .Replace("#APPLICATION_ICON#", USettings.Application_Icon.ToString())
+               .Replace("#APPLICATION_ICONPATH#", USettings.Application_IconPath.ToString())
+               .Replace("#PRODUCTION#", USettings.Production.ToString())
+               ;
             }
-            catch { }
+
+            if (Mode == ParseMode.System || Mode == ParseMode.Both || Mode == ParseMode.All)
+            {
+                ParsedText = Text
+                .Replace("{USER}", Environment.UserName)
+                .Replace("{DEVICE}", Environment.MachineName)
+                .Replace("{n}", "\n")
+                .Replace("{e}", "=")
+                .Replace("{q}", "'")
+                .Replace("{AppPath}", UCommon.Application_Path)
+                .Replace("{AppPathWindows}", UCommon.Application_Path_Windows)
+                ;
+            }
+
+            if (Mode == ParseMode.User || Mode == ParseMode.Both || Mode == ParseMode.All)
+            {
+                foreach (string Key in UCommon.Variable.Keys)
+                {
+                    string Value = UCommon.GetVariable(Key);
+                    ParsedText = ParsedText.Replace($"[{Key}]", Value);
+                }
+            }
+
+            return ParsedText;
         }
         internal static string JsInputHandler(string ID)
         {
@@ -94,68 +133,7 @@ namespace UPrompt.Core
                 }
             }
         }
-        
-        public static void ReloadView()
-        {
-            UCommon.XmlDocument.Load(UCommon.Xml_Path);
-            GenerateView();
-            UCommon.Windows.Invoke((Action)(() =>
-            {
-                if (UCommon.Windows.htmlhandler.CoreWebView2 != null && UCommon.Windows.htmlhandler.Source != null)
-                {
-                    UCommon.Windows.htmlhandler.Reload();
-                }
-            }));
-        }
-        public static string ParseSettingsText(string Text)
-        {
-            string ParsedText = Text
-                .Replace("#TEXT_COLOR#", USettings.Text_Color)
-                .Replace("#BACKGROUND_COLOR#", USettings.Background_Color)
-                .Replace("#ACCENT_COLOR#", USettings.Accent_Color)
-                .Replace("#ACCENT_TEXT_COLOR#", USettings.Text_Accent_Color)
-                .Replace("#FADE_BACKGROUND_COLOR#", USettings.Fade_Background_Color)
-                .Replace("#FADE_ACCENT_COLOR#", USettings.Fade_Accent_Color)
-                .Replace("#ITEM_MARGIN#", USettings.Item_Margin)
-                .Replace("#FONT#", USettings.Font_Name)
-                .Replace("#WINDOWSOPENMODE#", USettings.WindowsOpenMode)
-                .Replace("#WINDWOWSRESIZEMODE#", USettings.WindowsResizeMode)
-                .Replace("#SHOWMINIMIZE#", USettings.ShowMinimize.ToString())
-                .Replace("#SHOWMAXIMIZE#", USettings.ShowMaximize.ToString())
-                .Replace("#SHOWCLOSE#", USettings.ShowClose.ToString())
-                .Replace("#WIDTH#", USettings.Width.ToString())
-                .Replace("#HEIGHT#", USettings.Height.ToString())
-                .Replace("#APPLICATION_NAME#", USettings.Application_Name.ToString())
-                .Replace("#APPLICATION_ICON#", USettings.Application_Icon.ToString())
-                .Replace("#APPLICATION_ICONPATH#", USettings.Application_IconPath.ToString())
-                .Replace("#PRODUCTION#", USettings.Production.ToString())
-                ;
 
-            return ParsedText;
-        }
-        public static string ParseSystemText(string Text)
-        {
-            if (USettings.SkipSystemParsing == false)
-            {
-                string ParsedText = Text
-                    .Replace("{USER}", Environment.UserName)
-                    .Replace("{DEVICE}", Environment.MachineName)
-                    .Replace("{n}", "\n")
-                    .Replace("{e}", "=")
-                    .Replace("{q}", "'")
-                    .Replace("{AppPath}", UCommon.Application_Path)
-                    .Replace("{AppPathWindows}", UCommon.Application_Path_Windows)
-                    ;
-                //Internal Input Variable Replace
-                foreach (string Key in UCommon.Variable.Keys)
-                {
-                    string Value = UCommon.GetVariable(Key);
-                    ParsedText = ParsedText.Replace($"[{Key}]", Value);
-                }
-                return ParsedText;
-            }
-            return Text;
-        }
         public static string GenerateHtmlFromXML(string XML)
         {
             string Html = null;
@@ -166,7 +144,9 @@ namespace UPrompt.Core
             if (childNode != null)
             {
                 //get all atribute that can exist in all type
-                string InnerValue = ParseSystemText(childNode.InnerText);
+
+                string InnerValue = ParseText(childNode.InnerText, ParseMode.Both);
+               
                 string Type = childNode.Attributes["Type"]?.Value ?? "Default";
                 string Action = childNode.Attributes["Action"]?.Value;
                 string Argument = childNode.Attributes["Argument"]?.Value ?? "";
@@ -201,12 +181,12 @@ namespace UPrompt.Core
                             //action that must be apply for all type of ViewInput
                             if (UCommon.GetVariable(Id) != null && UCommon.GetVariable(Id).Length > 0)
                             {
-                                InnerValue = ParseSystemText(UCommon.GetVariable(Id));
+                                InnerValue = ParseText(UCommon.GetVariable(Id), ParseMode.Both);
                             }
                             else if (InnerValue == null || InnerValue.Length < 1)
                             {
-                                UCommon.SetVariable(Id, InnerValue);
-                                InnerValue = ParseSystemText($"[{Id}]");
+                                UCommon.SetVariable(Id, childNode.InnerText ?? "");
+                                InnerValue = ParseText($"[{Id}]", ParseMode.Both);
                             }
 
                             switch (Type.ToLower() ?? Type)
@@ -229,7 +209,10 @@ namespace UPrompt.Core
                                     {
                                         if (bool.Parse(Checked))
                                         { Checked_Text = "checked"; }
+                                        UCommon.SetVariable($"\"CheckBox_{Id}\"", Checked.ToString());
                                     }
+                                    else
+                                    { UCommon.SetVariable($"\"CheckBox_{Id}\"", "false"); }
 
                                     Html += "\n" +
                                         $"<label style=\"{ExtraStyle}\" class=\"label-checkbox Item-Margin{Class}\">\r\n" +
@@ -263,7 +246,7 @@ namespace UPrompt.Core
                                     Html += $"</div>\n";
                                     break;
                             }
-
+                            UCommon.SetVariable(Id, InnerValue);
                             if (Action != null) { Html += GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
                             break;
                         case "viewitem":
@@ -287,10 +270,13 @@ namespace UPrompt.Core
                                     break;
                                 case "box":
                                     Html += $"<div style=\"{ExtraStyle}\" Id=\"{Id}\" class=\"Box {Class}\">\n";
+                                    
+
                                     foreach (XmlNode rowChildNode in childNode.ChildNodes)
                                     {
                                         Html += GenerateHtmlFromXML(rowChildNode.OuterXml);
                                     }
+
                                     Html += "</div>\n";
                                     break;
                                 case "row":
@@ -311,7 +297,7 @@ namespace UPrompt.Core
                                     case "linker":
                                         string source = childNode.Attributes["Source"]?.Value ?? "default";
                                         string target = childNode.Attributes["Target"]?.Value ?? "default";
-                                        
+
                                         if (source != null && target != null)
                                         {
                                             Html += $"<input hidden=\"hidden\" Id=\"{Id}\" name=\"Action_{Id}\" value=\"{NewInputValue("Linker", "", Id, $"{source},{target}")}\"/>\n";
@@ -367,7 +353,7 @@ namespace UPrompt.Core
                         default:
                             if (UCommon.GetVariable(Id) != null && UCommon.GetVariable(Id).Length > 0)
                             {
-                                InnerValue = ParseSystemText(UCommon.Variable[Id]);
+                                InnerValue = ParseText(UCommon.Variable[Id], ParseMode.Both);
                                 XElement inputElement = XElement.Parse(childNode.OuterXml);
                                 XAttribute valueAttribute = inputElement.Attribute("Value");
 
@@ -383,7 +369,7 @@ namespace UPrompt.Core
                             }
                             else
                             {
-                                Html += ParseSystemText($"{childNode.OuterXml}\n");
+                                Html += ParseText($"{childNode.OuterXml}\n", ParseMode.Both);
                             }
 
                             break;

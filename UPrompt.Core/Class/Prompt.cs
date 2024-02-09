@@ -118,28 +118,60 @@ namespace UPrompt
             }
         }
 
-        public Prompt()
+        public Prompt(string[] Args)
         {
             UCommon.Windows = this;
+
+            // Handle argument
+            if (Args.Length > 0)
+            {
+                bool Path = false;
+                if (Args.Length == 1) { Path = true; }
+                foreach (string arg in Args)
+                {
+                    switch (arg.ToLower() ?? arg)
+                    {
+                        case "/path":
+                        case "-p":
+                        case "/p":
+                            Path = true;
+                            break;
+                        default:
+                            if (arg.ToLower().Contains(".xml") && Path)
+                            {
+                                if (File.Exists(arg))
+                                {
+                                    UPages.LoadPage(arg, true, true);
+                                }
+                            }
+                            else if (arg.ToLower().Contains(".xml") && File.Exists(arg))
+                            { UPages.LoadPage(arg, true, true); }
+                            Path = false;
+                            break;
+                    }
+                }
+            }
+
             InitializeComponent();
             this.DoubleBuffered = true;
         }
 
         private void Prompt_Load(object sender, EventArgs e)
         {
-            Thread thread = new Thread(() =>
+            if (!File.Exists(UPages.CurrentPage.Path) && File.Exists($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml"))
             {
-                if (File.Exists(UCommon.Xml_Path) && UCommon.ForceOpenDesinger != true)
-                {
-                    USettings.LoadXml(UCommon.Xml_Path);
-                }
-                else if (File.Exists($@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml"))
-                {
-                    UCommon.Xml_Path = $@"{UCommon.Application_Path_Windows}\Resources\Code\UDesigner.xml";
-                    USettings.LoadXml(UCommon.Xml_Path);
-                }
-            });
-            thread.Start();
+                UPages.LoadPage($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml", true, true);
+            }
+            else
+            {
+                UPages.RefreshPage(false);
+            }
+
+            if (USettings.UActionQueue.Count > 0)
+            {
+                do { USettings.UActionQueue.Dequeue().Run(); }
+                while (USettings.UActionQueue.Count <= 0);
+            }
         }
 
         internal void UpdateTitleBarColor()
@@ -183,7 +215,7 @@ namespace UPrompt
 
             if (Close == false)
             {
-                
+
                 ButtonSplitPanel.SetCellPosition(control1, new TableLayoutPanelCellPosition(1, 0));
                 ButtonSplitPanel.SetCellPosition(control2, new TableLayoutPanelCellPosition(2, 0));
                 ButtonSplitPanel.SetCellPosition(control3, new TableLayoutPanelCellPosition(0, 0));
@@ -232,7 +264,7 @@ namespace UPrompt
                 {
                     UHandler.HandlePost(e.WebMessageAsJson);
                 }));
-            UParser.ReloadView();
+                UPages.RefreshPage(true);
             });
             thread.Start();
         }

@@ -23,6 +23,22 @@ namespace UPrompt.Core
             this.Add(new USetting(Name, Value, Id));
         }
     }
+    public class UAction
+    {
+        public UAction(string Name, string Arguments, string Id)
+        {
+            this.Name = Name;
+            this.Arguments = Arguments;
+            this.Id = Id;
+        }
+        public string Name { get; private set; }
+        public string Arguments { get; private set; }
+        public string Id { get; private set; }
+        public void Run()
+        {
+            UHandler.RunAction(Name, Arguments, Id);
+        }
+    }
     public class USetting
     {
         public string Name { get; set; }
@@ -31,13 +47,14 @@ namespace UPrompt.Core
         public USetting(string Name, string Value, string Id)
         {
             this.Name = Name;
-            this.Value = UParser.ParseSystemText(Value);
+            this.Value = UParser.ParseText(Value,UParser.ParseMode.All);
             this.Id = Id;
         }
     }
     public class USettings
     {
         // Properties that do not reflect any system or view setting
+        internal static Queue<UAction> UActionQueue { get; } = new Queue<UAction>();
         internal static int ExtentionFallbackId { get; private set; } = 0;
         internal static bool FirstLoadCompleted { get; private set; } = false;
 
@@ -69,7 +86,7 @@ namespace UPrompt.Core
         public static Icon Application_Icon { get; private set; } = Properties.Resources.uicon;
         public static void ReLoad()
         {
-            Load(UCommon.XmlDocument.SelectNodes("//Application/Setting"));
+            Load(UPages.CurrentPage.XmlDocument.SelectNodes("//Application/Setting"));
         }
         public static void Load(XmlNodeList settingsList)
         {
@@ -98,21 +115,6 @@ namespace UPrompt.Core
             }
             NewFadeColor();
         }
-        public static void LoadXml(string path, bool loadsettings = true)
-        {
-            UCommon.Xml_Path = path;
-            try { UCommon.XmlDocument.Load(path); }
-            catch (Exception ex) { UCommon.Error($"{ex.Message}\n\n{UCommon.XmlDocument.InnerXml}", "Fatal error on XML Parsing"); }
-            if (loadsettings)
-            {
-                Load(UCommon.XmlDocument.SelectNodes("//Application/Setting"));
-            }
-            UParser.GenerateView();
-            UCommon.Windows.Invoke((Action)(() =>
-            {
-                UCommon.Windows.htmlhandler.Source = new Uri($"file:///{UCommon.Application_Path}Resources/Code/UView.html");
-            }));
-        }
         private static void NewFadeColor()
         {
             Fade_Background_Color = ColorTranslator.ToHtml(ControlPaint.Light(ColorTranslator.FromHtml(Background_Color), 0.1f));
@@ -122,7 +124,7 @@ namespace UPrompt.Core
         {
             string WarningTitle = "Wrong settings format";
 
-            value = UParser.ParseSystemText(value);
+            value = UParser.ParseText(value,UParser.ParseMode.All);
             switch (name.ToLower())
             {
                 // Misc
@@ -137,7 +139,7 @@ namespace UPrompt.Core
                     try
                     {
                         string arg = string.Join(",", value.Split(',').Skip(1).ToArray());
-                        UHandler.RunAction(value.Split(',')[0], arg, $"OnLoad_{value.Split(',')[0]}");
+                        UActionQueue.Enqueue(new UAction(value.Split(',')[0], arg, $"OnLoad_{value.Split(',')[0]}"));
                     }
                     catch { UCommon.Warning($"{name} value must be like Value=\"ActionName,ActionArgument\"", WarningTitle); }
                     break;
@@ -159,7 +161,7 @@ namespace UPrompt.Core
                         {
                             if (UCommon.GetVariable(value.Split(',')[0]) == null) { UCommon.SetVariable(value.Split(',')[0], $""); break; }
                         }
-                        UCommon.SetVariable(value.Split(',')[0], UParser.ParseSystemText(value.Split(',')[1]));
+                        UCommon.SetVariable(value.Split(',')[0], UParser.ParseText(value.Split(',')[1],UParser.ParseMode.All));
                     }
                     else
                     {
@@ -223,7 +225,7 @@ namespace UPrompt.Core
                     if (File.Exists(value) && value.ToLower().Contains(".css"))
                     {
                         NewFadeColor();
-                        string css = UParser.ParseSettingsText(File.ReadAllText(value));
+                        string css = UParser.ParseText(File.ReadAllText(value),UParser.ParseMode.Setting);
                         string copy = $@"{UCommon.Application_Path_Windows}Resources\Code\{UImage.GetFileLocalPath(value)}";
                         File.WriteAllText(copy, css);
                         UParser.CSSLink += $"<link rel=\"stylesheet\" href=\"file:///{copy}\">";

@@ -56,6 +56,7 @@
     <Compile Include="Class\UCommon.cs" />
     <Compile Include="Class\UHandler.cs" />
     <Compile Include="Class\UImage.cs" />
+    <Compile Include="Class\UPages.cs" />
     <Compile Include="Class\UParser.cs" />
     <Compile Include="Class\USettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

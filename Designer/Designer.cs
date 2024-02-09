@@ -51,7 +51,7 @@ namespace UPrompt.UDesigner
                 }
             }
             catch (Exception ex) { UCommon.Error(ex.Message, ErrorTitle); }
-            UParser.ReloadView();
+            UPages.RefreshPage(true);
         }
         public static void OpenNewUprompt()
         {
@@ -209,6 +209,7 @@ namespace UPrompt.UDesigner
                 ExtraXml = "<ViewItem Type=\"SubTitle\">Examples Value:</ViewItem>";
                 ExtraXml += GenrerateDropBox(Settings.Values, "SettingValue", "210129,SelectSetting(true)");
                 UCommon.SetVariable("XmlCode", "<Setting Name='" + name + "' Value='" + value + "'/>");
+
                 if (Refresh.Contains("true")) { RefreshDesignerCode(); }
             }
             catch (Exception ex) { UCommon.Error(ex.Message, ErrorTitle); }
@@ -294,7 +295,7 @@ namespace UPrompt.UDesigner
             catch (Exception ex) { UCommon.Error("Refresh Error: " + ex.Message, ErrorTitle); }
 
             PreviewXML();
-            UParser.ReloadView();
+            UPages.RefreshPage(true);
         }
 
         private static string GenrerateDropBox(string[] items, string id, string method)

@@ -1,19 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Xml.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace UPrompt.Core
 {
@@ -230,7 +227,6 @@ namespace UPrompt.Core
             }
             return null;
         }
-
         internal static void HandlePost(string json)
         {
             json = json.Substring(0, json.Length - 1).Substring(1).Replace(@"\", null);
@@ -324,13 +320,12 @@ namespace UPrompt.Core
                 {
                     UCommon.SetVariable($"Result_{ActionId}", LastActionOutput);
                 }
-                //UParser.GenerateView();
             }
         }
         internal static void SwitchAction(string ActionName, string ActionValue, string ActionId)
         {
             int DebugLine = 0;
-            foreach (string Line in File.ReadAllLines(UCommon.Xml_Path))
+            foreach (string Line in File.ReadAllLines(UPages.CurrentPage.Path))
             {
                 DebugLine++;
                 if (!Line.ToLower().Contains("setting") && Line.ToLower().Contains($"{ActionId.ToLower()}"))
@@ -341,7 +336,7 @@ namespace UPrompt.Core
             string LineTitle = $"Xml Line: {DebugLine}";
             try
             {
-                ActionValue = UParser.ParseSystemText(ActionValue);
+                ActionValue = UParser.ParseText(ActionValue,UParser.ParseMode.Both);
                 switch (ActionName.ToLower())
                 {
                     case "runmethod":
@@ -589,10 +584,10 @@ namespace UPrompt.Core
                         {
                             try
                             {
-                                USettings.LoadXml(ActionValue, false);
+                                UPages.LoadPage(ActionValue, false,false);
                                 LastActionOutput = "true";
                                 Thread.Sleep(100);
-                                UParser.ReloadView();
+                                UPages.RefreshPage(true);
                             }
                             catch (Exception ex) { UCommon.Error(ex.Message, LineTitle); }
                         }
@@ -605,7 +600,7 @@ namespace UPrompt.Core
                     case "reloadview":
                         try
                         {
-                            UParser.ReloadView();
+                            UPages.RefreshPage(true);
                             LastActionOutput = "true";
                         }
                         catch(Exception ex) { UCommon.Warning(ex.Message,LineTitle); LastActionOutput = "false"; }
@@ -622,7 +617,7 @@ namespace UPrompt.Core
                         try
                         {
                             USettings.Load(ActionValue.Split(',')[0], ActionValue.Split(',')[1], ActionValue.Split(',')[2]);
-                            UParser.ReloadView();
+                            UPages.RefreshPage(true);
                         }
                         catch { UCommon.Warning($"The argument of {ActionName} should be formated as:\n Argument=\"Name,Value,Id\" The Id is optional", LineTitle); }
                         break;
