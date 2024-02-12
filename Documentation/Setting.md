@@ -60,7 +60,10 @@ These settings load external files as extensions of the application. To learn ho
 
 | Name | Accepted Value | Description |
 | ---- | -------------- | ----------- |
+| PreLoadPage | String | This alow you to Load in memory a page that will make the load of it in app more faster and also initialize related variable of items.
 | Production | Boolean | This determines whether to hide warning messages.
 | OnLoad | Action, Arguments | This runs an action when the page loads.
 | SkipElementParsing | Element Id | This skips variable and system parsing for a given UI element.
 | Variable | Name, Default Value | This initializes a variable with a default value (to avoid seeing `[Variable]` if displayed in UI).
+
+> **PreLoadPage** support having an **Id** that alows you to create a user variable that contain the path of page so you can use it in other step
