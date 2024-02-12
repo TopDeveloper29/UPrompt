@@ -52,6 +52,16 @@ You can start application in specific mode or load a page instead of using the d
 | /path | /p  | This allow you to load a xml page by giving it path. Note if you pass directly a xml path as argument it will do the same. Exemple: `Uprompt.exe /path "MyPage.xml"` will do the same as `Uprompt.exe "MyPage.xml"`  |
 | /designer  |  /d  | This will force the application to open in designer mode whatever if a MainPage.xml exist or not, note if MainPage.xml do not exist it will do the same behavior |
 
+## Take a look to Demo Page
+You may want to try load Demo Page to better understand element that will be detail in next section. Here how achieve it step by step.
+
+So first step will be to get a copy of the folder "Example" located in folder "Documentation", then when you get the folder you can move it next to UPrompt.exe and open a command prompt in this folder.
+Before running the application you should take one of the 2 action describe above:
+- Go to "Example\Extention" folder then open DEMO.sln project in visual studio then build the project with debug profile
+- Go to "Example" folder then edit the file "MainPage.xml" and then remove the line: `<Setting Name="Extention" Value="{AppPathWindows}Example\Extention\DEMO\bin\Debug\DEMO.dll,DEMO.DemoPrompt" Id="2001"/>`
+
+Now you are ready to open the Demo page and take a look to it and experiment thing what you need to do is from command line open UPrompt.exe with /path argument that pointing to the demo page so what you want to enter is:
+`UPrompt.exe /path "Example\MainPage.xml"`
 
 ------------
 #### Related Page
