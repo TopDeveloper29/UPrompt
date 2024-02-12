@@ -6,7 +6,7 @@ With Uprompt, users of all coding expertise levels can create visually appealing
 
 In summary, Uprompt enhances UI creation by providing a straightforward and effective tool suitable for users of all skill levels. Its use of XML and HTML simplifies the development of visually attractive and interactive interfaces, while its built-in functions enhance program functionality and flexibility.
 
-###### Demo Page
+###### Demo Pageh
 
 ![SamplePage](https://github.com/TopDeveloper29/UPrompt/assets/141742981/540ebbc4-140e-45bd-9a33-6ac303de0376)
 
