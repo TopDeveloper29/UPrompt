@@ -97,7 +97,8 @@ namespace UPrompt.Core
                 UPage PageToLoad = Pages.FirstOrDefault(obj => obj.Path == Path);
                 if (PageToLoad == null)
                 { PageToLoad = new UPage(Path, true); Pages.Add(PageToLoad); }
-                else { PageToLoad.Load(ReloadHtml, true, LoadSettings); }
+                else
+                { PageToLoad.Load(ReloadHtml, true, LoadSettings); }
 
                 CurrentPage = PageToLoad;
                 return true;

@@ -185,7 +185,7 @@ namespace UPrompt.Core
                             }
                             else if (InnerValue == null || InnerValue.Length < 1)
                             {
-                                UCommon.SetVariable(Id, childNode.InnerText ?? "");
+                                UCommon.SetVariable(Id, InnerValue);
                                 InnerValue = ParseText($"[{Id}]", ParseMode.Both);
                             }
 
@@ -246,7 +246,6 @@ namespace UPrompt.Core
                                     Html += $"</div>\n";
                                     break;
                             }
-                            UCommon.SetVariable(Id, InnerValue);
                             if (Action != null) { Html += GenerateHtmlFromXML($"<ViewAction Type=\"InputHandler\" Action=\"{Action}\" Argument=\"{Argument}\">{Id}</ViewAction>"); }
                             break;
                         case "viewitem":

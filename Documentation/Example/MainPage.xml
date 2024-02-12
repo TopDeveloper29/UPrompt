@@ -16,7 +16,8 @@
 	<Setting Name="Production" Value="false"/>
 	<Setting Name="Variable" Value="yn,N/A"/>
 	<Setting Name="Variable" Value="Page1,{AppPathWindows}Example\MainPage.xml"/>
-	<Setting Name="Variable" Value="Page2,{AppPathWindows}Example\SubPage.xml"/>
+	<Setting Name="PreLoadPage" Value="{AppPathWindows}Example\SubPage.xml" Id="Page2"/>
+	
 
 	<View>
 		<ViewItem Type="Title">Welcome to UPrompt</ViewItem>

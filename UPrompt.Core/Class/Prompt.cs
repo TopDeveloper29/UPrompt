@@ -1,5 +1,6 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System;
+using System.Collections;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -11,6 +12,7 @@ namespace UPrompt
 {
     public partial class Prompt : Form
     {
+        private string[] Arguments { get; set; }
         internal bool IconLigthMode = false;
 
         protected private bool isDragging = false;
@@ -121,16 +123,33 @@ namespace UPrompt
         public Prompt(string[] Args)
         {
             UCommon.Windows = this;
+            Arguments = Args;
 
-            // Handle argument
-            if (Args.Length > 0)
+            InitializeComponent();
+            this.DoubleBuffered = true;
+        }
+
+        private void Prompt_Load(object sender, EventArgs e)
+        {
+            if (Arguments.Length > 0)
             {
                 bool Path = false;
-                if (Args.Length == 1) { Path = true; }
-                foreach (string arg in Args)
+                if (Arguments.Length == 1) { Path = true; }
+                foreach (string arg in Arguments)
                 {
+
                     switch (arg.ToLower() ?? arg)
                     {
+                        case "/designer":
+                        case "/d":
+                        case "-designer":
+                        case "-d":
+                        case "--designer":
+                            if (!File.Exists(UPages.CurrentPage.Path) && File.Exists($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml"))
+                            {
+                                UPages.LoadPage($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml", true, true);
+                            }
+                            break;
                         case "/path":
                         case "-p":
                         case "/p":
@@ -151,26 +170,22 @@ namespace UPrompt
                     }
                 }
             }
-
-            InitializeComponent();
-            this.DoubleBuffered = true;
-        }
-
-        private void Prompt_Load(object sender, EventArgs e)
-        {
-            if (!File.Exists(UPages.CurrentPage.Path) && File.Exists($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml"))
-            {
-                UPages.LoadPage($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml", true, true);
-            }
             else
             {
-                UPages.RefreshPage(false);
+                if (!File.Exists(UPages.CurrentPage.Path) && File.Exists($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml"))
+                {
+                    UPages.LoadPage($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml", true, true);
+                }
             }
 
             if (USettings.UActionQueue.Count > 0)
             {
-                do { USettings.UActionQueue.Dequeue().Run(); }
-                while (USettings.UActionQueue.Count <= 0);
+                do { 
+                    UAction Action = USettings.UActionQueue.Dequeue();
+                    Action.Run();
+                }
+                while (USettings.UActionQueue.Count != 0);
+                UPages.RefreshPage(true);
             }
         }
 

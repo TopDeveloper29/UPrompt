@@ -19,7 +19,7 @@ namespace UPrompt.UDesigner
         private static string Xml { get; set; } = "";
         private static string ExtraXml { get; set; } = "";
         private static string PreferedEditorPath { get; set; } = @"C:\Program Files\Notepad++\notepad++.exe";
-        private static string ErrorTitle = "UDesigner Internal Error";
+        private static string ErrorTitle { get; } = "UDesigner Internal Error";
 
         // Handle editor and file load
         public static void SetPreferedEditor(string path)

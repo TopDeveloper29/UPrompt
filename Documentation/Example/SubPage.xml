@@ -2,5 +2,11 @@
 	<View>
 		<ViewItem Type="Title">Page 2</ViewItem>
 		<ViewAction Type="Button" Action="LoadPage" Argument="[Page1]">Page 1</ViewAction>
+		<ViewItem Type='SubTitle'>Element 2</ViewItem>
+		<ViewInput Id="TextBox2" Type='TextBox'>Test of textbox2</ViewInput>
+		<br/>
+		<ViewInput Id="LinesBox2" Type='LinesBox'>Test of linebox2</ViewInput>
+		<br/>
+		<ViewInput Id="CheckBox2" Type='CheckBox'>Test of CheckBox2</ViewInput>
 	</View>
 </Application>

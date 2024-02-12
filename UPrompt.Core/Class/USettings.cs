@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -128,6 +126,10 @@ namespace UPrompt.Core
             switch (name.ToLower())
             {
                 // Misc
+                case "preloadpage":
+                    UPages.AddPage(value);
+                    UCommon.SetVariable(id, value);
+                    break;
                 case "production":
                     try
                     {
