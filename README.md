@@ -22,6 +22,7 @@ To get started with Uprompt, follow these steps:
   - [XML Basic Structure](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Basic.md#xml-basic-structure)
   - [How the program work in back-end](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Basic.md#how-the-program-works-in-the-back-end)
   - [Comand Line Arguments](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Basic.md#Arguments)
+  - [Take a look to demo page](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Basic.md#take-a-look-to-demo-page)
 - [Setting](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Setting.md)
   - [XML Structure](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Setting.md#xml-structure)
   - [Theme](https://github.com/TopDeveloper29/UPrompt/blob/Prod/Documentation/Setting.md#theme)
