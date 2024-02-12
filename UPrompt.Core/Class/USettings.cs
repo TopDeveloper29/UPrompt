@@ -18,7 +18,7 @@ namespace UPrompt.Core
         }
         public void Add(string Name, string Value, string Id)
         {
-            this.Add(new USetting(Name, Value, Id));
+            Add(new USetting(Name, Value, Id));
         }
     }
     public class UAction
@@ -128,6 +128,7 @@ namespace UPrompt.Core
                 // Misc
                 case "preloadpage":
                     UPages.AddPage(value);
+                    if(id != null)
                     UCommon.SetVariable(id, value);
                     break;
                 case "production":

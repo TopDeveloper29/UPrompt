@@ -150,6 +150,9 @@ namespace UPrompt
                                 UPages.LoadPage($@"{UCommon.Application_Path_Windows}Resources\Code\UDesigner.xml", true, true);
                             }
                             break;
+                        case "/l":
+                        case "loadpage":
+                        case "load":
                         case "/path":
                         case "-p":
                         case "/p":

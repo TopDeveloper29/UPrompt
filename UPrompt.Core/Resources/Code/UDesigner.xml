@@ -30,7 +30,7 @@
 			<ViewAction Id="ReloadBt" Type="Button" Action="ReloadView" Argument="true" Image="https://m.media-amazon.com/images/I/41R2Kt9o2XL.png,60,false"></ViewAction>
 			<ViewAction Id="NewPath" Type="Button" Action="Browse" Argument="File,Save,Xml Files|*.xml" Class="new_image" Image="https://cdn-icons-png.flaticon.com/512/5825/5825337.png,22,true">New XML</ViewAction>
 			<ViewAction Id="LoadPath" Type="Button" Action="Browse" Argument="File,Load,Xml Files|*.xml" Class="load_image" Image="https://static.thenounproject.com/png/196595-200.png,28,true">Load XML</ViewAction>
-			<ViewAction Id="OpenHelpBt" Type="Button" Action="RunExe" Argument="https://github.com/TopDeveloper29/UPrompt/blob/Post/README.md"  Image="https://mfhb.ca/images/help.png,50,true"></ViewAction>
+			<ViewAction Id="OpenHelpBt" Type="Button" Action="RunExe" Argument="https://github.com/TopDeveloper29/UPrompt/blob/Prod/README.md"  Image="https://mfhb.ca/images/help.png,50,true"></ViewAction>
 			<ViewAction Id="ExitBt" Type="Button" Action="Exit" Class="exit_image" Image="https://static-00.iconduck.com/assets.00/exit-icon-1821x2048-50xh00pv.png,22,true">Exit</ViewAction>
 			<ViewItem Type="Spacer" Id="Spc2"/>
 		</ViewItem>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -74,6 +75,7 @@ namespace UPrompt.Core
                 }
             }
         }
+
         public static string HtmlTemplate { get; } = File.ReadAllText($@"{UCommon.Application_Path}\Resources\Code\UTemplate.html");
         public static string CssTemplate { get; } = File.ReadAllText($@"{UCommon.Application_Path_Windows}Resources\Code\UTemplate.css");
         public static UPage CurrentPage { get; private set; } = new UPage($@"{UCommon.Application_Path_Windows}MainPage.xml", true);

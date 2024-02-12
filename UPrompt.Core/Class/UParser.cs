@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Drawing;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
@@ -144,19 +141,27 @@ namespace UPrompt.Core
             if (childNode != null)
             {
                 //get all atribute that can exist in all type
+                string Id = childNode.Attributes["Id"]?.Value ?? $"RandomId{new Random().Next()}";
+
+                if (UCommon.GetVariable(Id) == null)
+                {  UCommon.SetVariable(Id, childNode.InnerText); }
 
                 string InnerValue = ParseText(childNode.InnerText, ParseMode.Both);
-               
+
                 string Type = childNode.Attributes["Type"]?.Value ?? "Default";
                 string Action = childNode.Attributes["Action"]?.Value;
                 string Argument = childNode.Attributes["Argument"]?.Value ?? "";
 
-                string Id = childNode.Attributes["Id"]?.Value ?? $"RandomId{new Random().Next()}";
                 string ExtraStyle = childNode.Attributes["Style"]?.Value ?? "";
                 string Class = childNode.Attributes["Class"]?.Value ?? "";
 
                 string ImageObject = childNode.Attributes["Image"]?.Value;
                 string ImagePath = ""; string ImageSize = ""; string ImageAutoColor = "";
+
+                if (UCommon.GetVariable(Id) != null && UCommon.GetVariable(Id).Length > 0)
+                {
+                    InnerValue = ParseText(UCommon.GetVariable(Id), ParseMode.All);
+                }
 
                 //Handle image argument
                 if (ImageObject != null)
@@ -179,16 +184,6 @@ namespace UPrompt.Core
                     {
                         case "viewinput":
                             //action that must be apply for all type of ViewInput
-                            if (UCommon.GetVariable(Id) != null && UCommon.GetVariable(Id).Length > 0)
-                            {
-                                InnerValue = ParseText(UCommon.GetVariable(Id), ParseMode.Both);
-                            }
-                            else if (InnerValue == null || InnerValue.Length < 1)
-                            {
-                                UCommon.SetVariable(Id, InnerValue);
-                                InnerValue = ParseText($"[{Id}]", ParseMode.Both);
-                            }
-
                             switch (Type.ToLower() ?? Type)
                             {
                                 default:
@@ -209,10 +204,10 @@ namespace UPrompt.Core
                                     {
                                         if (bool.Parse(Checked))
                                         { Checked_Text = "checked"; }
-                                        UCommon.SetVariable($"\"CheckBox_{Id}\"", Checked.ToString());
+                                        UCommon.SetVariable($"CheckBox_{Id}", Checked.ToString());
                                     }
                                     else
-                                    { UCommon.SetVariable($"\"CheckBox_{Id}\"", "false"); }
+                                    { UCommon.SetVariable($"CheckBox_{Id}", "false"); }
 
                                     Html += "\n" +
                                         $"<label style=\"{ExtraStyle}\" class=\"label-checkbox Item-Margin{Class}\">\r\n" +
@@ -350,31 +345,14 @@ namespace UPrompt.Core
                             break;
                         // if html that will just write it down simply
                         default:
-                            if (UCommon.GetVariable(Id) != null && UCommon.GetVariable(Id).Length > 0)
-                            {
-                                InnerValue = ParseText(UCommon.Variable[Id], ParseMode.Both);
-                                XElement inputElement = XElement.Parse(childNode.OuterXml);
-                                XAttribute valueAttribute = inputElement.Attribute("Value");
+                                Html += ParseText(childNode.OuterXml, ParseMode.All);
 
-                                if (valueAttribute == null)
-                                {
-                                    inputElement.Add(new XAttribute("Value", InnerValue));
-                                }
-                                else
-                                {
-                                    valueAttribute.Value = InnerValue;
-                                }
-                                Html += inputElement.ToString();
-                            }
-                            else
-                            {
-                                Html += ParseText($"{childNode.OuterXml}\n", ParseMode.Both);
-                            }
 
                             break;
                     }
                 }
             }
+
             return Html;
         }
 

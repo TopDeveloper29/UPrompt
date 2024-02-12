@@ -142,11 +142,17 @@ namespace UPrompt.Core
             {
                 Variable[Id] = Value;
             }
-            File.WriteAllText($@"{Application_Path}\Resources\Code\Variables.ps1","");
-            foreach (string Key in Variable.Keys)
+
+            try
             {
-                File.AppendAllText($@"{Application_Path}\Resources\Code\Variables.ps1",$"[string]$Global:{Key} = \"{Variable[Key]}\";\n");
+                File.WriteAllText($@"{Application_Path}\Resources\Code\Variables.ps1", "");
+
+                foreach (string Key in Variable.Keys)
+                {
+                    File.AppendAllText($@"{Application_Path}\Resources\Code\Variables.ps1", $"[string]$Global:{Key} = \"{Variable[Key]}\";\n");
+                }
             }
+            catch { }
         }
         public static string GetVariable(string Id)
         {

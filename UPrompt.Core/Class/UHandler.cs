@@ -540,9 +540,11 @@ namespace UPrompt.Core
                                 {
                                     if (Mode.Contains("Save"))
                                     {
-                                        SaveFileDialog saveFileDialog = new SaveFileDialog();
-                                        saveFileDialog.Filter = Filter;
-                                        saveFileDialog.Title = "Save a File";
+                                        SaveFileDialog saveFileDialog = new SaveFileDialog
+                                        {
+                                            Filter = Filter,
+                                            Title = "Save a File"
+                                        };
 
                                         if (saveFileDialog.ShowDialog() == DialogResult.OK)
                                         {
@@ -552,9 +554,11 @@ namespace UPrompt.Core
                                     }
                                     else
                                     {
-                                        OpenFileDialog openFileDialog = new OpenFileDialog();
-                                        openFileDialog.Filter = Filter;
-                                        openFileDialog.Title = "Select a File";
+                                        OpenFileDialog openFileDialog = new OpenFileDialog
+                                        {
+                                            Filter = Filter,
+                                            Title = "Select a File"
+                                        };
 
                                         if (openFileDialog.ShowDialog() == DialogResult.OK)
                                         {
@@ -565,8 +569,10 @@ namespace UPrompt.Core
                                 }
                                 else
                                 {
-                                    FolderBrowserDialog Folderdialog = new FolderBrowserDialog();
-                                    Folderdialog.Description = "Select a Folder";
+                                    FolderBrowserDialog Folderdialog = new FolderBrowserDialog
+                                    {
+                                        Description = "Select a Folder"
+                                    };
 
                                     if (Folderdialog.ShowDialog() == DialogResult.OK)
                                     {
